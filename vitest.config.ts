@@ -12,5 +12,6 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     include: ["tests/**/*.test.{ts,tsx}"],
     css: true,
+    maxWorkers: 4,
   },
 });

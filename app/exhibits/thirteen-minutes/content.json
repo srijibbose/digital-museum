@@ -1,0 +1,89 @@
+{
+  "id": "thirteen-minutes",
+  "title": "Thirteen Minutes",
+  "subtitle": "The last minutes of Apollo 11's descent, told as a systems story",
+  "wing": "systems-and-machines",
+  "estimatedMinutes": 7,
+  "hook": {
+    "text": "Seven minutes before Apollo 11 landed, its guidance computer flashed an alarm the crew had never seen in training. This is the thirteen minutes between ignition and touchdown, told through the numbers the room was watching."
+  },
+  "context": {
+    "text": "On July 20, 1969, the Apollo 11 lunar module Eagle began its final descent to the Moon's surface. Everything from here on is real: the mission clock, the altitude, the fuel remaining, and the words said in the room. Scroll to follow the descent."
+  },
+  "beats": [
+    {
+      "id": "approach",
+      "label": "Approach",
+      "met": "102:33:05",
+      "altitude": "49,971 ft",
+      "fuel": "≈13:20",
+      "body": "The descent engine ignites. For the next twelve minutes, the lunar module falls toward the surface under computer control.",
+      "quote": null
+    },
+    {
+      "id": "course-check",
+      "label": "Course check",
+      "met": "102:36:11",
+      "altitude": "≈42,000 ft",
+      "fuel": "≈10:15",
+      "body": "Armstrong's landmark checks show Eagle is running long — several miles beyond the planned target. The descent is precise. The position is not.",
+      "quote": "We're going to land long."
+    },
+    {
+      "id": "program-alarm",
+      "label": "Program alarm",
+      "met": "102:38:26",
+      "altitude": "33,500 ft",
+      "fuel": "≈8:00",
+      "body": "Neil Armstrong calls out a 1202. The guidance computer is overloaded — and nobody aboard Eagle knows yet whether that is fatal to the landing.",
+      "quote": "Program alarm. It's a 1202."
+    },
+    {
+      "id": "go-call",
+      "label": "The go call",
+      "met": "102:38:53",
+      "altitude": "<30,000 ft",
+      "fuel": "≈7:30",
+      "body": "A 26-year-old guidance officer in Houston has twenty-seven seconds from the first alarm call to the answer. The computer is restarting critical jobs and leaving lower-priority work behind.",
+      "quote": "We're Go on that alarm."
+    },
+    {
+      "id": "manual-control",
+      "label": "Manual control",
+      "met": "102:43:22",
+      "altitude": "410 ft",
+      "fuel": "≈3:00",
+      "body": "Armstrong selects the manual landing program, flying by eye over West Crater's boulder field while the computer continues controlling the engine's descent rate.",
+      "quote": null
+    },
+    {
+      "id": "touchdown",
+      "label": "Touchdown",
+      "met": "102:45:40",
+      "altitude": "0 ft",
+      "fuel": "≈0:45",
+      "body": "Engine off. Postflight analysis found about forty-five seconds of hover time remained — more than it felt like in the room, and still close enough to matter.",
+      "quote": "The Eagle has landed."
+    }
+  ],
+  "takeaway": {
+    "text": "The computer didn't fail because it overloaded. It was built to drop what mattered least and keep what mattered most — which is exactly why it landed on the Moon that day, and why 'graceful degradation' still describes good systems design today."
+  },
+  "telemetryNote": "Mission time and event altitudes are checked against NASA's Apollo 11 records. Approximate firing-time values are marked ≈; they are inferred from the elapsed descent and NASA's postflight 45-second touchdown margin, not direct cockpit readouts.",
+  "goDeeper": {
+    "label": "Read the real mission transcript",
+    "note": "Link to NASA's public Apollo 11 transcript archive — insert the real URL before publishing, do not fabricate one."
+  },
+  "relatedExhibits": [
+    {
+      "slug": "what-happens-when-you-click-a-button",
+      "title": "What happens when you click a button",
+      "status": "build separately"
+    },
+    {
+      "slug": "apollo-guidance-computer",
+      "title": "Why the Apollo Guidance Computer had less power than a calculator",
+      "status": "future idea, not built"
+    }
+  ]
+}
