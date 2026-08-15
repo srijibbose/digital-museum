@@ -19,8 +19,14 @@ test("walks from the museum lobby through the complete Living Atlas", async ({ p
   await page.goto("/");
   await page.waitForLoadState("networkidle");
   await expect(page.getByRole("heading", { name: /look closer/i })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "The Living Atlas", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Thirteen Minutes", exact: true }),
+  ).toBeVisible();
 
-  await page.getByRole("link", { name: /the living atlas/i }).click();
+  await page.goto("/exhibits/living-atlas");
   await expect(page.getByRole("heading", { name: "The Living Atlas" })).toBeVisible();
   await page.getByRole("button", { name: /begin the journey/i }).click();
 

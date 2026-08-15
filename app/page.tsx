@@ -1,10 +1,10 @@
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
 import { ExhibitCard } from "@/components/museum/ExhibitCard";
-import { getActiveExhibits, getActiveWings } from "@/content/exhibits";
+import { getActiveWings, getFeaturedExhibits } from "@/content/exhibits";
 
 export default function MuseumLobby() {
-  const activeExhibits = getActiveExhibits();
-  const activeWings = getActiveWings();
+  const activeExhibits = getFeaturedExhibits();
+  const activeWings = getActiveWings(activeExhibits);
 
   return (
     <main className="lobby">

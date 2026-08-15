@@ -65,7 +65,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     tags: ["Human Physiology", "Interactive 3D", "Bio-Mechanics", "Soundscape"],
     route: "/exhibits/living-atlas",
     enabled: true,
-    featured: true,
+    featured: false,
     order: 1,
     visualTheme: {
       variant: "living-atlas",
@@ -118,6 +118,13 @@ export function getActiveExhibits(): ExhibitDefinition[] {
 }
 
 /**
+ * Returns enabled exhibits selected for the museum lobby.
+ */
+export function getFeaturedExhibits(): ExhibitDefinition[] {
+  return getActiveExhibits().filter((exhibit) => exhibit.featured);
+}
+
+/**
  * Lookup an exhibit by its URL slug.
  */
 export function getExhibitBySlug(slug: string): ExhibitDefinition | undefined {
@@ -135,11 +142,12 @@ export function isExhibitEnabled(slug: string): boolean {
 /**
  * Returns all wings with active exhibit counts.
  */
-export function getActiveWings(): { wing: ExhibitWing; count: number }[] {
-  const active = getActiveExhibits();
+export function getActiveWings(
+  exhibits: readonly ExhibitDefinition[] = getActiveExhibits(),
+): { wing: ExhibitWing; count: number }[] {
   const map = new Map<string, { wing: ExhibitWing; count: number }>();
 
-  for (const exhibit of active) {
+  for (const exhibit of exhibits) {
     const existing = map.get(exhibit.wing.id);
     if (existing) {
       existing.count += 1;

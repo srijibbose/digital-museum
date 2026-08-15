@@ -3,6 +3,7 @@ import {
   EXHIBIT_REGISTRY,
   getActiveExhibits,
   getExhibitBySlug,
+  getFeaturedExhibits,
   isExhibitEnabled,
   getActiveWings,
 } from "@/content/exhibits";
@@ -18,6 +19,16 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     const active = getActiveExhibits();
     expect(active.length).toBeGreaterThanOrEqual(2);
     expect(active.every((e) => e.enabled)).toBe(true);
+  });
+
+  it("keeps Living Atlas published but out of the featured lobby", () => {
+    const featured = getFeaturedExhibits();
+
+    expect(featured.map((exhibit) => exhibit.slug)).toEqual(["thirteen-minutes"]);
+    expect(isExhibitEnabled("living-atlas")).toBe(true);
+    expect(getActiveWings(featured).map(({ wing }) => wing.title)).toEqual([
+      "Systems & Machines",
+    ]);
   });
 
   it("can lookup exhibits by slug", () => {
