@@ -98,6 +98,35 @@ test("keeps the mobile progress strip clear of telemetry and the active heading"
   expect(heading!.y).toBeGreaterThanOrEqual(rail!.y + rail!.height);
 });
 
+test("keeps control outcomes visible on a narrow touch viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(route);
+  await page.getByTestId("beat-approach").evaluate((element) =>
+    element.scrollIntoView({ block: "center", behavior: "instant" }),
+  );
+
+  const inspect = page.getByRole("button", { name: "Inspect Eagle" });
+  await inspect.click();
+  const inspectDetail = inspect.locator("span").nth(3);
+  await expect(inspectDetail).toHaveText(/drag scene to orbit/i);
+  expect(await inspectDetail.evaluate((element) => getComputedStyle(element).display)).not.toBe(
+    "none",
+  );
+  expect(await inspect.evaluate((element) => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(
+    130,
+  );
+  expect(
+    await inspect.evaluate((element) => element.getBoundingClientRect().bottom <= window.innerHeight),
+  ).toBe(true);
+
+  const next = page.getByRole("button", { name: /next: course check/i });
+  const nextLabel = next.locator("span").first();
+  await expect(nextLabel).toHaveText(/next: course check/i);
+  expect(await nextLabel.evaluate((element) => getComputedStyle(element).display)).not.toBe(
+    "none",
+  );
+});
+
 test("keeps every beat and its telemetry visible without JavaScript", async ({ browser }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
   const page = await context.newPage();

@@ -66,6 +66,7 @@ describe("ProgressRail", () => {
       />,
     );
 
+    expect(screen.getByText("Tap a chapter to jump")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /go to approach/i })).toHaveAttribute(
       "aria-current",
       "step",

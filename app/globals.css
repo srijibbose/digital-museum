@@ -453,6 +453,344 @@ a {
   text-transform: uppercase;
 }
 
+/* Registry-driven museum directory */
+.exhibit-index__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.35fr);
+  align-items: end;
+  gap: clamp(2rem, 6vw, 7rem);
+  margin: clamp(3.5rem, 8vw, 8rem) 0 clamp(3rem, 6vw, 6rem);
+}
+
+.exhibit-index__header h2 {
+  max-width: 10ch;
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(3.4rem, 8vw, 8rem);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.86;
+}
+
+.exhibit-index__header p {
+  max-width: 32rem;
+  margin: 0;
+  color: #5c574e;
+  line-height: 1.65;
+}
+
+.museum-exhibit-gallery {
+  display: grid;
+  gap: clamp(3rem, 7vw, 7rem);
+  max-width: 1260px;
+  margin: 0 auto;
+}
+
+.museum-exhibit-card {
+  display: block;
+  color: #ede8dd;
+  text-decoration: none;
+}
+
+.museum-exhibit-card article {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(19rem, 0.82fr);
+  min-height: clamp(34rem, 58vw, 46rem);
+  overflow: hidden;
+  border: 1px solid rgba(11, 13, 14, 0.16);
+  border-radius: 0.25rem;
+  background: #111416;
+  box-shadow: 0 2rem 5rem rgba(34, 31, 24, 0.14);
+  transition: transform 500ms var(--ease-out), box-shadow 500ms var(--ease-out);
+}
+
+.museum-exhibit-card:hover article,
+.museum-exhibit-card:focus-visible article {
+  transform: translateY(-0.6rem);
+  box-shadow: 0 2.7rem 7rem rgba(34, 31, 24, 0.24);
+}
+
+.museum-exhibit-card:focus-visible {
+  outline: 3px solid #bf5b34;
+  outline-offset: 0.45rem;
+}
+
+.museum-exhibit-card__visual {
+  position: relative;
+  min-height: 34rem;
+  overflow: hidden;
+  background: #080b0d;
+}
+
+.museum-exhibit-card--full-throttle .museum-exhibit-card__visual {
+  background: linear-gradient(145deg, #f4f0e7, #cbc8be 62%, #8a8780);
+}
+
+.museum-exhibit-card__meta {
+  position: absolute;
+  z-index: 4;
+  top: 1.5rem;
+  right: 1.6rem;
+  left: 1.6rem;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(237, 232, 221, 0.72);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.museum-exhibit-card--full-throttle .museum-exhibit-card__meta {
+  color: rgba(23, 28, 30, 0.68);
+}
+
+.museum-exhibit-card__metrics {
+  position: absolute;
+  z-index: 4;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  left: 1.2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid rgba(237, 232, 221, 0.15);
+  background: rgba(8, 11, 13, 0.72);
+  backdrop-filter: blur(12px);
+}
+
+.museum-exhibit-card__metrics > span {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.85rem 1rem;
+  border-right: 1px solid rgba(237, 232, 221, 0.12);
+}
+
+.museum-exhibit-card__metrics > span:last-child { border-right: 0; }
+.museum-exhibit-card__metrics small { color: #97958e; font-size: 0.53rem; letter-spacing: 0.14em; text-transform: uppercase; }
+.museum-exhibit-card__metrics strong { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.72rem; font-weight: 500; }
+
+.museum-exhibit-card__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(2.2rem, 5vw, 5.6rem);
+  background: #141719;
+}
+
+.museum-exhibit-card--full-throttle .museum-exhibit-card__copy { background: #222729; }
+.museum-exhibit-card__wing { color: #aaa69d; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+.museum-exhibit-card__wing span { margin: 0 0.4rem; color: #d67543; }
+.museum-exhibit-card__ordinal { margin: clamp(3rem, 7vw, 6.5rem) 0 0.75rem; color: #77766f; font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.72rem; }
+.museum-exhibit-card__copy h3 { margin: 0; font-family: var(--display); font-size: clamp(3rem, 5vw, 5.6rem); font-weight: 400; letter-spacing: -0.055em; line-height: 0.86; }
+.museum-exhibit-card__tagline { max-width: 34rem; margin: 1.8rem 0 0; color: #e3ded2; font-family: var(--display); font-size: clamp(1.15rem, 1.7vw, 1.55rem); line-height: 1.25; }
+.museum-exhibit-card__synopsis { max-width: 34rem; margin: 1.25rem 0 0; color: #aaa69d; font-size: 0.88rem; line-height: 1.65; }
+.museum-exhibit-card__cta { display: flex; align-items: center; justify-content: space-between; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid rgba(237, 232, 221, 0.16); font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+
+.directory-poster { position: absolute; inset: 0; }
+.apollo-poster__moon { position: absolute; right: -20%; bottom: -52%; width: 122%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 42% 32%, #6f7476 0 1.5%, transparent 1.8%), radial-gradient(circle at 61% 23%, #565b5d 0 3%, transparent 3.5%), radial-gradient(circle at 51% 19%, #999b97, #4f5558 49%, #23282b 72%); box-shadow: inset 0 1.8rem 4rem rgba(255,255,255,.08); }
+.apollo-poster__trajectory { position: absolute; inset: 7%; width: 86%; height: 78%; fill: none; stroke: rgba(242,184,75,.82); stroke-width: 2; }
+.apollo-poster__trajectory .apollo-poster__planned { stroke: rgba(151,165,154,.48); stroke-dasharray: 8 10; }
+.apollo-poster__trajectory circle { fill: #f2b84b; stroke: #070a0b; stroke-width: 4; }
+.apollo-poster__lander { position: absolute; top: 36%; left: 54%; width: 8rem; height: 8rem; filter: drop-shadow(0 1rem 1.6rem rgba(0,0,0,.45)); transform: translate(-50%,-50%) rotate(-8deg); }
+.apollo-poster__cabin { position: absolute; top: 1.1rem; left: 2rem; width: 4rem; height: 3.3rem; clip-path: polygon(20% 0,80% 0,100% 44%,78% 100%,20% 100%,0 44%); background: #d9d0bd; }
+.apollo-poster__deck { position: absolute; top: 4.3rem; left: 1.25rem; width: 5.5rem; height: 2rem; background: #8c6e35; }
+.apollo-poster__leg { position: absolute; top: 5.8rem; width: 3.5rem; height: .16rem; background: #b9b29f; transform-origin: top; }
+.apollo-poster__leg--left { left: 1.2rem; transform: rotate(138deg); }
+.apollo-poster__leg--right { right: 1.2rem; transform: rotate(42deg); }
+.apollo-poster__plume { position: absolute; top: 6.2rem; left: 3.55rem; width: .9rem; height: 3.4rem; background: linear-gradient(#f2b84b,transparent); clip-path: polygon(35% 0,65% 0,100% 100%,0 100%); }
+.apollo-poster__readout { position: absolute; top: 5.2rem; left: 2rem; display: grid; color: #f2b84b; font-family: "SFMono-Regular", Consolas, monospace; }
+.apollo-poster__readout span { font-size: clamp(2.6rem,5vw,5rem); letter-spacing: .08em; line-height: 1; }
+.apollo-poster__readout small { margin-top: .5rem; color: #9fa49b; font-size: .55rem; letter-spacing: .18em; }
+
+.engine-poster__drawing { position: absolute; top: 50%; left: 50%; width: 112%; transform: translate(-50%,-51%); filter: drop-shadow(0 1.5rem 2.1rem rgba(28,30,29,.24)); }
+.engine-poster__cut { fill: rgba(28,31,30,.82); }
+.engine-poster__bypass { fill: none; stroke: rgba(41,124,148,.64); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 2 15; }
+.engine-poster__flow { fill: none; stroke: url(#engine-flow); stroke-width: 15; stroke-linecap: round; opacity: .9; }
+.engine-poster__fan path { fill: #595d5d; stroke: #e5e0d6; stroke-width: 2; }
+.engine-poster__fan circle { fill: #b8b5ac; stroke: #3e4242; stroke-width: 6; }
+.engine-poster__stages path { fill: none; stroke: #c5c1b6; stroke-width: 9; stroke-linecap: round; }
+.engine-poster__stages .engine-poster__hot-stage { stroke: #e26b39; }
+.engine-poster__shaft { fill: none; stroke-linecap: round; }
+.engine-poster__shaft--outer { stroke: #7d8888; stroke-width: 8; }
+.engine-poster__shaft--inner { stroke: #dbb563; stroke-width: 4; }
+.engine-poster__combustor { fill: rgba(223,102,51,.35); stroke: #f08a4b; stroke-width: 3; }
+.engine-poster__nozzle { fill: rgba(91,92,87,.72); stroke: #c4c0b5; stroke-width: 3; }
+.engine-poster__label { position: absolute; padding-left: 1.8rem; color: rgba(27,31,32,.72); font-size: .54rem; font-weight: 800; letter-spacing: .16em; }
+.engine-poster__label::before { position: absolute; top: 50%; left: 0; width: 1.2rem; height: 1px; background: currentColor; content: ""; }
+.engine-poster__label--fan { top: 27%; left: 10%; }
+.engine-poster__label--core { top: 69%; left: 39%; }
+.engine-poster__label--hot { top: 24%; right: 8%; color: #9d3e24; }
+
+@media (max-width: 820px) {
+  .exhibit-index__header { grid-template-columns: 1fr; }
+  .exhibit-index__header h2 { max-width: 12ch; }
+  .museum-exhibit-card article { grid-template-columns: 1fr; }
+  .museum-exhibit-card__visual { min-height: min(72vw, 32rem); }
+  .museum-exhibit-card__copy { min-height: 30rem; }
+}
+
+@media (max-width: 560px) {
+  .exhibit-index__header { margin-top: 3rem; }
+  .museum-exhibit-card__visual { min-height: 25rem; }
+  .museum-exhibit-card__metrics { grid-template-columns: 1fr 1fr 1fr; }
+  .museum-exhibit-card__metrics > span { padding: .7rem .55rem; }
+  .museum-exhibit-card__metrics strong { font-size: .58rem; }
+  .museum-exhibit-card__copy { min-height: 27rem; padding: 2rem 1.4rem; }
+  .museum-exhibit-card__ordinal { margin-top: 2.7rem; }
+  .engine-poster__drawing { width: 132%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .museum-exhibit-card article { transition: none; }
+  .museum-exhibit-card:hover article,
+  .museum-exhibit-card:focus-visible article { transform: none; }
+}
+
+/* Lobby threshold refinement */
+.lobby-hero {
+  background:
+    radial-gradient(circle at 74% 40%, rgba(239, 200, 132, 0.19), transparent 4%),
+    radial-gradient(ellipse at 74% 40%, rgba(139, 103, 58, 0.24), transparent 19%),
+    radial-gradient(ellipse at 76% 40%, transparent 0 24%, rgba(228, 207, 173, 0.1) 24.2% 24.45%, transparent 24.65%),
+    linear-gradient(118deg, #07090a 8%, #10100f 58%, #19140e 100%);
+}
+
+.lobby-hero__content {
+  position: relative;
+  z-index: 2;
+  max-width: min(76rem, 100%);
+}
+
+.lobby-hero__lens {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 74%;
+  width: min(62vw, 58rem);
+  aspect-ratio: 1;
+  border: 1px solid rgba(238, 233, 220, 0.09);
+  border-radius: 50%;
+  box-shadow: inset 0 0 7rem rgba(242, 184, 75, 0.06), 0 0 9rem rgba(242, 184, 75, 0.05);
+  transform: translate(-50%, -50%);
+}
+
+.lobby-hero__lens-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 243, 208, 0.8), rgba(242, 184, 75, 0.16) 35%, transparent 70%);
+  box-shadow: 0 0 4rem rgba(242, 184, 75, 0.32);
+  transform: translate(-50%, -50%);
+}
+
+.lobby-hero__lens-line {
+  position: absolute;
+  top: 50%;
+  left: -14%;
+  width: 128%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(238, 233, 220, 0.18), transparent);
+}
+
+.lobby-hero__lens-line--one { transform: rotate(-18deg); }
+.lobby-hero__lens-line--two { transform: rotate(47deg); }
+
+.lobby-hero h1 {
+  max-width: 9ch;
+  text-wrap: balance;
+}
+
+.lobby-hero__footer {
+  display: flex;
+  align-items: end;
+  gap: clamp(1.5rem, 5vw, 5rem);
+  margin: clamp(2.7rem, 5vw, 4.5rem) 0 0 clamp(0px, 7vw, 110px);
+}
+
+.lobby-hero__intro {
+  margin: 0;
+}
+
+.lobby-hero__action {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 3.45rem;
+  padding: 0.25rem 0.3rem 0.25rem 1.15rem;
+  border: 1px solid rgba(238, 233, 220, 0.38);
+  color: var(--paper);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  transition: background 280ms ease, border-color 280ms ease, color 280ms ease, transform 280ms var(--ease-out);
+}
+
+.lobby-hero__action > span:last-child {
+  display: grid;
+  width: 2.55rem;
+  height: 2.55rem;
+  place-items: center;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.lobby-hero__action:hover {
+  border-color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
+  transform: translateY(-0.2rem);
+}
+
+.lobby-hero__action:hover > span:last-child {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.lobby-hero__collection {
+  position: absolute;
+  z-index: 2;
+  right: clamp(1.5rem, 5vw, 5.25rem);
+  bottom: clamp(1.7rem, 5vh, 4.5rem);
+  margin: 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(238, 233, 220, 0.28);
+  color: var(--paper-dim);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px) {
+  .lobby-hero__lens {
+    top: 31%;
+    left: 82%;
+    width: 35rem;
+  }
+
+  .lobby-hero__footer {
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 2.6rem 0 0;
+  }
+
+  .lobby-hero__action {
+    min-height: 3.15rem;
+    font-size: 0.61rem;
+  }
+
+  .lobby-hero__collection {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+}
+
 /* Exhibit threshold */
 .atlas-threshold {
   position: relative;

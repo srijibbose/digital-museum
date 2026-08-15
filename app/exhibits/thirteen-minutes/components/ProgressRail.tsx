@@ -10,6 +10,7 @@ export type ProgressRailProps = {
 export function ProgressRail({ beats, activeIndex, onSelect }: ProgressRailProps) {
   return (
     <nav aria-label="Mission progress" className={styles.rail}>
+      <p className={styles.railPrompt}>Tap a chapter to jump</p>
       <ol>
         {beats.map((beat, index) => (
           <li key={beat.id}>

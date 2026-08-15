@@ -1,0 +1,219 @@
+{
+  "id": "full-throttle",
+  "title": "Full Throttle",
+  "subtitle": "How a high-bypass turbofan converts thin air and continuous fire into 75,000 lbs of thrust",
+  "wing": "systems-and-machines",
+  "estimatedMinutes": 8,
+  "hook": {
+    "kicker": "A machine you have sat beside for hours",
+    "text": "It sucks in two tons of air every second, compresses it to 45 times atmospheric pressure, ignites it at 1,700°C, and hurls it backward faster than sound. It is a masterpiece of thermodynamic balance."
+  },
+  "context": {
+    "title": "Most of the air never touches the flame.",
+    "text": "In a modern high-bypass turbofan, over 85% of the total air volume bypasses the combustion chamber entirely. Accelerated by an 11-foot titanium fan, this cool outer shroud provides the vast majority of quiet, fuel-efficient thrust, while the inner core acts as a roaring turbo-generator powering the entire system.",
+    "fact": "Dissect the machine across seven precision modules, trace one breath through the thermodynamic Brayton cycle, and command the flight deck throttle."
+  },
+  "parts": [
+    {
+      "id": "fan",
+      "name": "Wide-Chord Titanium Fan",
+      "shortName": "Fan",
+      "eyebrow": "The 11-Foot Giant",
+      "body": "Forged from aerospace-grade Ti-6Al-4V titanium alloy with 3D swept aerodynamic airfoils. The spinning fan pulls in over 1,200 kg of air per second, immediately splitting the flow into a massive bypass envelope (85%) and a core engine stream (15%).",
+      "callout": "One rotation begins two entirely different thermodynamic journeys.",
+      "accent": "cool",
+      "metallurgy": "Ti-6Al-4V Titanium Alloy / Carbon Composite",
+      "operatingTemp": "-50°C to +45°C (Inlet Ambient)",
+      "pressureRatio": "1.5 : 1 Fan Pressure Ratio",
+      "spoolAssociation": "Low-Pressure (N1) Spool",
+      "hotspotPosition": [-3.3, 1.8, 0.4]
+    },
+    {
+      "id": "lp-compressor",
+      "name": "Low-Pressure Compressor (Booster)",
+      "shortName": "LP compressor",
+      "eyebrow": "The Initial Compression",
+      "body": "A 3-stage axial compression drum featuring alternating rotating blade disks and stationary stator vanes. It increases the density of the incoming core airflow before feeding it into the high-speed high-pressure compressor core.",
+      "callout": "Mechanically locked to the fan via the low-pressure coaxial drive shaft.",
+      "accent": "neutral",
+      "metallurgy": "Titanium Alloy Rotor Disks & Stator Vanes",
+      "operatingTemp": "+80°C to +210°C",
+      "pressureRatio": "2.8 : 1 Intermediate Compression",
+      "spoolAssociation": "Low-Pressure (N1) Spool",
+      "hotspotPosition": [-2.1, 1.1, 0.3]
+    },
+    {
+      "id": "hp-compressor",
+      "name": "High-Pressure Compressor (HPC)",
+      "shortName": "HP compressor",
+      "eyebrow": "Supersonic Squeeze",
+      "body": "Five tightly spaced axial stages spinning at over 12,000 RPM. As the annular passage shrinks, air molecules are forced into an extreme state of density. By stage 5, the air reaches 45 atmospheres of pressure and heats to over 600°C purely from adiabatic compression.",
+      "callout": "Air reaches oven temperatures before a single drop of fuel has burned.",
+      "accent": "neutral",
+      "metallurgy": "Inconel 718 / Powder Nickel Superalloy",
+      "operatingTemp": "+250°C to +650°C",
+      "pressureRatio": "45.0 : 1 Overall Pressure Ratio (OPR)",
+      "spoolAssociation": "High-Pressure (N2) Spool",
+      "hotspotPosition": [-0.7, 0.85, 0.25]
+    },
+    {
+      "id": "combustor",
+      "name": "Annular Combustion Chamber",
+      "shortName": "Combustor",
+      "eyebrow": "Continuous Ring of Fire",
+      "body": "A dual-walled annular flame tube protected by thermal barrier ceramic coatings. Sixteen swirl injector nozzles atomize Jet-A kerosene into a continuous, self-sustaining vortex of fire burning at over 1,700°C. Laser-drilled effusion cooling micro-holes create an insulating air boundary layer along the metal liner.",
+      "callout": "A continuous flame hotter than the melting point of standard steel.",
+      "accent": "warm",
+      "metallurgy": "Hastelloy X / Ceramic Matrix Composite (CMC)",
+      "operatingTemp": "+1,650°C to +1,750°C Peak Flame",
+      "pressureRatio": "Constant-Pressure Heat Addition (Brayton Cycle)",
+      "spoolAssociation": "Stationary Flame Structure",
+      "hotspotPosition": [0.65, 0.8, 0.2]
+    },
+    {
+      "id": "hp-turbine",
+      "name": "High-Pressure Turbine (HPT)",
+      "shortName": "HP turbine",
+      "eyebrow": "The Engine's Heart",
+      "body": "Grown as single-crystal superalloys without crystal grain boundaries to withstand centrifugal forces exceeding 20,000 Gs in a 1,500°C inferno. High-pressure cooling air from the compressor is ducted through internal serpentine passages and ejected through leading-edge micro-holes, creating a microscopic protective film of cool air.",
+      "callout": "Extracts over 50,000 shaft horsepower to drive the HP compressor.",
+      "accent": "hot",
+      "metallurgy": "CMSX-4 Single-Crystal Nickel Superalloy",
+      "operatingTemp": "+1,150°C to +1,480°C Gas Inflow",
+      "pressureRatio": "High-expansion work extraction",
+      "spoolAssociation": "High-Pressure (N2) Spool",
+      "hotspotPosition": [1.6, 0.75, 0.2]
+    },
+    {
+      "id": "lp-turbine",
+      "name": "Low-Pressure Turbine (LPT)",
+      "shortName": "LP turbine",
+      "eyebrow": "The Fan's Master Drive",
+      "body": "Three progressively expanding turbine stages. As the remaining gas expands and cools, the LPT extracts mechanical torque and channels it forward through the central titanium drive shaft to spin the front fan and low-pressure compressor.",
+      "callout": "The tail of the engine powers the mouth that feeds it.",
+      "accent": "warm",
+      "metallurgy": "Titanium-Aluminide (TiAl) & Cast Nickel Alloy",
+      "operatingTemp": "+750°C to +950°C",
+      "pressureRatio": "Final stage power extraction",
+      "spoolAssociation": "Low-Pressure (N1) Spool",
+      "hotspotPosition": [2.6, 0.95, 0.25]
+    },
+    {
+      "id": "nozzle",
+      "name": "Chevron Exhaust Mixer & Tail Cone",
+      "shortName": "Nozzle",
+      "eyebrow": "The Propulsion Vector",
+      "body": "A sculpted titanium convergent duct with serrated chevrons along the trailing rim. The chevrons induce controlled micro-vortices that smoothly blend the high-speed hot core jet with the slower, cooler bypass stream, dramatically slashing acoustic shear noise while maximizing forward momentum.",
+      "callout": "Newton's third law: two accelerated streams push the airframe forward.",
+      "accent": "cool",
+      "metallurgy": "Ti-6Al-2Sn-4Zr-2Mo Titanium Sheet & Carbon Composite",
+      "operatingTemp": "+450°C to +620°C Exhaust Gas Temp",
+      "pressureRatio": "Ambient atmospheric expansion",
+      "spoolAssociation": "Propulsive Exhaust Assembly",
+      "hotspotPosition": [3.8, 0.85, 0.3]
+    }
+  ],
+  "airflowStages": [
+    {
+      "id": "intake-fan",
+      "label": "1. Ambient Intake & Fan Split",
+      "progress": 0,
+      "throttle": 0.38,
+      "body": "The 11-foot titanium fan ingests ambient air at Mach 0.8. In an instant, the flow is divided: 85% is swept into the annular bypass duct for direct thrust, while 15% enters the booster compressor core.",
+      "annotation": "Watch the cold blue stream bifurcate into bypass and core paths.",
+      "cameraShot": "wide",
+      "pressurePsi": 14.7,
+      "temperatureC": 15,
+      "machSpeed": 0.82
+    },
+    {
+      "id": "compression",
+      "label": "2. High-Ratio Compression",
+      "progress": 0.25,
+      "throttle": 0.52,
+      "body": "Eight cumulative compressor stages force the core flow into a narrowing convergent channel. Molecular friction and adiabatic compression spike the temperature to 620°C and pressure to 650 PSI.",
+      "annotation": "Extreme pressure gradient: volume plummets as thermal density climbs.",
+      "cameraShot": "core-front",
+      "pressurePsi": 650,
+      "temperatureC": 620,
+      "machSpeed": 0.45
+    },
+    {
+      "id": "combustion",
+      "label": "3. Continuous Combustion",
+      "progress": 0.5,
+      "throttle": 0.72,
+      "body": "In the annular flame chamber, Jet-A fuel atomizes into the compressed air. The continuous flame sustains a 1,700°C fireball, dramatically increasing the internal energy and volumetric velocity of the gas.",
+      "annotation": "Isobaric combustion: constant pressure, massive thermal expansion.",
+      "cameraShot": "combustor",
+      "pressurePsi": 630,
+      "temperatureC": 1720,
+      "machSpeed": 0.32
+    },
+    {
+      "id": "turbine",
+      "label": "4. Turbine Expansion & Feedback",
+      "progress": 0.75,
+      "throttle": 0.76,
+      "body": "Superheated gas slams into the single-crystal turbine blades. Two concentric coaxial shafts spin in synchrony: the outer shaft drives the HPC, while the inner shaft delivers 50,000 HP forward to the fan.",
+      "annotation": "Self-feeding closed loop: exhaust expansion drives intake suction.",
+      "cameraShot": "turbines",
+      "pressurePsi": 180,
+      "temperatureC": 980,
+      "machSpeed": 0.68
+    },
+    {
+      "id": "exhaust-thrust",
+      "label": "5. Supersonic Exhaust & Thrust",
+      "progress": 1,
+      "throttle": 0.92,
+      "body": "The core jet expands through the chevron nozzle, meeting the high-velocity bypass stream. The combined momentum change imparts up to 76,000 lbf of forward thrust against the engine pylon.",
+      "annotation": "F = ṁ · Δv: mass flow multiplied by exit velocity produces flight.",
+      "cameraShot": "exit",
+      "pressurePsi": 14.7,
+      "temperatureC": 480,
+      "machSpeed": 1.25
+    }
+  ],
+  "throttle": {
+    "title": "Flight Deck Throttle Quadrant",
+    "body": "Command the twin spools from Ground Idle through Climb, Cruise, and Takeoff to Max TOGA. Observe how the low-inertia HP core spools up instantly while the massive N1 fan spools with realistic aerodynamic mass inertia, driving live telemetry readouts and harmonic acoustic synthesis.",
+    "payoff": "Seven modules. Two nested shafts. One continuous thermodynamic exhale."
+  },
+  "takeaway": {
+    "title": "The fire is only the pump that keeps the loop turning.",
+    "text": "A jet engine is not a sequence of explosions; it is a continuous thermodynamic equilibrium. As long as fuel is metered into the combustor, the turbines extract just enough power from the expanding fire to pull in and compress the next breath of air—perpetuating flight across oceans."
+  },
+  "hud": [
+    { "id": "fan", "label": "N1 Fan Spool", "unit": "%" },
+    { "id": "heat", "label": "Core EGT", "unit": "%" },
+    { "id": "thrust", "label": "Net Thrust", "unit": "%" }
+  ],
+  "accuracyNote": "Representative two-spool high-bypass turbofan (e.g. GE90 / CFM LEAP / Trent 1000 architecture). Readouts reflect calibrated aerodynamic and thermodynamic relationships across standard atmospheric flight regimes.",
+  "goDeeper": {
+    "label": "Explore NASA Glenn's Interactive Propulsion Guide",
+    "url": "https://www.grc.nasa.gov/www/k-12/BGP/Animation/turbtyp/etff.html"
+  },
+  "sources": [
+    {
+      "label": "NASA Glenn Research Center — Turbofan Engine Propulsion",
+      "url": "https://www.grc.nasa.gov/www/k-12/BGP/Animation/turbtyp/etff.html",
+      "supports": "Thermodynamic Brayton cycle, dual-spool coaxial architecture, and bypass ratio thrust partitioning."
+    },
+    {
+      "label": "Rolls-Royce — The Jet Engine (Technical Reference Handbook)",
+      "url": "https://www.rolls-royce.com",
+      "supports": "Single-crystal turbine metallurgy, fir-tree blade attachments, and internal effusion cooling."
+    },
+    {
+      "label": "NASA Glenn — Gas Turbine Combustion Chambers",
+      "url": "https://www.grc.nasa.gov/www/BGH/burner.html",
+      "supports": "Annular combustor aerodynamics, fuel swirl atomization, and thermal barrier coatings."
+    },
+    {
+      "label": "GE Aerospace — High Bypass Turbofan Innovation & Materials",
+      "url": "https://www.geaerospace.com",
+      "supports": "Wide-chord titanium swept fan blades, acoustic chevron mixer nozzles, and telemetry envelopes."
+    }
+  ]
+}

@@ -1,58 +1,69 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
+import { ExhibitCard } from "@/components/museum/ExhibitCard";
+import { getActiveExhibits, getActiveWings } from "@/content/exhibits";
 
 export default function MuseumLobby() {
+  const activeExhibits = getActiveExhibits();
+  const activeWings = getActiveWings();
+
   return (
     <main className="lobby">
       <MuseumHeader />
       <section className="lobby-hero" aria-labelledby="lobby-title">
-        <p className="kicker">A digital museum for the quietly curious</p>
-        <h1 id="lobby-title">
-          Look closer.
-          <span>The ordinary is full of hidden worlds.</span>
-        </h1>
-        <p className="lobby-hero__intro">
-          Immersive, ten-minute stories about the systems we live inside but
-          rarely stop to see.
+        <div className="lobby-hero__lens" aria-hidden="true">
+          <span className="lobby-hero__lens-core" />
+          <span className="lobby-hero__lens-line lobby-hero__lens-line--one" />
+          <span className="lobby-hero__lens-line lobby-hero__lens-line--two" />
+        </div>
+        <div className="lobby-hero__content">
+          <p className="kicker">A digital museum for the quietly curious</p>
+          <h1 id="lobby-title">
+            Look closer.
+            <span>The ordinary is full of hidden worlds.</span>
+          </h1>
+          <div className="lobby-hero__footer">
+            <p className="lobby-hero__intro">
+              Immersive stories about the systems we live inside and the machines
+              we trust without ever seeing.
+            </p>
+            <a className="lobby-hero__action" href="#exhibits">
+              <span>Explore the exhibitions</span>
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+        <p className="lobby-hero__collection">
+          {String(activeExhibits.length).padStart(2, "0")} active exhibits
         </p>
-        <a className="round-link" href="#exhibits" aria-label="Enter the museum">
-          <span>Enter</span>
-          <span aria-hidden="true">↓</span>
-        </a>
         <div className="lobby-orbit lobby-orbit--one" aria-hidden="true" />
         <div className="lobby-orbit lobby-orbit--two" aria-hidden="true" />
       </section>
 
       <section className="exhibit-index" id="exhibits" aria-labelledby="exhibit-heading">
         <div className="section-label">
-          <span>Now showing</span>
-          <span>Wing 01 — The body</span>
+          <span>Exhibits directory</span>
+          <span>
+            {activeExhibits.length} active exhibitions ·{" "}
+            {activeWings.map(({ wing }, index) => (
+              <span key={wing.id}>
+                {index > 0 ? " & " : ""}
+                {wing.title}
+              </span>
+            ))}
+          </span>
         </div>
-        <h2 id="exhibit-heading">One body. Many conversations.</h2>
-        <Link className="exhibit-card" href="/exhibits/living-atlas">
-          <div className="exhibit-card__visual" aria-hidden="true">
-            <div className="poster-body">
-              <span className="poster-body__head" />
-              <span className="poster-body__torso" />
-              <span className="poster-body__core" />
-              <span className="poster-body__ring poster-body__ring--one" />
-              <span className="poster-body__ring poster-body__ring--two" />
-            </div>
-            <span className="exhibit-card__number">EXH. 001</span>
-          </div>
-          <div className="exhibit-card__copy">
-            <p>Interactive anatomy · 12–15 minutes</p>
-            <h3>The Living Atlas</h3>
-            <p>
-              Follow a touch, a breath, and a heartbeat through the systems
-              that keep a human body in conversation with itself.
-            </p>
-            <span className="exhibit-card__cta">
-              Enter the exhibit <ArrowUpRight size={18} aria-hidden="true" />
-            </span>
-          </div>
-        </Link>
+        <div className="exhibit-index__header">
+          <h2 id="exhibit-heading">Machines, caught in the act.</h2>
+          <p>
+            Two self-contained stories. Enter one, touch the system, and leave
+            seeing an ordinary machine differently.
+          </p>
+        </div>
+        <div className="museum-exhibit-gallery">
+          {activeExhibits.map((exhibit, index) => (
+            <ExhibitCard exhibit={exhibit} index={index} key={exhibit.id} />
+          ))}
+        </div>
       </section>
 
       <section className="manifesto" id="manifesto" aria-labelledby="manifesto-title">
@@ -67,7 +78,7 @@ export default function MuseumLobby() {
 
       <footer className="museum-footer">
         <span>Loupe / Digital Museum</span>
-        <span>Made for curiosity, 2026</span>
+        <span>Curated for curiosity, 2026</span>
       </footer>
     </main>
   );

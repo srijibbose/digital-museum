@@ -58,7 +58,8 @@ export function ComputerLoad({
           }
           type="button"
         >
-          Dropped
+          <span>Show dropped radar data</span>
+          <small>What the computer abandoned</small>
         </button>
         <button
           aria-label="Inspect retained guidance jobs"
@@ -68,7 +69,8 @@ export function ComputerLoad({
           }
           type="button"
         >
-          Kept
+          <span>Show retained guidance</span>
+          <small>What kept Eagle descending</small>
         </button>
       </div>
     </section>

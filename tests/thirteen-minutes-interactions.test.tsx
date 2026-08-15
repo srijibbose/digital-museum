@@ -91,6 +91,9 @@ describe("Thirteen Minutes understanding interactions", () => {
       "aria-pressed",
       "true",
     );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      /drag the scene to orbit Eagle/i,
+    );
     expect(screen.getByTestId("descent-experience")).toHaveAttribute(
       "data-inspect-mode",
       "true",
@@ -102,7 +105,16 @@ describe("Thirteen Minutes understanding interactions", () => {
       "false",
     );
 
-    await user.click(screen.getByRole("button", { name: /next: course check/i }));
+    const nextCourseCheck = screen.getByRole("button", {
+      name: /next: course check/i,
+    });
+    expect(nextCourseCheck).toHaveTextContent(
+      /course check/i,
+    );
+    await user.click(nextCourseCheck);
+    expect(
+      screen.getByRole("button", { name: /compare planned and actual landing paths/i }),
+    ).toHaveTextContent(/show landing paths/i);
     await user.click(
       screen.getByRole("button", { name: /compare planned and actual landing paths/i }),
     );
@@ -120,6 +132,10 @@ describe("Thirteen Minutes understanding interactions", () => {
     const computer = screen.getByRole("region", { name: /guidance computer load/i });
     expect(computer).toHaveAttribute("data-detail", "overview");
     expect(computer).toHaveTextContent("Essential jobs retained");
+
+    expect(screen.getByRole("button", { name: /inspect dropped radar data/i })).toHaveTextContent(
+      /show dropped radar data/i,
+    );
 
     await user.click(screen.getByRole("button", { name: /inspect dropped radar data/i }));
     expect(computer).toHaveAttribute("data-detail", "dropped");

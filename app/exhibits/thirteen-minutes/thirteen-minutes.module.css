@@ -2045,3 +2045,176 @@
     width: 100%;
   }
 }
+
+/* Explicit controls distinguish actions from static mission telemetry. */
+.experienceActions {
+  display: flex;
+  gap: 0.55rem;
+}
+
+.experienceControls button {
+  min-height: 3.45rem;
+  grid-template-columns: 1.7rem minmax(0, 1fr);
+  gap: 0.65rem;
+  padding: 0.45rem 0.72rem;
+  border-color: rgba(242, 184, 75, 0.38);
+  background: rgba(3, 5, 5, 0.82);
+  box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.18);
+  text-align: left;
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms var(--instrument-ease);
+}
+
+.experienceControls button:hover,
+.experienceControls button:focus-visible,
+.experienceControls button[aria-pressed="true"] {
+  border-color: var(--phosphor);
+  background: rgba(19, 17, 10, 0.94);
+  color: var(--paper);
+  transform: translateY(-0.1rem);
+}
+
+.experienceControls .controlGlyph {
+  display: grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  color: var(--phosphor);
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.experienceControls .controlCopy {
+  display: grid;
+  gap: 0.16rem;
+}
+
+.experienceControls .controlTitle {
+  color: var(--paper);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1.05;
+}
+
+.experienceControls .controlDetail {
+  color: var(--phosphor-dim);
+  font-size: 0.46rem;
+  letter-spacing: 0.07em;
+  line-height: 1.15;
+}
+
+.computerActions button {
+  display: grid;
+  flex: 1;
+  min-height: 2.8rem;
+  align-content: center;
+  gap: 0.18rem;
+  text-align: left;
+}
+
+.computerActions button span {
+  color: var(--paper);
+  font-size: 0.48rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  line-height: 1.15;
+}
+
+.computerActions button small {
+  color: var(--phosphor-dim);
+  font-size: 0.42rem;
+  letter-spacing: 0.04em;
+  line-height: 1.12;
+}
+
+.controls button {
+  min-width: 5.75rem;
+}
+
+@media (max-width: 720px) {
+  .experienceControls {
+    top: calc(100svh - 4.65rem - env(safe-area-inset-bottom));
+  }
+
+  .experienceActions {
+    gap: 0.4rem;
+  }
+
+  .experienceActions button {
+    min-width: 8.25rem;
+  }
+
+  .experienceControls button {
+    min-height: 2.75rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .experienceControls button .controlGlyph {
+    display: none;
+  }
+
+  .experienceControls button .controlCopy,
+  .experienceControls button .controlTitle,
+  .experienceControls button .controlDetail {
+    display: block;
+  }
+
+  .experienceControls button .controlTitle {
+    font-size: 0.52rem;
+  }
+
+  .experienceControls button .controlDetail {
+    margin-top: 0.12rem;
+    font-size: 0.42rem;
+  }
+
+  .controls {
+    top: calc(100svh - 7.65rem - env(safe-area-inset-bottom));
+  }
+
+  .controls button {
+    min-width: 4.25rem;
+    min-height: 2.65rem;
+    padding: 0.3rem 0.42rem;
+    font-size: 0.43rem;
+    line-height: 1.15;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .controls .controlLong {
+    display: inline;
+  }
+
+  .controls .controlShort {
+    display: none;
+  }
+
+  .computerActions button span {
+    font-size: 0.44rem;
+  }
+
+  .computerActions button small {
+    display: none;
+  }
+}
+
+.railPrompt {
+  margin: 0;
+  padding: 0.5rem 0.65rem 0.4rem;
+  border-bottom: 1px solid rgba(242, 184, 75, 0.14);
+  color: var(--phosphor-dim);
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+@media (min-width: 721px) {
+  .railPrompt {
+    padding: 0 0 0.5rem;
+    border-bottom: 0;
+  }
+}

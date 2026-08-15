@@ -252,7 +252,9 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
             onClick={() => selectBeat(activeIndex - 1)}
             type="button"
           >
-            <span aria-hidden="true" className={styles.controlLong}>Previous</span>
+            <span aria-hidden="true" className={styles.controlLong}>
+              {activeIndex > 0 ? `Back: ${beats[activeIndex - 1].label}` : "Back"}
+            </span>
             <span aria-hidden="true" className={styles.controlShort}>↑</span>
           </button>
           <button
@@ -265,7 +267,11 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
             onClick={() => selectBeat(activeIndex + 1)}
             type="button"
           >
-            <span aria-hidden="true" className={styles.controlLong}>Next</span>
+            <span aria-hidden="true" className={styles.controlLong}>
+              {activeIndex < beats.length - 1
+                ? `Next: ${beats[activeIndex + 1].label}`
+                : "Descent complete"}
+            </span>
             <span aria-hidden="true" className={styles.controlShort}>↓</span>
           </button>
         </nav>
