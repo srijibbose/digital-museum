@@ -50,11 +50,14 @@ export function LunarScene({
           <DescentCamera inspectMode={inspectMode} state={state} />
           {inspectMode && (
             <OrbitControls
+              enableDamping
               enablePan={false}
-              enableZoom={false}
+              enableZoom={true}
               makeDefault
-              maxPolarAngle={Math.PI * 0.56}
-              minPolarAngle={Math.PI * 0.24}
+              maxDistance={30}
+              maxPolarAngle={Math.PI * 0.58}
+              minDistance={6}
+              minPolarAngle={Math.PI * 0.22}
               target={[...state.camera.target]}
             />
           )}

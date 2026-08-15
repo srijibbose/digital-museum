@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { LivingAtlasExperience } from "@/components/living-atlas/LivingAtlasExperience";
 import { livingAtlasChapters, livingAtlasSources } from "@/content/living-atlas";
+import { isExhibitEnabled } from "@/content/exhibits";
 
 export const metadata: Metadata = {
   title: "The Living Atlas",
@@ -9,6 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default function LivingAtlasPage() {
+  if (!isExhibitEnabled("living-atlas")) {
+    notFound();
+  }
+
   return (
     <main className="atlas-page">
       <a className="skip-link" href="#atlas-transcript">

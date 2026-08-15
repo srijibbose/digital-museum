@@ -49,17 +49,43 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
     return () => media.removeEventListener?.("change", updatePreference);
   }, []);
 
+  // Universal native scroll listener ensuring real-time progress on touch devices
+  useEffect(() => {
+    const handleNativeScroll = () => {
+      if (!timelineRef.current) return;
+      const rect = timelineRef.current.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      if (total > 0) {
+        const current = Math.max(0, Math.min(total, -rect.top));
+        const rawProgress = current / total;
+        setProgress(rawProgress);
+      }
+      const centeredIndex = centeredBeatIndex(
+        beatRefs.current.map((section) =>
+          section?.getBoundingClientRect() ?? {
+            top: Number.POSITIVE_INFINITY,
+            bottom: Number.POSITIVE_INFINITY,
+          },
+        ),
+        window.innerHeight,
+      );
+      if (centeredIndex !== null) setActiveIndex(centeredIndex);
+    };
+
+    window.addEventListener("scroll", handleNativeScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleNativeScroll);
+  }, []);
+
   const selectBeat = useCallback(
-    (index: number, behavior: ScrollBehavior = "auto", focus = true) => {
+    (index: number, behavior: ScrollBehavior = "smooth", focus = true) => {
       const nextIndex = Math.max(0, Math.min(beats.length - 1, index));
       const section = beatRefs.current[nextIndex];
       setActiveIndex(nextIndex);
       setProgress(progressForBeat(beats[nextIndex].id));
       dispatchExperience({ type: "RESET_TRANSIENT" });
-      const previousScrollBehavior = document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior = "auto";
-      section?.scrollIntoView({ block: "start", behavior });
-      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+      if (section) {
+        section.scrollIntoView({ block: "start", behavior });
+      }
       if (focus) {
         section?.querySelector<HTMLElement>("h2")?.focus({ preventScroll: true });
       }
@@ -111,6 +137,12 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
           })
         : null;
 
+      const isTouchDevice =
+        typeof window !== "undefined" &&
+        (window.matchMedia("(pointer: coarse)").matches ||
+          "ontouchstart" in window ||
+          navigator.maxTouchPoints > 0);
+
       const lenis = new Lenis({
         autoRaf: false,
         lerp: 0.085,
@@ -119,6 +151,7 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
         wheelMultiplier: 0.88,
         touchMultiplier: 1,
       });
+
       const syncCenteredBeat = () => {
         const centeredIndex = centeredBeatIndex(
           beatRefs.current.map((section) =>
@@ -131,20 +164,28 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
         );
         if (centeredIndex !== null) setActiveIndex(centeredIndex);
       };
+
       const updateScrollTrigger = () => {
         ScrollTrigger.update();
         syncCenteredBeat();
       };
+
       const tick = (time: number) => lenis.raf(time * 1000);
       lenis.on("scroll", updateScrollTrigger);
-      gsap.ticker.add(tick);
+      window.addEventListener("scroll", updateScrollTrigger, { passive: true });
+      if (!isTouchDevice) {
+        gsap.ticker.add(tick);
+      }
       ScrollTrigger.refresh();
       syncCenteredBeat();
 
       cleanup = () => {
         lenis.off("scroll", updateScrollTrigger);
+        window.removeEventListener("scroll", updateScrollTrigger);
         lenis.destroy();
-        gsap.ticker.remove(tick);
+        if (!isTouchDevice) {
+          gsap.ticker.remove(tick);
+        }
         progressTrigger?.kill();
         beatTriggers.forEach((trigger) => trigger.kill());
       };

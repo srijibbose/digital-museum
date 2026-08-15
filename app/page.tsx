@@ -1,8 +1,11 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
+import { ExhibitCard } from "@/components/museum/ExhibitCard";
+import { getActiveExhibits, getActiveWings } from "@/content/exhibits";
 
 export default function MuseumLobby() {
+  const activeExhibits = getActiveExhibits();
+  const activeWings = getActiveWings();
+
   return (
     <main className="lobby">
       <MuseumHeader />
@@ -13,10 +16,10 @@ export default function MuseumLobby() {
           <span>The ordinary is full of hidden worlds.</span>
         </h1>
         <p className="lobby-hero__intro">
-          Immersive, ten-minute stories about the systems we live inside but
-          rarely stop to see.
+          Immersive, interactive stories about the systems we live inside and
+          the machines we build to explore beyond.
         </p>
-        <a className="round-link" href="#exhibits" aria-label="Enter the museum">
+        <a className="round-link" href="#exhibits" aria-label="Explore the exhibits">
           <span>Enter</span>
           <span aria-hidden="true">↓</span>
         </a>
@@ -24,38 +27,40 @@ export default function MuseumLobby() {
         <div className="lobby-orbit lobby-orbit--two" aria-hidden="true" />
       </section>
 
-      <section className="exhibit-index" id="exhibits" aria-labelledby="exhibit-heading">
+      <section
+        className="exhibit-index"
+        id="exhibits"
+        aria-labelledby="exhibit-heading"
+      >
         <div className="section-label">
-          <span>Now showing</span>
-          <span>Wing 01 — The body</span>
+          <span>Exhibits Directory</span>
+          <span>
+            {activeExhibits.length} Active{" "}
+            {activeExhibits.length === 1 ? "Exhibition" : "Exhibitions"} ·{" "}
+            {activeWings.map((w) => w.wing.title).join(" & ")}
+          </span>
         </div>
-        <h2 id="exhibit-heading">One body. Many conversations.</h2>
-        <Link className="exhibit-card" href="/exhibits/living-atlas">
-          <div className="exhibit-card__visual" aria-hidden="true">
-            <div className="poster-body">
-              <span className="poster-body__head" />
-              <span className="poster-body__torso" />
-              <span className="poster-body__core" />
-              <span className="poster-body__ring poster-body__ring--one" />
-              <span className="poster-body__ring poster-body__ring--two" />
-            </div>
-            <span className="exhibit-card__number">EXH. 001</span>
-          </div>
-          <div className="exhibit-card__copy">
-            <p>Interactive anatomy · 12–15 minutes</p>
-            <h3>The Living Atlas</h3>
-            <p>
-              Follow a touch, a breath, and a heartbeat through the systems
-              that keep a human body in conversation with itself.
-            </p>
-            <span className="exhibit-card__cta">
-              Enter the exhibit <ArrowUpRight size={18} aria-hidden="true" />
-            </span>
-          </div>
-        </Link>
+
+        <div className="exhibit-index__header">
+          <h2 id="exhibit-heading">Preserved in motion.</h2>
+          <p className="exhibit-index__subtext">
+            Choose an exhibition below to step inside high-fidelity interactive
+            visualizations, archival audio, and systems simulations.
+          </p>
+        </div>
+
+        <div className="exhibit-gallery">
+          {activeExhibits.map((exhibit, index) => (
+            <ExhibitCard key={exhibit.id} exhibit={exhibit} index={index} />
+          ))}
+        </div>
       </section>
 
-      <section className="manifesto" id="manifesto" aria-labelledby="manifesto-title">
+      <section
+        className="manifesto"
+        id="manifesto"
+        aria-labelledby="manifesto-title"
+      >
         <p className="kicker">Our point of view</p>
         <h2 id="manifesto-title">Information should feel like discovery.</h2>
         <p>
@@ -67,7 +72,7 @@ export default function MuseumLobby() {
 
       <footer className="museum-footer">
         <span>Loupe / Digital Museum</span>
-        <span>Made for curiosity, 2026</span>
+        <span>Curated for curiosity, 2026</span>
       </footer>
     </main>
   );
