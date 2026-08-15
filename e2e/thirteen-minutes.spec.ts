@@ -53,6 +53,24 @@ test("updates the HUD in both scroll directions and mirrors non-scroll navigatio
   await expect(timeline).toHaveAttribute("data-active-beat", "go-call");
 });
 
+test("keeps mouse-wheel scrolling responsive on touch-capable desktop browsers", async ({ page }) => {
+  await page.goto(route);
+  const timeline = page.getByTestId("timeline");
+  await timeline.evaluate((element) => {
+    window.scrollTo({
+      top: element.getBoundingClientRect().top + window.scrollY + 20,
+      behavior: "instant",
+    });
+  });
+  const before = await page.evaluate(() => window.scrollY);
+
+  await page.mouse.wheel(0, 700);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 500);
+
+  await page.mouse.wheel(0, 700);
+  await expect(timeline).not.toHaveAttribute("data-active-beat", "approach");
+});
+
 test("supports keyboard beat navigation", async ({ page }) => {
   await page.goto(route);
   const timeline = page.getByTestId("timeline");

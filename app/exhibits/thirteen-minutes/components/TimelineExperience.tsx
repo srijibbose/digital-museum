@@ -77,14 +77,21 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
   }, []);
 
   const selectBeat = useCallback(
-    (index: number, behavior: ScrollBehavior = "smooth", focus = true) => {
+    (index: number, focus = true) => {
       const nextIndex = Math.max(0, Math.min(beats.length - 1, index));
       const section = beatRefs.current[nextIndex];
       setActiveIndex(nextIndex);
       setProgress(progressForBeat(beats[nextIndex].id));
       dispatchExperience({ type: "RESET_TRANSIENT" });
       if (section) {
-        section.scrollIntoView({ block: "start", behavior });
+        const root = document.documentElement;
+        const previousScrollBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        try {
+          section.scrollIntoView({ block: "start", behavior: "auto" });
+        } finally {
+          root.style.scrollBehavior = previousScrollBehavior;
+        }
       }
       if (focus) {
         section?.querySelector<HTMLElement>("h2")?.focus({ preventScroll: true });
@@ -108,10 +115,9 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
     let cleanup: (() => void) | undefined;
 
     async function enhanceScroll() {
-      const [{ gsap }, { ScrollTrigger }, { default: Lenis }] = await Promise.all([
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
         import("gsap"),
         import("gsap/ScrollTrigger"),
-        import("lenis"),
       ]);
       if (disposed) return;
 
@@ -137,21 +143,6 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
           })
         : null;
 
-      const isTouchDevice =
-        typeof window !== "undefined" &&
-        (window.matchMedia("(pointer: coarse)").matches ||
-          "ontouchstart" in window ||
-          navigator.maxTouchPoints > 0);
-
-      const lenis = new Lenis({
-        autoRaf: false,
-        lerp: 0.085,
-        smoothWheel: true,
-        syncTouch: false,
-        wheelMultiplier: 0.88,
-        touchMultiplier: 1,
-      });
-
       const syncCenteredBeat = () => {
         const centeredIndex = centeredBeatIndex(
           beatRefs.current.map((section) =>
@@ -170,22 +161,12 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
         syncCenteredBeat();
       };
 
-      const tick = (time: number) => lenis.raf(time * 1000);
-      lenis.on("scroll", updateScrollTrigger);
       window.addEventListener("scroll", updateScrollTrigger, { passive: true });
-      if (!isTouchDevice) {
-        gsap.ticker.add(tick);
-      }
       ScrollTrigger.refresh();
       syncCenteredBeat();
 
       cleanup = () => {
-        lenis.off("scroll", updateScrollTrigger);
         window.removeEventListener("scroll", updateScrollTrigger);
-        lenis.destroy();
-        if (!isTouchDevice) {
-          gsap.ticker.remove(tick);
-        }
         progressTrigger?.kill();
         beatTriggers.forEach((trigger) => trigger.kill());
       };
