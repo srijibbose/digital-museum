@@ -49,17 +49,50 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
     return () => media.removeEventListener?.("change", updatePreference);
   }, []);
 
+  // Universal native scroll listener ensuring real-time progress on touch devices
+  useEffect(() => {
+    const handleNativeScroll = () => {
+      if (!timelineRef.current) return;
+      const rect = timelineRef.current.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      if (total > 0) {
+        const current = Math.max(0, Math.min(total, -rect.top));
+        const rawProgress = current / total;
+        setProgress(rawProgress);
+      }
+      const centeredIndex = centeredBeatIndex(
+        beatRefs.current.map((section) =>
+          section?.getBoundingClientRect() ?? {
+            top: Number.POSITIVE_INFINITY,
+            bottom: Number.POSITIVE_INFINITY,
+          },
+        ),
+        window.innerHeight,
+      );
+      if (centeredIndex !== null) setActiveIndex(centeredIndex);
+    };
+
+    window.addEventListener("scroll", handleNativeScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleNativeScroll);
+  }, []);
+
   const selectBeat = useCallback(
-    (index: number, behavior: ScrollBehavior = "auto", focus = true) => {
+    (index: number, focus = true) => {
       const nextIndex = Math.max(0, Math.min(beats.length - 1, index));
       const section = beatRefs.current[nextIndex];
       setActiveIndex(nextIndex);
       setProgress(progressForBeat(beats[nextIndex].id));
       dispatchExperience({ type: "RESET_TRANSIENT" });
-      const previousScrollBehavior = document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior = "auto";
-      section?.scrollIntoView({ block: "start", behavior });
-      document.documentElement.style.scrollBehavior = previousScrollBehavior;
+      if (section) {
+        const root = document.documentElement;
+        const previousScrollBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = "auto";
+        try {
+          section.scrollIntoView({ block: "start", behavior: "auto" });
+        } finally {
+          root.style.scrollBehavior = previousScrollBehavior;
+        }
+      }
       if (focus) {
         section?.querySelector<HTMLElement>("h2")?.focus({ preventScroll: true });
       }
@@ -82,10 +115,9 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
     let cleanup: (() => void) | undefined;
 
     async function enhanceScroll() {
-      const [{ gsap }, { ScrollTrigger }, { default: Lenis }] = await Promise.all([
+      const [{ gsap }, { ScrollTrigger }] = await Promise.all([
         import("gsap"),
         import("gsap/ScrollTrigger"),
-        import("lenis"),
       ]);
       if (disposed) return;
 
@@ -111,14 +143,6 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
           })
         : null;
 
-      const lenis = new Lenis({
-        autoRaf: false,
-        lerp: 0.085,
-        smoothWheel: true,
-        syncTouch: false,
-        wheelMultiplier: 0.88,
-        touchMultiplier: 1,
-      });
       const syncCenteredBeat = () => {
         const centeredIndex = centeredBeatIndex(
           beatRefs.current.map((section) =>
@@ -131,20 +155,18 @@ export function TimelineExperience({ beats, exhibitTitle }: TimelineExperiencePr
         );
         if (centeredIndex !== null) setActiveIndex(centeredIndex);
       };
+
       const updateScrollTrigger = () => {
         ScrollTrigger.update();
         syncCenteredBeat();
       };
-      const tick = (time: number) => lenis.raf(time * 1000);
-      lenis.on("scroll", updateScrollTrigger);
-      gsap.ticker.add(tick);
+
+      window.addEventListener("scroll", updateScrollTrigger, { passive: true });
       ScrollTrigger.refresh();
       syncCenteredBeat();
 
       cleanup = () => {
-        lenis.off("scroll", updateScrollTrigger);
-        lenis.destroy();
-        gsap.ticker.remove(tick);
+        window.removeEventListener("scroll", updateScrollTrigger);
         progressTrigger?.kill();
         beatTriggers.forEach((trigger) => trigger.kill());
       };
