@@ -47,6 +47,12 @@ export const WINGS: Record<string, ExhibitWing> = {
     title: "Systems & Machines",
     description: "Complex engineered systems, aerospace telemetry, and pivotal human decisions",
   },
+  space: {
+    id: "wing-03",
+    code: "Wing 03",
+    title: "Space & Science",
+    description: "Scale, matter, and the structures that hold a universe together",
+  },
 };
 
 export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
@@ -75,6 +81,34 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
         { label: "Resting Pulse", value: "72 BPM" },
         { label: "Neural Speed", value: "120 m/s" },
         { label: "Vascular Span", value: "60k mi" },
+      ],
+    },
+  },
+  {
+    id: "powers-of-ten",
+    slug: "powers-of-ten",
+    exhibitNumber: "EXH. 003",
+    wing: WINGS.space,
+    title: "Powers of Ten",
+    tagline: "You, scaled to the universe.",
+    synopsis:
+      "A continuous journey through ten orders of magnitude, from the living surface of your hand to the edge of the observable universe.",
+    curatorNote: "A scroll-driven scale ladder with procedural 3D scenes built to make exponential distance feel physical.",
+    readingTime: "8–12 min explore",
+    interactionType: "Scroll Zoom · Procedural 3D",
+    tags: ["Cosmology", "Scale", "Human Biology", "Interactive 3D"],
+    route: "/exhibits/powers-of-ten",
+    enabled: true,
+    featured: true,
+    order: 3,
+    visualTheme: {
+      variant: "generic",
+      accentColor: "#8fb7c9",
+      badgeText: "SCALE OBSERVATORY",
+      metrics: [
+        { label: "Journey", value: "10 stops" },
+        { label: "Reach", value: "10²⁶ m" },
+        { label: "Direction", value: "Outward" },
       ],
     },
   },
