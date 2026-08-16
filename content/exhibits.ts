@@ -6,7 +6,7 @@ export interface ExhibitWing {
 }
 
 export interface ExhibitVisualTheme {
-  variant: "living-atlas" | "thirteen-minutes" | "generic";
+  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -95,7 +95,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     featured: true,
     order: 2,
     visualTheme: {
-      variant: "generic",
+      variant: "jet-engine",
       accentColor: "#d86f3d",
       badgeText: "LIVE ENGINE STUDY",
       metrics: [
