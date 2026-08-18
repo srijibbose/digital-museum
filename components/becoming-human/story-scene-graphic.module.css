@@ -308,23 +308,51 @@
 @keyframes artifactInCenter { from { opacity: 0; transform: translate(50%, 22px) scale(0.97); filter: blur(7px); } to { opacity: 1; transform: translate(50%, 0) scale(1); filter: blur(0); } }
 
 @media (max-width: 760px) {
-  .svg { inset: 0 -23% 28%; width: 146%; height: 72%; }
+  .svg {
+    inset: 38px -18% auto;
+    width: 136%;
+    height: 40svh;
+    max-height: 360px;
+    opacity: 0.82;
+  }
 
   .artifact,
   .root[data-composition="left"] .artifact,
   .root[data-composition="center"] .artifact,
   .root[data-composition="split"] .artifact {
-    top: 9%;
-    right: 7vw;
-    left: 7vw;
+    top: 50px;
+    right: 22px;
+    left: 22px;
     width: auto;
-    height: 54vh;
+    height: min(38svh, 340px);
     transform: none;
   }
 
   .root[data-composition="center"] .artifact { animation-name: artifactIn; }
-  .artifact figcaption { right: 0; bottom: 18px; max-width: 100%; font-size: 7px; }
-  .artifactImage { bottom: 56px; }
+  .artifact figcaption { display: none; }
+  .artifactImage { bottom: 0; box-shadow: 0 24px 54px rgba(0, 0, 0, 0.4); }
+
+  .root[data-kind="routes"] .artifact,
+  .root[data-kind="crossing"] .artifact,
+  .root[data-kind="navigation"] .artifact,
+  .root[data-kind="electricity"] .artifact,
+  .root[data-kind="network"] .artifact {
+    top: 56px;
+    right: 42px;
+    left: 42px;
+    height: min(34svh, 300px);
+  }
+}
+
+@media (max-width: 760px) and (max-height: 720px) {
+  .svg { height: 34svh; }
+
+  .artifact,
+  .root[data-composition="left"] .artifact,
+  .root[data-composition="center"] .artifact,
+  .root[data-composition="split"] .artifact {
+    height: 31svh;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

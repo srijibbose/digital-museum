@@ -68,3 +68,42 @@ test("keeps dates legible and the deep-time atlas usable on portrait screens", a
   await atlas.getByRole("button", { name: /28.*Printing Copies Knowledge at Scale/i }).click();
   await expect(page.getByRole("heading", { name: "Printing Copies Knowledge at Scale" })).toBeVisible();
 });
+
+test("keeps every episode clear of the portrait navigation", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/exhibits/becoming-human");
+  await page.getByRole("button", { name: "BEGIN QUIET" }).click();
+
+  for (let order = 1; order <= 35; order += 1) {
+    const layout = await page.locator("main article").evaluate((article) => {
+      const footer = document.querySelector<HTMLElement>("#journey-controls");
+      const date = article.querySelector<HTMLElement>("time");
+      const actions = [...article.querySelectorAll<HTMLElement>("button")];
+      const articleRect = article.getBoundingClientRect();
+      const footerRect = footer?.getBoundingClientRect();
+      return {
+        actionHeights: actions.map((action) => action.getBoundingClientRect().height),
+        articleBottom: articleRect.bottom,
+        dateSize: date ? Number.parseFloat(getComputedStyle(date).fontSize) : 0,
+        footerTop: footerRect?.top ?? window.innerHeight,
+        horizontalOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+
+    expect(layout.horizontalOverflow, `episode ${order} horizontal overflow`).toBeLessThanOrEqual(0);
+    expect(layout.articleBottom, `episode ${order} copy overlaps navigation`).toBeLessThan(layout.footerTop);
+    expect(layout.dateSize, `episode ${order} date is too small`).toBeGreaterThanOrEqual(12);
+    expect(Math.min(...layout.actionHeights), `episode ${order} actions are too small`).toBeGreaterThanOrEqual(43);
+
+    if (order < 35) await page.getByRole("button", { name: "Next episode" }).click();
+  }
+});
+
+test("shows a single Becoming Human title on the portrait homepage card", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const card = page.locator('[data-exhibit-id="becoming-human"]');
+
+  await expect(card.getByRole("heading", { name: "Becoming Human" })).toHaveCount(1);
+  await expect(card.locator(".poster-bh__title")).toHaveCount(0);
+});

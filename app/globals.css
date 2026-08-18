@@ -402,21 +402,6 @@ a {
 .poster-bh__strata i { position: absolute; right: calc(var(--level) * 3%); bottom: calc(var(--level) * 6px); left: calc(var(--level) * 3%); height: 36%; border: 1px solid rgba(238, 233, 220, 0.14); border-radius: 50%; background: #111214; }
 .poster-bh__strata i:nth-child(1) { --level: 0; }.poster-bh__strata i:nth-child(2) { --level: 1; }.poster-bh__strata i:nth-child(3) { --level: 2; }.poster-bh__strata i:nth-child(4) { --level: 3; border-color: rgba(238, 233, 220, 0.68); }.poster-bh__strata i:nth-child(5) { --level: 4; }.poster-bh__strata i:nth-child(6) { --level: 5; }
 
-.poster-bh__title {
-  position: absolute;
-  z-index: 5;
-  bottom: 68px;
-  left: 28px;
-  display: grid;
-  color: #f0ede6;
-  font-size: clamp(1.9rem, 3.8vw, 3.7rem);
-  font-weight: 400;
-  letter-spacing: -0.07em;
-  line-height: 0.78;
-}
-
-.poster-bh__title strong { color: #a5a19a; font-weight: 400; }
-
 .exhibit-card__meta-badges {
   position: relative;
   z-index: 3;
@@ -946,6 +931,37 @@ a {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  .exhibit-card--becoming-human .exhibit-card__visual {
+    min-height: 540px;
+  }
+
+  .exhibit-card--becoming-human .poster-bh__artifact {
+    top: 45%;
+    width: min(70%, 290px);
+  }
+
+  .exhibit-card--becoming-human .exhibit-card__metrics-ribbon {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    padding: 0;
+  }
+
+  .exhibit-card--becoming-human .metric-cell {
+    min-width: 0;
+    padding: 12px 9px;
+  }
+
+  .exhibit-card--becoming-human .metric-cell__label {
+    overflow-wrap: anywhere;
+    font-size: 0.48rem;
+  }
+
+  .exhibit-card--becoming-human .metric-cell__value {
+    font-size: 0.72rem;
   }
 }
 

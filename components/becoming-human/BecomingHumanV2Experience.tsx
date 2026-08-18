@@ -435,9 +435,18 @@ export function BecomingHumanV2Experience() {
               <p className={styles.sceneHook}>{episode.hook}</p>
               <p className={styles.sceneCapability}><span>WHY THIS MATTERS</span>{episode.capability}</p>
               <div className={styles.sceneActions}>
-                <button onClick={(event) => openPanel("story", event.currentTarget)} type="button">READ THE FULL STORY</button>
-                <button onClick={(event) => openPanel("evidence", event.currentTarget)} type="button">SEE THE EVIDENCE</button>
-                <button className={styles.primaryAction} onClick={(event) => openPanel("instrument", event.currentTarget)} type="button">EXPLORE THIS STEP <span aria-hidden="true">↗</span></button>
+                <button aria-label="READ THE FULL STORY" onClick={(event) => openPanel("story", event.currentTarget)} type="button">
+                  <span aria-hidden="true" className={styles.actionLong}>READ THE FULL STORY</span>
+                  <span aria-hidden="true" className={styles.actionShort}>STORY</span>
+                </button>
+                <button aria-label="SEE THE EVIDENCE" onClick={(event) => openPanel("evidence", event.currentTarget)} type="button">
+                  <span aria-hidden="true" className={styles.actionLong}>SEE THE EVIDENCE</span>
+                  <span aria-hidden="true" className={styles.actionShort}>EVIDENCE</span>
+                </button>
+                <button aria-label="EXPLORE THIS STEP" className={styles.primaryAction} onClick={(event) => openPanel("instrument", event.currentTarget)} type="button">
+                  <span aria-hidden="true" className={styles.actionLong}>EXPLORE THIS STEP ↗</span>
+                  <span aria-hidden="true" className={styles.actionShort}>INTERACT ↗</span>
+                </button>
               </div>
             </article>
             <a className={styles.environmentCredit} href={episodeVisual.backgroundSourceUrl ?? actVisual.sourceUrl} rel="noreferrer" target="_blank">ENVIRONMENT · {episodeVisual.backgroundSourceLabel ?? actVisual.sourceLabel} ↗</a>

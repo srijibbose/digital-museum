@@ -9,7 +9,6 @@ export function BecomingHumanPoster() {
         <div className="poster-bh__ring poster-bh__ring--two" />
         <div className="poster-bh__ember" />
       </div>
-      <div className="poster-bh__title"><span>BECOMING</span><strong>HUMAN</strong></div>
     </div>
   );
 }
