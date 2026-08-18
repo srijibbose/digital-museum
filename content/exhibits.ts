@@ -6,7 +6,7 @@ export interface ExhibitWing {
 }
 
 export interface ExhibitVisualTheme {
-  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "generic";
+  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -47,9 +47,43 @@ export const WINGS: Record<string, ExhibitWing> = {
     title: "Systems & Machines",
     description: "Complex engineered systems, aerospace telemetry, and pivotal human decisions",
   },
+  origins: {
+    id: "wing-03",
+    code: "Wing 03",
+    title: "Origins & Futures",
+    description: "Deep time, human evolution, cumulative culture, and the systems shaping what comes next",
+  },
 };
 
 export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
+  {
+    id: "becoming-human",
+    slug: "becoming-human",
+    exhibitNumber: "EXH. 004",
+    wing: WINGS.origins,
+    title: "Becoming Human",
+    tagline: "We did not inherit the world in a straight line.",
+    synopsis:
+      "Travel from the shared ape branch through walking, fire, hunting, settlement, writing, industry, networks, the computer in your hand, and tools that learn from our record.",
+    curatorNote: "A 35-episode flagship journey grounded in fossil evidence, museum objects, archival photography, open research, and one Blender-composed geological scan.",
+    readingTime: "Approx. 70 min complete",
+    interactionType: "Cinematic Atlas · Evidence Lens · 35 Instruments",
+    tags: ["Human Evolution", "Paleoanthropology", "Cumulative Culture", "AI & Society"],
+    route: "/exhibits/becoming-human",
+    enabled: true,
+    featured: true,
+    order: 1,
+    visualTheme: {
+      variant: "becoming-human",
+      accentColor: "#c96b39",
+      badgeText: "PREMIUM FLAGSHIP",
+      metrics: [
+        { label: "Deep Time", value: "8 MA" },
+        { label: "Episodes", value: "35" },
+        { label: "Clocks", value: "4" },
+      ],
+    },
+  },
   {
     id: "living-atlas",
     slug: "living-atlas",

@@ -1,0 +1,1519 @@
+.instrumentHost {
+  --instrument-ink: #111512;
+  --instrument-bone: #f1eee4;
+  --instrument-paper: #ded8c8;
+  --instrument-muted: rgba(241, 238, 228, 0.62);
+  --instrument-line: rgba(241, 238, 228, 0.2);
+  --instrument-faint: rgba(241, 238, 228, 0.08);
+  --instrument-accent: #d8ff70;
+  --instrument-ember: #f0a45e;
+  --instrument-water: #7aa7ad;
+  --instrument-danger: #d77b64;
+  --instrument-mono: "SFMono-Regular", "Cascadia Mono", "IBM Plex Mono", Consolas, monospace;
+  width: 100%;
+  color: var(--instrument-bone);
+  container-type: inline-size;
+}
+
+.instrument {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid var(--instrument-line);
+  border-bottom: 1px solid var(--instrument-line);
+  background:
+    radial-gradient(circle at 82% 0%, rgba(216, 255, 112, 0.07), transparent 31%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.035), transparent 48%),
+    #101311;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.23);
+}
+
+.instrument::before {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 42px 42px;
+  content: "";
+  mask-image: linear-gradient(to bottom, black, transparent 74%);
+  pointer-events: none;
+}
+
+.instrumentHeader,
+.instrumentBody,
+.liveReadout,
+.evidenceBoundary {
+  position: relative;
+  z-index: 1;
+}
+
+.instrumentHeader {
+  padding: clamp(18px, 3vw, 30px) clamp(18px, 4vw, 42px) 0;
+}
+
+.instrumentTopline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+  color: var(--instrument-muted);
+  font-family: var(--instrument-mono);
+  font-size: 0.59rem;
+  letter-spacing: 0.12em;
+}
+
+.instrumentTopline span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.instrumentTopline span:first-child::before {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--instrument-accent);
+  border-radius: 50%;
+  content: "";
+  box-shadow: 0 0 16px rgba(216, 255, 112, 0.55);
+}
+
+.instrumentHeader h3 {
+  max-width: 780px;
+  margin: 0;
+  color: var(--instrument-bone);
+  font-size: clamp(1.45rem, 4vw, 2.8rem);
+  font-weight: 430;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+}
+
+.instrumentBody {
+  padding: clamp(20px, 4vw, 42px);
+}
+
+.choiceRail {
+  display: flex;
+  overflow-x: auto;
+  border-top: 1px solid var(--instrument-line);
+  border-bottom: 1px solid var(--instrument-line);
+  scrollbar-width: thin;
+}
+
+.choiceRail button {
+  position: relative;
+  display: inline-flex;
+  min-width: max-content;
+  min-height: 47px;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 11px;
+  padding: 0 15px;
+  border: 0;
+  border-right: 1px solid var(--instrument-line);
+  background: transparent;
+  color: rgba(241, 238, 228, 0.44);
+  font-family: var(--instrument-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-align: left;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.choiceRail button::after {
+  position: absolute;
+  right: 15px;
+  bottom: -1px;
+  left: 15px;
+  height: 1px;
+  background: var(--instrument-accent);
+  content: "";
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: opacity 180ms ease, transform 260ms ease;
+}
+
+.choiceRail button:last-child {
+  border-right: 0;
+}
+
+.choiceRail button > span {
+  color: rgba(216, 255, 112, 0.52);
+  font-size: 0.48rem;
+}
+
+.choiceRail button:hover {
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--instrument-bone);
+}
+
+.choiceRail button[aria-pressed="true"] {
+  background: rgba(216, 255, 112, 0.045);
+  color: var(--instrument-bone);
+}
+
+.choiceRail button[aria-pressed="true"]::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.choiceRail button:focus-visible,
+.boundaryButton:focus-visible,
+.networkSteps button:focus-visible,
+.networkActions button:focus-visible,
+.phoneLayers button:focus-visible,
+.restoreButton:focus-visible,
+.rangeControl input:focus-visible {
+  outline: 2px solid var(--instrument-accent);
+  outline-offset: -3px;
+}
+
+.liveReadout {
+  min-height: 86px;
+  margin: 0;
+  padding: 19px clamp(18px, 4vw, 42px) 21px;
+  border-top: 1px solid var(--instrument-line);
+  color: rgba(241, 238, 228, 0.88);
+  font-size: clamp(0.92rem, 2vw, 1.08rem);
+  line-height: 1.56;
+}
+
+.liveReadout::before {
+  display: inline-block;
+  width: 23px;
+  height: 1px;
+  margin: 0 11px 4px 0;
+  background: var(--instrument-accent);
+  content: "";
+}
+
+.evidenceBoundary {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.28fr) 1fr;
+  gap: 20px;
+  padding: 13px clamp(18px, 4vw, 42px) 15px;
+  border-top: 1px solid var(--instrument-line);
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.evidenceBoundary span,
+.evidenceBoundary p,
+.modelNote,
+.optionTape {
+  font-family: var(--instrument-mono);
+}
+
+.evidenceBoundary span {
+  color: var(--instrument-accent);
+  font-size: 0.54rem;
+  letter-spacing: 0.1em;
+}
+
+.evidenceBoundary p {
+  margin: 0;
+  color: var(--instrument-muted);
+  font-size: 0.58rem;
+  line-height: 1.5;
+}
+
+.modelNote {
+  max-width: 760px;
+  margin: 13px 0 0;
+  color: var(--instrument-muted);
+  font-size: 0.57rem;
+  letter-spacing: 0.01em;
+  line-height: 1.55;
+}
+
+.modelNote a {
+  color: var(--instrument-bone);
+  text-decoration-color: rgba(216, 255, 112, 0.5);
+  text-underline-offset: 3px;
+}
+
+.branchViewport,
+.stoneViewport,
+.routesViewport,
+.householdViewport,
+.encounterViewport,
+.energyViewport,
+.networkViewport,
+.phoneViewport,
+.modelViewport,
+.genericViewport {
+  position: relative;
+  min-height: 270px;
+  margin-top: 17px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.branchSvg,
+.stoneSvg,
+.routesSvg,
+.householdSvg,
+.encounterSvg,
+.energySvg,
+.networkSvg,
+.phoneSvg,
+.modelSvg,
+.genericSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 270px;
+}
+
+/* Branching model */
+
+.branchSvg {
+  color: var(--instrument-paper);
+}
+
+.branchSvg path,
+.branchSvg circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.branchSvg text {
+  fill: var(--instrument-muted);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.ladderModel,
+.treeModel {
+  transform-origin: center;
+  transition: opacity 350ms ease, transform 420ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+.treeModel {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.branchSvg[data-view="branches"] .ladderModel {
+  opacity: 0;
+  transform: translateY(-9px);
+}
+
+.branchSvg[data-view="branches"] .treeModel {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ladderModel > path:first-child {
+  stroke: rgba(241, 238, 228, 0.26);
+  stroke-dasharray: 4 8;
+}
+
+.ladderModel g path {
+  stroke-width: 1.25;
+}
+
+.ladderModel .correctionStroke {
+  stroke: var(--instrument-danger);
+  stroke-width: 1.1;
+}
+
+.treeModel .treeTrunk {
+  stroke: var(--instrument-paper);
+  stroke-width: 2.5;
+}
+
+.treeModel .extinctBranch {
+  stroke: rgba(241, 238, 228, 0.35);
+  stroke-dasharray: 4 7;
+}
+
+.treeModel circle {
+  fill: var(--instrument-ink);
+  stroke: var(--instrument-accent);
+}
+
+.treeModel .humanTip {
+  fill: var(--instrument-accent);
+}
+
+.treeModel .fossilLabel {
+  fill: rgba(241, 238, 228, 0.4);
+}
+
+/* Stone sequence */
+
+.stoneSvg {
+  overflow: visible;
+}
+
+.stoneShadow {
+  fill: rgba(0, 0, 0, 0.28);
+}
+
+.coreStone {
+  fill: url("#stone-surface");
+  stroke: rgba(241, 238, 228, 0.24);
+  stroke-width: 1.4;
+}
+
+.coreScar,
+.refitLine,
+.platform,
+.hammerArc,
+.callout {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.coreScar {
+  stroke: rgba(241, 238, 228, 0.33);
+  stroke-width: 1.2;
+}
+
+.platform {
+  stroke: var(--instrument-accent);
+  stroke-width: 4;
+  opacity: 0.18;
+  transition: opacity 260ms ease;
+}
+
+.hammerArc {
+  stroke: var(--instrument-ember);
+  stroke-dasharray: 4 7;
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.flake {
+  fill: rgba(222, 216, 200, 0.42);
+  stroke: var(--instrument-paper);
+  stroke-width: 1.4;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 260ms ease, transform 520ms cubic-bezier(0.16, 0.76, 0.18, 1);
+}
+
+.refitLine {
+  stroke: var(--instrument-accent);
+  stroke-dasharray: 4 6;
+  stroke-width: 1.4;
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.stoneSvg[data-phase="prepare"] .platform,
+.stoneSvg[data-phase="strike"] .platform {
+  opacity: 1;
+}
+
+.stoneSvg[data-phase="prepare"] .hammerArc,
+.stoneSvg[data-phase="strike"] .hammerArc {
+  opacity: 1;
+}
+
+.stoneSvg[data-phase="strike"] .flake {
+  transform: translate(92px, 48px) rotate(7deg);
+}
+
+.stoneSvg[data-phase="refit"] .flake {
+  opacity: 0.8;
+  transform: translate(126px, 57px) rotate(12deg);
+}
+
+.stoneSvg[data-phase="refit"] .refitLine {
+  opacity: 1;
+}
+
+.stoneSvg text {
+  fill: var(--instrument-muted);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+}
+
+.stoneSvg .callout {
+  stroke: rgba(241, 238, 228, 0.25);
+  stroke-width: 1;
+}
+
+.stoneSvg .phaseNumber {
+  fill: rgba(241, 238, 228, 0.12);
+  font-size: 88px;
+  font-weight: 300;
+}
+
+/* Fire */
+
+.fireViewport {
+  position: relative;
+  min-height: 292px;
+  margin-top: 17px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 70%, rgba(240, 164, 94, 0.2), transparent 35%),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.01), rgba(38, 20, 12, 0.19));
+}
+
+.fireViewport::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 45%;
+  background: repeating-linear-gradient(to bottom, rgba(241, 238, 228, 0.1) 0 1px, transparent 1px 32px);
+  content: "";
+  opacity: 0.35;
+}
+
+.fireStrata {
+  position: absolute;
+  z-index: 2;
+  right: clamp(16px, 4vw, 42px);
+  bottom: 24px;
+  left: clamp(16px, 4vw, 42px);
+  display: grid;
+  gap: 0;
+}
+
+.fireStrata span {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  padding-inline: 12px;
+  border-top: 1px solid rgba(241, 238, 228, 0.19);
+  color: rgba(241, 238, 228, 0.32);
+  font-family: var(--instrument-mono);
+  font-size: 0.53rem;
+  letter-spacing: 0.08em;
+  transition: color 220ms ease, background 220ms ease;
+}
+
+.fireViewport[data-claim="find"] .stratumAsh,
+.fireViewport[data-claim="keep"] .stratumAsh,
+.fireViewport[data-claim="keep"] .stratumHearth,
+.fireViewport[data-claim="make"] .stratumAsh,
+.fireViewport[data-claim="make"] .stratumHearth,
+.fireViewport[data-claim="make"] .stratumIgnition {
+  background: linear-gradient(90deg, rgba(240, 164, 94, 0.12), transparent);
+  color: var(--instrument-bone);
+}
+
+.flame {
+  position: absolute;
+  z-index: 3;
+  top: 52px;
+  left: 50%;
+  width: 70px;
+  height: 105px;
+  filter: drop-shadow(0 0 25px rgba(240, 164, 94, 0.34));
+  transform: translateX(-50%);
+}
+
+.flame i {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 44px;
+  height: 92px;
+  border: 1px solid rgba(240, 164, 94, 0.75);
+  border-radius: 58% 42% 62% 38% / 72% 48% 52% 28%;
+  background: linear-gradient(to top, rgba(240, 164, 94, 0.24), rgba(216, 255, 112, 0.02));
+  transform: translateX(-50%) rotate(8deg);
+  transform-origin: bottom;
+  animation: flameBreath 2.3s ease-in-out infinite alternate;
+}
+
+.flame i:nth-child(2) {
+  width: 29px;
+  height: 65px;
+  border-color: rgba(216, 255, 112, 0.6);
+  transform: translateX(-73%) rotate(-12deg);
+  animation-delay: -0.8s;
+}
+
+.flame i:nth-child(3) {
+  width: 20px;
+  height: 45px;
+  border-color: var(--instrument-bone);
+  opacity: 0.5;
+  transform: translateX(-25%) rotate(15deg);
+  animation-delay: -1.4s;
+}
+
+.fireViewport[data-claim="find"] .flame {
+  opacity: 0.45;
+}
+
+.fireViewport[data-claim="make"] .flame {
+  filter: drop-shadow(0 0 38px rgba(240, 164, 94, 0.6));
+}
+
+@keyframes flameBreath {
+  from { transform: translateX(-50%) rotate(4deg) scaleY(0.92); }
+  to { transform: translateX(-50%) rotate(10deg) scaleY(1.04); }
+}
+
+.claimScale {
+  position: absolute;
+  z-index: 4;
+  top: 20px;
+  left: 20px;
+  display: grid;
+  gap: 9px;
+}
+
+.claimScale span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(241, 238, 228, 0.25);
+  font-family: var(--instrument-mono);
+  font-size: 0.51rem;
+  letter-spacing: 0.11em;
+}
+
+.claimScale span::before {
+  width: 19px;
+  height: 1px;
+  background: currentColor;
+  content: "";
+}
+
+.claimScale .claimReached {
+  color: var(--instrument-ember);
+}
+
+/* Dispersal corridors */
+
+.routesSvg .landMass,
+.routesSvg .africaMass,
+.routesSvg .sahulMass {
+  fill: rgba(222, 216, 200, 0.055);
+  stroke: rgba(241, 238, 228, 0.15);
+  stroke-width: 1;
+}
+
+.routesSvg .africaMass {
+  fill: rgba(216, 255, 112, 0.04);
+}
+
+.routeCorridor {
+  fill: none;
+  stroke: rgba(216, 255, 112, 0.17);
+  stroke-dasharray: 2 10;
+  stroke-linecap: round;
+  stroke-width: 14;
+  transition: opacity 260ms ease, stroke 260ms ease, stroke-width 260ms ease;
+}
+
+.routesSvg[data-moment="early"] .routeEarly,
+.routesSvg[data-moment="middle"] .routeMiddle,
+.routesSvg[data-moment="late"] .routeLate {
+  stroke: rgba(216, 255, 112, 0.62);
+  stroke-width: 19;
+  animation: routeDrift 1.9s linear infinite;
+}
+
+@keyframes routeDrift {
+  to { stroke-dashoffset: -24; }
+}
+
+.originPulse {
+  fill: var(--instrument-accent);
+  stroke: rgba(216, 255, 112, 0.2);
+  stroke-width: 15;
+}
+
+.mapSites circle {
+  fill: var(--instrument-bone);
+  stroke: var(--instrument-ink);
+  stroke-width: 2;
+}
+
+.routesSvg text {
+  fill: rgba(241, 238, 228, 0.45);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+/* Household */
+
+.householdGround {
+  fill: rgba(150, 124, 78, 0.15);
+  stroke: rgba(241, 238, 228, 0.13);
+}
+
+.householdRiver {
+  fill: rgba(122, 167, 173, 0.29);
+  stroke: rgba(150, 198, 205, 0.55);
+  stroke-width: 1;
+  transition: d 420ms ease;
+}
+
+.houseRoof {
+  fill: url("#thatch");
+  color: rgba(222, 216, 200, 0.5);
+  stroke: rgba(241, 238, 228, 0.34);
+  stroke-width: 1.2;
+}
+
+.houseFrame,
+.householdPeople {
+  fill: none;
+  stroke: rgba(241, 238, 228, 0.65);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.storageJar {
+  fill: rgba(148, 105, 62, 0.16);
+  stroke: rgba(241, 238, 228, 0.44);
+}
+
+.storageFill {
+  fill: rgba(216, 255, 112, 0.37);
+  transition: d 420ms ease;
+}
+
+.householdSvg text {
+  fill: rgba(241, 238, 228, 0.4);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.householdMeters {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  display: grid;
+  width: min(230px, 43%);
+  gap: 9px;
+}
+
+.householdMeters span {
+  position: relative;
+  overflow: hidden;
+  padding: 8px 10px;
+  border: 1px solid rgba(241, 238, 228, 0.13);
+  color: rgba(241, 238, 228, 0.65);
+  font-family: var(--instrument-mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.06em;
+}
+
+.householdMeters i {
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto 0 0;
+  background: rgba(216, 255, 112, 0.11);
+  transition: width 420ms ease;
+}
+
+/* Encounter */
+
+.encounterViewport {
+  background: linear-gradient(to bottom, rgba(117, 148, 150, 0.11), rgba(31, 42, 39, 0.2));
+}
+
+.encounterSky {
+  fill: rgba(168, 185, 177, 0.07);
+}
+
+.encounterWater {
+  fill: rgba(122, 167, 173, 0.17);
+  stroke: rgba(164, 195, 199, 0.25);
+}
+
+.encounterShore {
+  fill: rgba(139, 112, 72, 0.16);
+}
+
+.encounterShip,
+.encounterSettlement {
+  fill: rgba(241, 238, 228, 0.06);
+  stroke: rgba(241, 238, 228, 0.62);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+
+.routeWake {
+  fill: none;
+  stroke: rgba(241, 238, 228, 0.26);
+  stroke-dasharray: 4 8;
+}
+
+.focusMarks circle,
+.focusMarks path {
+  fill: none;
+  stroke: var(--instrument-accent);
+  stroke-dasharray: 3 8;
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 260ms ease, transform 460ms cubic-bezier(0.16, 0.76, 0.18, 1);
+}
+
+.encounterViewport[data-perspective="shore"] .focusShore,
+.encounterViewport[data-perspective="ship"] .focusShip,
+.encounterViewport[data-perspective="captivity"] .focusCaptivity,
+.encounterViewport[data-perspective="continuity"] .focusContinuity {
+  opacity: 1;
+  transform: scale(1.07);
+}
+
+.encounterViewport[data-perspective="captivity"] .encounterSvg {
+  filter: saturate(0.45) contrast(1.04);
+}
+
+.encounterViewport[data-perspective="continuity"] .encounterSettlement {
+  stroke: var(--instrument-accent);
+}
+
+.encounterSvg text {
+  fill: rgba(241, 238, 228, 0.45);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.encounterViewport[data-perspective="shore"] .shipLabel,
+.encounterViewport[data-perspective="ship"] .shoreLabel {
+  opacity: 0.25;
+}
+
+/* Energy boundary */
+
+.energyControls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 18px;
+}
+
+.rangeControl {
+  display: grid;
+  gap: 11px;
+  color: rgba(241, 238, 228, 0.63);
+  font-family: var(--instrument-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+}
+
+.rangeControl > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rangeControl output {
+  color: var(--instrument-accent);
+}
+
+.rangeControl input {
+  width: 100%;
+  height: 23px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  cursor: ew-resize;
+}
+
+.rangeControl input::-webkit-slider-runnable-track {
+  height: 1px;
+  background: linear-gradient(90deg, var(--instrument-accent), rgba(241, 238, 228, 0.2));
+}
+
+.rangeControl input::-webkit-slider-thumb {
+  width: 17px;
+  height: 17px;
+  margin-top: -8px;
+  appearance: none;
+  border: 1px solid var(--instrument-accent);
+  border-radius: 50%;
+  background: var(--instrument-ink);
+  box-shadow: 0 0 0 5px rgba(216, 255, 112, 0.08);
+}
+
+.rangeControl input::-moz-range-track {
+  height: 1px;
+  background: rgba(241, 238, 228, 0.25);
+}
+
+.rangeControl input::-moz-range-progress {
+  height: 1px;
+  background: var(--instrument-accent);
+}
+
+.rangeControl input::-moz-range-thumb {
+  width: 17px;
+  height: 17px;
+  border: 1px solid var(--instrument-accent);
+  border-radius: 50%;
+  background: var(--instrument-ink);
+}
+
+.boundaryButton,
+.restoreButton,
+.networkActions button {
+  min-height: 39px;
+  padding: 0 13px;
+  border: 1px solid rgba(241, 238, 228, 0.3);
+  background: transparent;
+  color: var(--instrument-bone);
+  font-family: var(--instrument-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.07em;
+  transition: border 180ms ease, background 180ms ease;
+}
+
+.boundaryButton:hover,
+.boundaryButton[aria-pressed="true"],
+.restoreButton:hover:not(:disabled),
+.networkActions button:hover:not(:disabled) {
+  border-color: var(--instrument-accent);
+  background: rgba(216, 255, 112, 0.06);
+}
+
+.energyViewport {
+  margin-top: 20px;
+}
+
+.energyFlow {
+  fill: none;
+  stroke: rgba(216, 255, 112, 0.42);
+  stroke-linecap: round;
+  transition: stroke-width 300ms ease;
+}
+
+.energyCoal,
+.energyBoiler,
+.energyPiston {
+  fill: rgba(241, 238, 228, 0.045);
+  stroke: rgba(241, 238, 228, 0.53);
+  stroke-width: 1.4;
+}
+
+.energyWheel,
+.energyWheelSpokes {
+  fill: none;
+  stroke: rgba(241, 238, 228, 0.68);
+  stroke-linecap: round;
+  stroke-width: 1.4;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wheelTurn 8s linear infinite;
+}
+
+@keyframes wheelTurn {
+  to { transform: rotate(360deg); }
+}
+
+.systemBoundary {
+  opacity: 0;
+  transition: opacity 350ms ease;
+}
+
+.energyViewport[data-expanded="true"] .systemBoundary {
+  opacity: 1;
+}
+
+.systemBoundary path {
+  fill: none;
+  stroke: var(--instrument-ember);
+  stroke-dasharray: 3 6;
+}
+
+.energySvg text {
+  fill: rgba(241, 238, 228, 0.4);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+}
+
+.systemBoundary text {
+  fill: var(--instrument-ember);
+}
+
+/* Network */
+
+.networkSteps {
+  display: flex;
+  overflow-x: auto;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--instrument-line);
+  border-bottom: 1px solid var(--instrument-line);
+  list-style: none;
+}
+
+.networkSteps li {
+  min-width: max-content;
+  flex: 1;
+}
+
+.networkSteps button {
+  display: grid;
+  width: 100%;
+  min-height: 54px;
+  gap: 4px;
+  padding: 10px 13px;
+  border: 0;
+  border-right: 1px solid var(--instrument-line);
+  background: transparent;
+  color: rgba(241, 238, 228, 0.38);
+  font-family: var(--instrument-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.06em;
+  text-align: left;
+}
+
+.networkSteps li:last-child button {
+  border-right: 0;
+}
+
+.networkSteps button span {
+  color: rgba(216, 255, 112, 0.45);
+  font-size: 0.46rem;
+}
+
+.networkSteps button[aria-current="step"] {
+  background: rgba(216, 255, 112, 0.055);
+  color: var(--instrument-bone);
+}
+
+.networkGround {
+  fill: rgba(85, 99, 89, 0.12);
+  stroke: rgba(241, 238, 228, 0.12);
+}
+
+.networkRouteGhost,
+.networkRouteLive {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 4;
+}
+
+.networkRouteGhost {
+  stroke: rgba(241, 238, 228, 0.12);
+}
+
+.networkRouteLive {
+  stroke: var(--instrument-accent);
+  transition: stroke-dasharray 520ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+.networkNode circle {
+  fill: var(--instrument-ink);
+  stroke: rgba(241, 238, 228, 0.3);
+}
+
+.networkNodeDone circle {
+  stroke: rgba(216, 255, 112, 0.52);
+}
+
+.networkNodeActive circle:first-child {
+  fill: rgba(216, 255, 112, 0.09);
+  stroke: var(--instrument-accent);
+  stroke-width: 2;
+}
+
+.networkNodeActive circle:last-child {
+  fill: var(--instrument-accent);
+  stroke: var(--instrument-accent);
+}
+
+.subseaMarks {
+  fill: none;
+  stroke: rgba(122, 167, 173, 0.45);
+  stroke-dasharray: 2 8;
+}
+
+.networkSvg text {
+  fill: rgba(241, 238, 228, 0.38);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.networkActions {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  display: flex;
+  gap: 7px;
+}
+
+.networkActions button:disabled,
+.restoreButton:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+/* Pocket computer */
+
+.phoneLayout {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.74fr) minmax(260px, 1.26fr);
+  border-top: 1px solid var(--instrument-line);
+  border-bottom: 1px solid var(--instrument-line);
+}
+
+.phoneLayers {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--instrument-line);
+}
+
+.phoneLayers button {
+  display: grid;
+  min-height: 53px;
+  grid-template-columns: 27px 1fr auto;
+  align-items: center;
+  gap: 7px;
+  padding: 0 11px;
+  border: 0;
+  border-bottom: 1px solid var(--instrument-line);
+  background: transparent;
+  color: rgba(241, 238, 228, 0.4);
+  font-family: var(--instrument-mono);
+  font-size: 0.53rem;
+  letter-spacing: 0.04em;
+  text-align: left;
+}
+
+.phoneLayers button:last-child {
+  border-bottom: 0;
+}
+
+.phoneLayers button > span {
+  color: rgba(216, 255, 112, 0.45);
+  font-size: 0.46rem;
+}
+
+.phoneLayers button i {
+  color: rgba(215, 123, 100, 0.8);
+  font-size: 0.42rem;
+  font-style: normal;
+}
+
+.phoneLayers button[aria-pressed="true"] {
+  color: var(--instrument-bone);
+}
+
+.phoneLayers button[aria-pressed="true"] i {
+  color: var(--instrument-accent);
+}
+
+.phoneViewport {
+  min-height: 390px;
+  margin: 0;
+  background:
+    radial-gradient(circle at center, rgba(216, 255, 112, 0.07), transparent 47%),
+    rgba(255, 255, 255, 0.012);
+}
+
+.phoneSvg {
+  width: min(300px, 78%);
+  min-height: 390px;
+  margin: 0 auto;
+}
+
+.phoneShell {
+  fill: rgba(241, 238, 228, 0.025);
+  stroke: rgba(241, 238, 228, 0.7);
+  stroke-width: 2;
+}
+
+.phonePlane {
+  fill: rgba(122, 167, 173, 0.06);
+  stroke: rgba(122, 167, 173, 0.53);
+}
+
+.phoneCircuit,
+.phoneSignal,
+.phonePosition,
+.phoneMaterial {
+  fill: none;
+  stroke: rgba(216, 255, 112, 0.58);
+  stroke-linecap: round;
+  stroke-width: 1.4;
+}
+
+.phoneChip,
+.phoneBattery {
+  fill: rgba(216, 255, 112, 0.035);
+  stroke: rgba(241, 238, 228, 0.58);
+  stroke-width: 1.2;
+}
+
+.phonePlaneMissing {
+  opacity: 0.08;
+  stroke: var(--instrument-danger);
+  stroke-dasharray: 4 8;
+  transform: translateX(10px);
+  transition: opacity 260ms ease, transform 340ms ease;
+}
+
+.phoneOffline {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 8px 11px;
+  border: 1px solid var(--instrument-danger);
+  background: rgba(17, 21, 18, 0.84);
+  color: var(--instrument-danger);
+  font-family: var(--instrument-mono);
+  font-size: 0.53rem;
+  letter-spacing: 0.1em;
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+
+.restoreButton {
+  margin-top: 12px;
+}
+
+/* Tiny model */
+
+.modelViewport {
+  min-height: 290px;
+  margin-top: 19px;
+}
+
+.modelRegionA {
+  fill: rgba(122, 167, 173, 0.07);
+}
+
+.modelRegionB {
+  fill: rgba(216, 255, 112, 0.045);
+}
+
+.modelAxis {
+  fill: none;
+  stroke: rgba(241, 238, 228, 0.45);
+}
+
+.modelBoundary {
+  fill: none;
+  stroke: var(--instrument-accent);
+  stroke-dasharray: 3 6;
+  stroke-width: 1.6;
+  transition: d 360ms cubic-bezier(0.2, 0.7, 0.1, 1);
+}
+
+.modelSvg text {
+  fill: rgba(241, 238, 228, 0.42);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+}
+
+.modelSvg .modelBoundaryLabel {
+  fill: var(--instrument-accent);
+  font-size: 8px;
+}
+
+.trainingPoint {
+  fill: rgba(122, 167, 173, 0.55);
+  stroke: rgba(210, 235, 238, 0.85);
+  stroke-width: 1.4;
+}
+
+.trainingPoint.movingPoint {
+  fill: var(--instrument-ink);
+  stroke: var(--instrument-accent);
+  stroke-width: 3;
+  transition: cx 320ms ease;
+}
+
+.trainingPointB {
+  fill: rgba(216, 255, 112, 0.3);
+  stroke: rgba(216, 255, 112, 0.83);
+  stroke-width: 1.2;
+}
+
+.testPoint circle {
+  fill: rgba(241, 238, 228, 0.5);
+}
+
+.testPoint path {
+  stroke: var(--instrument-danger);
+  stroke-width: 1.5;
+}
+
+.testPointWrong circle {
+  fill: var(--instrument-danger);
+}
+
+.modelLegend {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 13px;
+  color: rgba(241, 238, 228, 0.5);
+  font-family: var(--instrument-mono);
+  font-size: 0.46rem;
+  letter-spacing: 0.06em;
+}
+
+.modelLegend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legendCircle {
+  width: 8px;
+  height: 8px;
+  border: 1px solid #d2ebee;
+  border-radius: 50%;
+  background: rgba(122, 167, 173, 0.55);
+}
+
+.legendTriangle {
+  width: 0;
+  height: 0;
+  border-right: 5px solid transparent;
+  border-bottom: 9px solid rgba(216, 255, 112, 0.75);
+  border-left: 5px solid transparent;
+}
+
+.legendCross {
+  position: relative;
+  width: 9px;
+  height: 9px;
+}
+
+.legendCross::before,
+.legendCross::after {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  width: 9px;
+  height: 1px;
+  background: var(--instrument-danger);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.legendCross::after {
+  transform: rotate(-45deg);
+}
+
+/* Generic evidence lens */
+
+.genericViewport {
+  min-height: 245px;
+}
+
+.genericTrace,
+.genericInference,
+.genericLimit {
+  fill: none;
+  stroke: rgba(241, 238, 228, 0.14);
+  stroke-width: 2;
+  transition: stroke 250ms ease, stroke-width 250ms ease;
+}
+
+.genericViewport[data-lens="trace"] .genericTrace,
+.genericViewport[data-lens="inference"] .genericInference,
+.genericViewport[data-lens="limit"] .genericLimit {
+  stroke: var(--instrument-accent);
+  stroke-width: 3;
+}
+
+.genericSvg > circle {
+  fill: var(--instrument-ink);
+  stroke: var(--instrument-paper);
+  stroke-width: 1.4;
+}
+
+.genericLens {
+  fill: rgba(216, 255, 112, 0.02);
+  stroke: rgba(241, 238, 228, 0.38);
+  stroke-dasharray: 4 8;
+  transition: transform 350ms ease;
+}
+
+.genericViewport[data-lens="inference"] .genericLens {
+  transform: translateX(22px);
+}
+
+.genericViewport[data-lens="limit"] .genericLens {
+  transform: translateX(44px);
+}
+
+.genericSvg text {
+  fill: rgba(241, 238, 228, 0.38);
+  font-family: var(--instrument-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.genericSvg .genericLensLabel {
+  fill: var(--instrument-accent);
+  font-size: 11px;
+}
+
+.optionTape {
+  margin: 10px 0 0;
+  color: rgba(241, 238, 228, 0.35);
+  font-size: 0.5rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+@container (max-width: 680px) {
+  .instrumentTopline {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .instrumentTopline span:last-child {
+    opacity: 0.6;
+  }
+
+  .choiceRail button {
+    min-height: 45px;
+  }
+
+  .evidenceBoundary {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .energyControls {
+    grid-template-columns: 1fr;
+  }
+
+  .boundaryButton {
+    width: 100%;
+  }
+
+  .phoneLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .phoneLayers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-right: 0;
+    border-bottom: 1px solid var(--instrument-line);
+  }
+
+  .phoneLayers button {
+    grid-template-columns: 23px 1fr;
+    min-height: 49px;
+    border-right: 1px solid var(--instrument-line);
+  }
+
+  .phoneLayers button i {
+    display: none;
+  }
+
+  .phoneViewport {
+    min-height: 340px;
+  }
+
+  .phoneSvg {
+    min-height: 340px;
+  }
+
+  .networkActions {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 12px 12px;
+  }
+
+  .modelLegend {
+    top: auto;
+    right: auto;
+    bottom: 10px;
+    left: 12px;
+  }
+}
+
+@container (max-width: 430px) {
+  .instrumentBody {
+    padding-inline: 14px;
+  }
+
+  .instrumentHeader,
+  .liveReadout,
+  .evidenceBoundary {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .branchViewport,
+  .stoneViewport,
+  .routesViewport,
+  .householdViewport,
+  .encounterViewport,
+  .energyViewport,
+  .networkViewport,
+  .modelViewport,
+  .genericViewport {
+    min-height: 220px;
+  }
+
+  .branchSvg,
+  .stoneSvg,
+  .routesSvg,
+  .householdSvg,
+  .encounterSvg,
+  .energySvg,
+  .networkSvg,
+  .modelSvg,
+  .genericSvg {
+    min-width: 560px;
+    min-height: 220px;
+    transform: translateX(-12%);
+  }
+
+  .routesSvg,
+  .encounterSvg {
+    transform: translateX(-18%);
+  }
+
+  .phoneLayers {
+    grid-template-columns: 1fr;
+  }
+
+  .phoneViewport,
+  .phoneSvg {
+    min-height: 310px;
+  }
+
+  .householdMeters {
+    width: 47%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .instrument *,
+  .instrument *::before,
+  .instrument *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

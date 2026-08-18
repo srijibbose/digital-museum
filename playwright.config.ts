@@ -1,5 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const externalBaseUrl = process.env.E2E_BASE_URL;
+
 export default defineConfig({
   testDir: "./e2e",
   timeout: 90_000,
@@ -8,11 +10,11 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: "list",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: externalBaseUrl ?? "http://127.0.0.1:3000",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
-  webServer: {
+  webServer: externalBaseUrl ? undefined : {
     command: "node node_modules/next/dist/bin/next start -p 3000",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: true,
