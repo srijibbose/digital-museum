@@ -113,9 +113,9 @@
 
 .markOrb { display: inline-block; width: 12px; height: 12px; border: 1px solid currentColor; border-radius: 50%; box-shadow: inset 4px 0 0 currentColor; }
 
-.actIdentity { display: flex; align-items: baseline; gap: 14px; text-align: center; }
+.actIdentity { display: flex; max-width: min(56vw, 720px); align-items: baseline; gap: 14px; text-align: center; }
 .actIdentity span { color: var(--accent); }
-.actIdentity strong { font-weight: 500; }
+.actIdentity strong { overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 
 .topChrome nav { display: flex; justify-content: flex-end; gap: 22px; }
 .topChrome button { padding: 0; font: inherit; letter-spacing: inherit; }
@@ -166,7 +166,9 @@
   text-transform: uppercase;
 }
 
-.sceneMeta span + span::before { margin-right: 18px; color: var(--accent); content: "⌖"; }
+.sceneMeta span + span::before { margin-right: 18px; color: rgba(255, 255, 255, 0.42); content: "/"; }
+.sceneMeta .sceneStep { color: var(--accent); }
+.sceneMeta .sceneLocation::before { color: var(--accent); content: "⌖"; }
 
 .eyebrow {
   margin: 0 0 14px;
@@ -196,13 +198,16 @@
   text-wrap: balance;
 }
 
+.sceneCopy[data-title-scale="long"] h1 { max-width: 17ch; font-size: clamp(3.1rem, 5.3vw, 6.3rem); line-height: 0.86; }
+.sceneCopy[data-title-scale="compact"] h1 { max-width: 19ch; font-size: clamp(2.9rem, 4.7vw, 5.5rem); line-height: 0.9; }
+
 .sceneHook {
   max-width: 43ch;
-  margin: 22px 0 0;
+  margin: 19px 0 0;
   color: rgba(255, 255, 255, 0.9);
-  font-family: "Iowan Old Style", Baskerville, Georgia, serif;
-  font-size: clamp(1.15rem, 1.45vw, 1.48rem);
-  line-height: 1.28;
+  font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: clamp(1rem, 1.15vw, 1.2rem);
+  line-height: 1.43;
   text-wrap: pretty;
 }
 
@@ -264,22 +269,6 @@
   text-transform: uppercase;
   white-space: nowrap;
 }
-
-.actThreshold {
-  position: absolute;
-  z-index: 7;
-  inset: 0;
-  display: grid;
-  align-content: center;
-  padding: 8vw;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.86), rgba(0, 0, 0, 0.08));
-  pointer-events: none;
-  animation: thresholdAway 3.4s ease 1.3s both;
-}
-
-.actThreshold span { color: var(--accent); font: 10px/1.4 ui-monospace, "Cascadia Mono", monospace; letter-spacing: 0.17em; }
-.actThreshold strong { max-width: 10ch; margin-top: 13px; font: 400 clamp(4rem, 10vw, 10rem)/0.82 "Iowan Old Style", Baskerville, Georgia, serif; letter-spacing: -0.06em; }
-.actThreshold p { max-width: 44ch; margin: 26px 0 0; color: rgba(255, 255, 255, 0.72); font-size: 15px; }
 
 .strataRail {
   position: absolute;
@@ -365,7 +354,8 @@
 
 .readingPanel { display: grid; max-width: 780px; min-height: calc(100svh - 64px); align-content: center; padding: clamp(48px, 8vh, 90px) clamp(34px, 8vw, 120px); }
 .readingPanel h2 { max-width: 18ch; font-size: clamp(2.7rem, 5.3vw, 6.8rem); line-height: 0.94; text-wrap: balance; }
-.longStory { max-width: 63ch; margin: 38px 0 0; color: rgba(255, 255, 255, 0.82); font-family: "Iowan Old Style", Baskerville, Georgia, serif; font-size: clamp(1.15rem, 1.4vw, 1.4rem); line-height: 1.62; }
+.readingLead { max-width: 58ch; margin: 24px 0 0; color: var(--accent); font-size: clamp(1.05rem, 1.25vw, 1.3rem); line-height: 1.48; }
+.longStory { max-width: 63ch; margin: 24px 0 0; color: rgba(255, 255, 255, 0.82); font-family: "Iowan Old Style", Baskerville, Georgia, serif; font-size: clamp(1.15rem, 1.4vw, 1.4rem); line-height: 1.62; }
 .readingPanel blockquote { max-width: 56ch; margin: 38px 0 0; padding: 20px 0 20px 26px; border-left: 1px solid var(--accent); color: var(--accent); font: 1rem/1.55 ui-monospace, monospace; }
 .readingCoda { display: grid; max-width: 600px; gap: 10px; margin-top: 52px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.18); }
 .readingCoda span { color: var(--accent); font: 9px ui-monospace, monospace; letter-spacing: 0.12em; }
@@ -456,7 +446,6 @@
 
 @keyframes sceneReveal { from { opacity:0; filter:blur(5px); transform:scale(1.012); } to { opacity:1; filter:blur(0); transform:scale(1); } }
 @keyframes copyIn { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
-@keyframes thresholdAway { 0%,62% { opacity:1; } 100% { opacity:0; visibility:hidden; } }
 @keyframes backdropIn { from { opacity:0; } }
 @keyframes panelIn { from { opacity:0; transform:translateX(4%); } }
 @keyframes layerIn { from { opacity:0; transform:translateX(22px); } }
@@ -498,6 +487,8 @@
   .sceneMeta { margin-bottom:8px; font-size:8px; }
   .eyebrow { margin-bottom:8px; font-size:7px; }
   .sceneCopy h1 { max-width:12ch; font-size:clamp(2.65rem,13vw,4.5rem); line-height:.86; }
+  .sceneCopy[data-title-scale="long"] h1 { max-width:15ch; font-size:clamp(2.45rem,11.5vw,4.1rem); line-height:.9; }
+  .sceneCopy[data-title-scale="compact"] h1 { max-width:17ch; font-size:clamp(2.25rem,10.2vw,3.8rem); line-height:.92; }
   .sceneHook { max-width:32ch; margin-top:12px; font-size:1.06rem; line-height:1.25; }
   .sceneCapability { display:none; }
   .sceneActions { gap:5px 13px; margin-top:11px; }
@@ -511,14 +502,12 @@
   .journeyControls > div { min-width:0; grid-template-columns:1fr; gap:1px; }
   .journeyControls > div span { font-size:8px; }
   .journeyControls > div small { max-width:45vw; font-size:8px; }
-  .actThreshold { padding:21vw 9vw; background:linear-gradient(180deg,rgba(0,0,0,.72),rgba(0,0,0,.18) 63%,rgba(0,0,0,.88)); }
-  .actThreshold strong { font-size:clamp(3.6rem,19vw,6rem); }
-  .actThreshold p { max-width:32ch; font-size:12px; }
   .panelShell { width:100vw; border-left:0; }
   .panelTopline { min-height:56px; padding:0 18px; font-size:7px; }
   .readingPanel { min-height:calc(100svh - 56px); padding:55px 25px 80px; }
   .readingPanel h2 { font-size:clamp(2.6rem,12vw,4.5rem); }
-  .longStory { margin-top:28px; font-size:1.11rem; line-height:1.58; }
+  .readingLead { margin-top:18px; font-size:1rem; }
+  .longStory { margin-top:22px; font-size:1.11rem; line-height:1.58; }
   .evidenceRecord { display:block; }
   .evidenceFigure,.evidenceNoImage { min-height:48svh; border-right:0; border-bottom:1px solid rgba(255,255,255,.13); }
   .evidenceFigure img { padding:22px; }
@@ -576,5 +565,4 @@
     transition-duration:1ms !important;
   }
 
-  .actThreshold { display:none; }
 }

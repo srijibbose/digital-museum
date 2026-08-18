@@ -108,7 +108,7 @@ describe("Becoming Human story bible", () => {
   it("ends with responsibility rather than a progress ladder or a species claim", () => {
     expect(wordCount(becomingHumanFinale.story)).toBeGreaterThanOrEqual(80);
     expect(becomingHumanFinale.sources.length).toBeGreaterThan(1);
-    expect(becomingHumanFinale.story).toMatch(/rather than a final rung/i);
+    expect(becomingHumanFinale.story).toMatch(/not a predetermined final stage/i);
     expect(becomingHumanFinale.story).toMatch(/responsibilit/i);
     expect(episodeCorpus("learned-patterns")).toMatch(/without becoming a biological species/i);
   });

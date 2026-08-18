@@ -37,20 +37,6 @@ const predictionLabels: Record<Prediction, string> = {
   systems: "THE SYSTEMS BETWEEN US",
 };
 
-const clockLabels = {
-  biology: "BIOLOGICAL TIME",
-  "gene-culture": "BODY ↔ CULTURE",
-  culture: "CULTURAL TIME",
-  technology: "TECHNOLOGICAL TIME",
-} as const;
-
-const evidenceLabels = {
-  direct: "DIRECT TRACE",
-  "strong-inference": "STRONG INFERENCE",
-  contested: "ACTIVE DEBATE",
-  "interpretive-model": "INTERPRETIVE MODEL",
-} as const;
-
 function findAct(episode: BecomingHumanEpisode): BecomingHumanAct {
   return becomingHumanActs.find((act) => act.id === episode.actId) ?? becomingHumanActs[0];
 }
@@ -115,14 +101,14 @@ function EvidenceRecord({ episode }: { episode: BecomingHumanEpisode }) {
         </figure>
       ) : (
         <div className={styles.evidenceNoImage}>
-          <span>THE RECORD IS FRAGMENTARY</span>
+          <span>SUPPORTING EVIDENCE IS FRAGMENTARY</span>
           <strong>{episode.evidence.object}</strong>
         </div>
       )}
       <div className={styles.evidenceReading}>
-        <div><span>01 / WHAT SURVIVES</span><p>{episode.evidence.object}</p></div>
-        <div><span>02 / WHAT IT SUPPORTS</span><p>{episode.capability}</p></div>
-        <div><span>03 / WHERE IT STOPS</span><p>{episode.evidence.uncertainty}</p></div>
+        <div><span>01 / WHAT WAS FOUND</span><p>{episode.evidence.object}</p></div>
+        <div><span>02 / WHAT IT SHOWS</span><p>{episode.capability}</p></div>
+        <div><span>03 / WHAT WE STILL DO NOT KNOW</span><p>{episode.evidence.uncertainty}</p></div>
       </div>
       <div className={styles.sourceList}>
         <span>SOURCES</span>
@@ -138,9 +124,9 @@ function Atlas({ activeIndex, goTo }: { activeIndex: number; goTo: (index: numbe
   return (
     <div className={styles.atlas}>
       <div className={styles.atlasIntro}>
-        <p>RESEARCH ATLAS</p>
-        <h2>Eight galleries.<br />Four changing clocks.</h2>
-        <p>Enter any episode directly. Dates are deliberately not spaced evenly: deep time and historical time move at radically different scales.</p>
+        <p>THE COMPLETE STORY</p>
+        <h2>Eight stages.<br />Thirty-five steps.</h2>
+        <p>Follow the story in order, or jump to any step. The dates show exactly where you are—from the first hominins to artificial intelligence.</p>
       </div>
       <div className={styles.atlasActs}>
         {becomingHumanActs.map((act) => {
@@ -272,7 +258,6 @@ export function BecomingHumanV2Experience() {
   const act = findAct(episode);
   const actVisual = becomingHumanActVisuals[act.id];
   const episodeVisual = getEpisodeVisual(episode.id);
-  const isActOpening = !isFinale && act.episodeIds[0] === episode.id;
   const copySide = episodeVisual.composition === "left" ? "right" : "left";
   const requestedBackground = episodeVisual.backgroundOverride ?? actVisual.background;
   const [backgroundFrames, setBackgroundFrames] = useState<{ current: BackgroundFrame; previous: BackgroundFrame | null }>(() => ({
@@ -473,27 +458,24 @@ export function BecomingHumanV2Experience() {
         {!isFinale ? (
           <section className={styles.scene} id={`episode-${episode.id}`} key={episode.id}>
             <StorySceneGraphic visual={episodeVisual} />
-            {isActOpening ? (
-              <div className={styles.actThreshold}>
-                <span>GALLERY {String(act.order).padStart(2, "0")}</span>
-                <strong>{act.title}</strong>
-                <p>{act.thesis}</p>
-              </div>
-            ) : null}
             <div className={styles.sceneNumber} aria-hidden="true">{String(episode.order).padStart(2, "0")}</div>
-            <article className={styles.sceneCopy}>
+            <article
+              className={styles.sceneCopy}
+              data-title-scale={episode.title.length > 38 ? "compact" : episode.title.length > 30 ? "long" : "regular"}
+            >
               <div className={styles.sceneMeta}>
+                <span className={styles.sceneStep}>STEP {String(episode.order).padStart(2, "0")} OF {becomingHumanEpisodes.length}</span>
                 <span>{episode.dateLabel}</span>
-                <span>{episode.location}</span>
+                <span className={styles.sceneLocation}>{episode.location}</span>
               </div>
-              <p className={styles.eyebrow}>{clockLabels[episode.clock]} · {actVisual.ambientLabel}</p>
+              <p className={styles.eyebrow}>PART {String(act.order).padStart(2, "0")} OF 08 · {act.title}</p>
               <h1>{episode.title}</h1>
               <p className={styles.sceneHook}>{episode.hook}</p>
-              <p className={styles.sceneCapability}><span>WHAT CHANGED</span>{episode.capability}</p>
+              <p className={styles.sceneCapability}><span>WHY THIS MATTERS</span>{episode.capability}</p>
               <div className={styles.sceneActions}>
-                <button onClick={(event) => openPanel("story", event.currentTarget)} type="button">READ THE ACCOUNT</button>
-                <button onClick={(event) => openPanel("evidence", event.currentTarget)} type="button">INSPECT THE RECORD</button>
-                <button className={styles.primaryAction} onClick={(event) => openPanel("instrument", event.currentTarget)} type="button">TRY THE IDEA <span aria-hidden="true">↗</span></button>
+                <button onClick={(event) => openPanel("story", event.currentTarget)} type="button">READ THE FULL STORY</button>
+                <button onClick={(event) => openPanel("evidence", event.currentTarget)} type="button">SEE THE EVIDENCE</button>
+                <button className={styles.primaryAction} onClick={(event) => openPanel("instrument", event.currentTarget)} type="button">EXPLORE THIS STEP <span aria-hidden="true">↗</span></button>
               </div>
             </article>
             <a className={styles.environmentCredit} href={episodeVisual.backgroundSourceUrl ?? actVisual.sourceUrl} rel="noreferrer" target="_blank">ENVIRONMENT · {episodeVisual.backgroundSourceLabel ?? actVisual.sourceLabel} ↗</a>
@@ -532,11 +514,12 @@ export function BecomingHumanV2Experience() {
               {panel === "story" ? (
                 <article className={styles.readingPanel}>
                   <p className={styles.eyebrow}>{episode.dateLabel} · {episode.location}</p>
-                  <h2>{episode.hook}</h2>
+                  <h2>{episode.title}</h2>
+                  <p className={styles.readingLead}>{episode.hook}</p>
                   <p className={styles.longStory}>{episode.story}</p>
                   {episode.id === becomingHumanClockTransition.afterEpisodeId ? <blockquote>{becomingHumanClockTransition.label}</blockquote> : null}
                   <div className={styles.readingCoda}>
-                    <span>CAPABILITY CARRIED FORWARD</span>
+                    <span>WHY THIS STEP MATTERED</span>
                     <strong>{episode.capability}</strong>
                   </div>
                 </article>
