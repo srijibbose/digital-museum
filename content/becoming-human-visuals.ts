@@ -160,6 +160,13 @@ export const becomingHumanActVisuals: Record<string, ActVisual> = {
 };
 
 const realEvidence = {
+  laetoliCast: {
+    objectImage: "/media/becoming-human/laetoli-cast.jpg",
+    objectAlt: "Photograph of a full Laetoli fossil-footprint trail replica in a museum display",
+    objectCredit: "Momotarou2012 / Wikimedia Commons · CC BY-SA 3.0",
+    objectSourceUrl: "https://commons.wikimedia.org/wiki/File:Laetoli_footprints_replica.jpg",
+    objectLabel: "FOSSIL TRACKWAY REPLICA",
+  },
   footprints: {
     objectImage: "/media/becoming-human/evidence/laetoli-footprints.png",
     objectAlt: "Published contour and side-view comparison of the Laetoli G1-37 footprint",
@@ -262,19 +269,42 @@ const visual = (
 ): EpisodeVisual => ({ kind, composition, focalPoint, ...object });
 
 export const becomingHumanEpisodeVisuals: Record<string, EpisodeVisual> = {
-  "shared-branch": visual("branch", "center", "48% 46%"),
+  "shared-branch": visual("branch", "center", "56% 55%", {
+    backgroundOverride: "/media/becoming-human/nasa-world-map.png",
+    backgroundSourceLabel: "Blue Marble world map · NASA / GSFC · Public Domain",
+    backgroundSourceUrl: "https://svs.gsfc.nasa.gov/2915/",
+  }),
   "skull-at-threshold": visual("fossil", "right", "70% 44%", realEvidence.sahelanthropus),
   "woodland-walker": visual("walker", "left", "33% 58%"),
-  trackmakers: visual("trackway", "right", "63% 62%", realEvidence.footprints),
-  "before-homo-broken-stone": visual("stone", "center", "55% 54%", realEvidence.stoneScan),
-  "repeatable-edge": visual("stone", "left", "30% 51%"),
+  trackmakers: visual("trackway", "right", "55% 50%", {
+    ...realEvidence.laetoliCast,
+    backgroundOverride: "/media/becoming-human/laetoli-trackway.jpg",
+    backgroundSourceLabel: "Laetoli trackway survey · Chartep / Wikimedia Commons · CC BY-SA 4.0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Laetoli_trackway.jpg",
+  }),
+  "before-homo-broken-stone": visual("stone", "center", "55% 54%", {
+    ...realEvidence.stoneScan,
+    backgroundOverride: "/media/becoming-human/olduvai-gorge.jpg",
+    backgroundSourceLabel: "Olduvai Gorge panorama · רנדום / Wikimedia Commons · CC BY-SA 3.0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Panoramic_view_of_Olduvai_Gorge.jpg",
+  }),
+  "repeatable-edge": visual("stone", "left", "30% 51%", {
+    backgroundOverride: "/media/becoming-human/olduvai-gorge.jpg",
+    backgroundSourceLabel: "Olduvai Gorge panorama · רנדום / Wikimedia Commons · CC BY-SA 3.0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Panoramic_view_of_Olduvai_Gorge.jpg",
+  }),
   "bodies-built-for-ground": visual("horizon", "right", "70% 46%", {
     ...realEvidence.erectus,
     backgroundOverride: "/media/becoming-human/chronicle/scene-traveler.webp",
     backgroundSourceLabel: "Plains Sunset by Greg Zaal / Poly Haven · CC0",
     backgroundSourceUrl: "https://polyhaven.com/a/plains_sunset",
   }),
-  "five-skulls-dmanisi": visual("variation", "split", "49% 47%", realEvidence.erectus),
+  "five-skulls-dmanisi": visual("variation", "split", "49% 47%", {
+    ...realEvidence.erectus,
+    backgroundOverride: "/media/becoming-human/dmanisi-excavation.jpg",
+    backgroundSourceLabel: "Dmanisi excavation · Georgian National Museum / Wikimedia Commons · CC BY-SA 3.0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Dmanisi_excavation_site_(2007)a.jpg",
+  }),
   "handaxe-idea": visual("stone", "right", "69% 48%", realEvidence.biface),
   "three-histories-fire": visual("fire", "center", "52% 55%", {
     backgroundOverride: "/media/becoming-human/chronicle/scene-fire.webp",
@@ -290,20 +320,45 @@ export const becomingHumanEpisodeVisuals: Record<string, EpisodeVisual> = {
   "language-no-fossil": visual("voice", "right", "73% 48%"),
   "lineage-no-birthday": visual("lineage", "center", "48% 46%"),
   "neanderthal-lives": visual("fossil", "left", "30% 50%", realEvidence.neanderthal),
-  "genome-before-face": visual("genome", "right", "68% 48%"),
+  "genome-before-face": visual("genome", "right", "68% 48%", {
+    backgroundOverride: "/media/becoming-human/denisova-cave.jpg",
+    backgroundSourceLabel: "Denisova Cave entrance · Xenochka / Wikimedia Commons · CC BY-SA 4.0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Таинственная_пещера.jpg",
+  }),
   "we-met-others": visual("lineage", "split", "50% 51%", realEvidence.neanderthal),
   "marks-missing-meanings": visual("mark", "left", "27% 55%", realEvidence.blombos),
-  "many-departures": visual("routes", "right", "71% 48%", realEvidence.earth),
+  "many-departures": visual("routes", "right", "71% 48%", {
+    ...realEvidence.earth,
+    backgroundOverride: "/media/becoming-human/chronicle/nasa-blue-marble.jpg",
+    backgroundSourceLabel: "Blue Marble · NASA Earth Observatory · Public Domain",
+    backgroundSourceUrl: "https://earthobservatory.nasa.gov/features/BlueMarble",
+  }),
   "water-crossing": visual("crossing", "center", "45% 58%", realEvidence.earth),
   "holocene-possibilities": visual("climate", "right", "72% 47%"),
   "farming-more-than-once": visual("field", "left", "25% 56%"),
-  "river-household": visual("household", "right", "67% 54%"),
+  "river-household": visual("household", "right", "67% 54%", {
+    backgroundOverride: "/media/becoming-human/catalhoyuk-excavation.jpg",
+    backgroundSourceLabel: "Çatalhöyük excavation · Omar Hoftun / Wikimedia Commons · CC BY-SA 3.0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Çatalhöyük_excavations_..jpg",
+  }),
   "bodies-respond-culture": visual("body-culture", "center", "51% 51%"),
-  "dense-life": visual("dense-life", "left", "31% 53%"),
+  "dense-life": visual("dense-life", "left", "31% 53%", {
+    backgroundOverride: "/media/becoming-human/uruk-site.jpg",
+    backgroundSourceLabel: "Uruk archaeological site · SAC Andy Holmes / UK MOD · OGL 1.0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Uruk_Archaeological_site_at_Warka.jpg",
+  }),
   "memory-leaves-brain": visual("tablet", "right", "69% 48%", realEvidence.tablet),
-  "islands-connected": visual("navigation", "left", "22% 49%", realEvidence.earth),
+  "islands-connected": visual("navigation", "left", "22% 49%", {
+    backgroundOverride: "/media/becoming-human/polynesian-canoe.jpg",
+    backgroundSourceLabel: "Polynesian outrigger canoe · British Museum · Public Domain",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Polynesian_outrigger_canoe_at_sea,_Oc,G.T.1658,_Mana_Expedition_to_East_Polynesia,_British_Museum.jpg",
+  }),
   "shore-two-sides": visual("encounter", "split", "34% 50%"),
-  "page-becomes-thousands": visual("print", "right", "68% 52%"),
+  "page-becomes-thousands": visual("print", "right", "68% 52%", {
+    backgroundOverride: "/media/becoming-human/printing-press.jpg",
+    backgroundSourceLabel: "Replica printing press · Acdixon / Wikimedia Commons · CC0",
+    backgroundSourceUrl: "https://commons.wikimedia.org/wiki/File:Creation_Museum_printing_press.jpg",
+  }),
   "extending-senses": visual("instrument", "left", "29% 48%", realEvidence.astrolabe),
   "fossil-energy": visual("energy", "right", "72% 49%", {
     ...realEvidence.locomotiveShop,
@@ -314,9 +369,9 @@ export const becomingHumanEpisodeVisuals: Record<string, EpisodeVisual> = {
   }),
   "night-infrastructure": visual("electricity", "center", "51% 47%", {
     ...realEvidence.nightEarth,
-    backgroundOverride: "/media/becoming-human/chronicle/scene-network.webp",
-    backgroundSourceLabel: "Modern Buildings Night by Sergej Majboroda / Poly Haven · CC0",
-    backgroundSourceUrl: "https://polyhaven.com/a/modern_buildings_night",
+    backgroundOverride: "/media/becoming-human/chronicle/nasa-black-marble.jpg",
+    backgroundSourceLabel: "Black Marble · NASA Earth Observatory · Public Domain",
+    backgroundSourceUrl: "https://earthobservatory.nasa.gov/images/144898/earth-at-night",
   }),
   "instructions-machinery": visual("computer", "left", "28% 49%", {
     ...realEvidence.eniac,

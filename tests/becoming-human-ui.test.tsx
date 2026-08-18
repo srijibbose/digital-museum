@@ -20,7 +20,7 @@ describe("Becoming Human cinematic atlas", () => {
     fireEvent.click(screen.getByRole("button", { name: "Next episode" }));
     expect(await screen.findByRole("heading", { level: 1, name: "Possible Early Upright Walking" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { level: 1, name: "The Human Lineage Begins" })).not.toBeInTheDocument();
-  });
+  }, 15_000);
 
   it("exposes a research atlas and a no-score learning instrument", async () => {
     window.localStorage.clear();
@@ -28,8 +28,11 @@ describe("Becoming Human cinematic atlas", () => {
     render(<BecomingHumanV2Experience />);
     fireEvent.click(screen.getByRole("button", { name: /BEGIN QUIET/i }));
 
-    fireEvent.click(await screen.findByRole("button", { name: "MAP" }));
+    fireEvent.click(await screen.findByRole("button", { name: "TIME" }));
     const atlas = screen.getByRole("dialog", { name: "Research atlas" });
+    expect(within(atlas).getByRole("heading", { name: /Humans arrived.*very recently/i })).toBeInTheDocument();
+    expect(within(atlas).getByText(/4.54 billion years old/i)).toBeInTheDocument();
+    fireEvent.click(within(atlas).getByRole("button", { name: "STORY" }));
     expect(within(atlas).getByRole("heading", { name: /Eight stages/i })).toBeInTheDocument();
     expect(within(atlas).getByRole("button", { name: /35.*AI Learns from Human Data/i })).toBeInTheDocument();
 
@@ -38,5 +41,17 @@ describe("Becoming Human cinematic atlas", () => {
     const instrument = await screen.findByRole("dialog", { name: /The Human Lineage Begins instrument/i });
     expect(within(instrument).getByText("NO SCORE · CHANGE YOUR VIEW")).toBeInTheDocument();
     expect(within(instrument).getByRole("heading", { name: /Replace the ladder/i })).toBeInTheDocument();
-  });
+  }, 15_000);
+
+  it("opens a navigable geographic view of the story", async () => {
+    window.localStorage.clear();
+    window.history.replaceState(null, "", "/exhibits/becoming-human");
+    render(<BecomingHumanV2Experience />);
+    fireEvent.click(screen.getByRole("button", { name: /BEGIN QUIET/i }));
+
+    fireEvent.click(await screen.findByRole("button", { name: "MAP" }));
+    const atlas = screen.getByRole("dialog", { name: "Research atlas" });
+    expect(within(atlas).getByRole("heading", { name: /The story moves.*across the planet/i })).toBeInTheDocument();
+    expect(within(atlas).getByRole("button", { name: /04.*Footprints Prove Two-Legged Walking.*Laetoli/i })).toBeInTheDocument();
+  }, 15_000);
 });

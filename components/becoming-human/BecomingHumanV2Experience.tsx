@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { AmbientSoundscape } from "./AmbientSoundscape";
+import { BecomingHumanAtlas, type AtlasView } from "./BecomingHumanAtlas";
 import { StoryInstrument } from "./StoryInstrument";
 import { StorySceneGraphic } from "./StorySceneGraphic";
 import {
@@ -120,49 +121,6 @@ function EvidenceRecord({ episode }: { episode: BecomingHumanEpisode }) {
   );
 }
 
-function Atlas({ activeIndex, goTo }: { activeIndex: number; goTo: (index: number) => void }) {
-  return (
-    <div className={styles.atlas}>
-      <div className={styles.atlasIntro}>
-        <p>THE COMPLETE STORY</p>
-        <h2>Eight stages.<br />Thirty-five steps.</h2>
-        <p>Follow the story in order, or jump to any step. The dates show exactly where you are—from the first hominins to artificial intelligence.</p>
-      </div>
-      <div className={styles.atlasActs}>
-        {becomingHumanActs.map((act) => {
-          const first = becomingHumanEpisodes.findIndex((episode) => episode.id === act.episodeIds[0]);
-          const last = first + act.episodeIds.length - 1;
-          const isActive = activeIndex >= first && activeIndex <= last;
-          return (
-            <section className={styles.atlasAct} data-active={isActive} key={act.id}>
-              <button onClick={() => goTo(first)} type="button">
-                <span>ACT {String(act.order).padStart(2, "0")}</span>
-                <strong>{act.title}</strong>
-                <small>{act.thesis}</small>
-              </button>
-              <ol>
-                {act.episodeIds.map((episodeId) => {
-                  const index = becomingHumanEpisodes.findIndex((episode) => episode.id === episodeId);
-                  const episode = becomingHumanEpisodes[index];
-                  return (
-                    <li data-active={index === activeIndex} key={episodeId}>
-                      <button onClick={() => goTo(index)} type="button">
-                        <span>{String(episode.order).padStart(2, "0")}</span>
-                        <span>{episode.title}</span>
-                        <small>{episode.dateLabel}</small>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </section>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function Finale({ prediction, onDeleteTrace }: { prediction: Prediction | null; onDeleteTrace: () => void }) {
   return (
     <section className={styles.finale}>
@@ -245,6 +203,7 @@ export function BecomingHumanV2Experience() {
   const [resumeIndex, setResumeIndex] = useState<number | null>(null);
   const [prediction, setPredictionState] = useState<Prediction | null>(null);
   const [panel, setPanel] = useState<PanelKind>(null);
+  const [atlasView, setAtlasView] = useState<AtlasView>("time");
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [direction, setDirection] = useState<"next" | "previous">("next");
   const rootRef = useRef<HTMLElement>(null);
@@ -450,7 +409,8 @@ export function BecomingHumanV2Experience() {
             <strong>{act.title}</strong>
           </div>
           <nav aria-label="Exhibit tools">
-            <button onClick={(event) => openPanel("atlas", event.currentTarget)} type="button">MAP</button>
+            <button onClick={(event) => { setAtlasView("time"); openPanel("atlas", event.currentTarget); }} type="button">TIME</button>
+            <button onClick={(event) => { setAtlasView("place"); openPanel("atlas", event.currentTarget); }} type="button">MAP</button>
             <button aria-pressed={soundEnabled} onClick={() => setSoundEnabled((value) => !value)} type="button">SOUND {soundEnabled ? "ON" : "OFF"}</button>
           </nav>
         </header>
@@ -464,9 +424,11 @@ export function BecomingHumanV2Experience() {
               data-title-scale={episode.title.length > 38 ? "compact" : episode.title.length > 30 ? "long" : "regular"}
             >
               <div className={styles.sceneMeta}>
-                <span className={styles.sceneStep}>STEP {String(episode.order).padStart(2, "0")} OF {becomingHumanEpisodes.length}</span>
-                <span>{episode.dateLabel}</span>
-                <span className={styles.sceneLocation}>{episode.location}</span>
+                <time className={styles.sceneDate}><span>WHEN</span>{episode.dateLabel}</time>
+                <div>
+                  <span className={styles.sceneStep}>STEP {String(episode.order).padStart(2, "0")} OF {becomingHumanEpisodes.length}</span>
+                  <span className={styles.sceneLocation}>{episode.location}</span>
+                </div>
               </div>
               <p className={styles.eyebrow}>PART {String(act.order).padStart(2, "0")} OF 08 · {act.title}</p>
               <h1>{episode.title}</h1>
@@ -499,6 +461,7 @@ export function BecomingHumanV2Experience() {
           <div>
             <span>{isFinale ? "FINALE" : `${String(activeIndex + 1).padStart(2, "0")} / ${String(becomingHumanEpisodes.length).padStart(2, "0")}`}</span>
             <small>{isFinale ? becomingHumanFinale.title : episode.title}</small>
+            {!isFinale ? <time>{episode.dateLabel}</time> : null}
           </div>
           <button aria-label="Next episode" disabled={isFinale} onClick={() => goTo(activeIndex + 1)} type="button"><span>NEXT</span> →</button>
         </footer>
@@ -509,7 +472,7 @@ export function BecomingHumanV2Experience() {
       {panel ? (
         <div className={styles.panelBackdrop}>
           <FocusTrap label={panel === "atlas" ? "Research atlas" : `${episode.title} ${panel}`} onClose={closePanel}>
-            <PanelTopline eyebrow={panel === "atlas" ? "BECOMING HUMAN / RESEARCH MODE" : `${String(episode.order).padStart(2, "0")} · ${episode.title}`} onClose={closePanel} />
+            <PanelTopline eyebrow={panel === "atlas" ? "BECOMING HUMAN / TIME · PLACE · STORY" : `${String(episode.order).padStart(2, "0")} · ${episode.title}`} onClose={closePanel} />
             <div className={styles.panelScroll}>
               {panel === "story" ? (
                 <article className={styles.readingPanel}>
@@ -526,7 +489,7 @@ export function BecomingHumanV2Experience() {
               ) : null}
               {panel === "evidence" ? <EvidenceRecord episode={episode} /> : null}
               {panel === "instrument" ? <StoryInstrument episode={episode} /> : null}
-              {panel === "atlas" ? <Atlas activeIndex={activeIndex} goTo={goTo} /> : null}
+              {panel === "atlas" ? <BecomingHumanAtlas activeIndex={activeIndex} goTo={goTo} initialView={atlasView} /> : null}
             </div>
           </FocusTrap>
         </div>

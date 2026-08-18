@@ -46,3 +46,25 @@ test("supports a portrait deep link without horizontal overflow", async ({ page 
   await expect(page.getByRole("dialog", { name: /Spears and Bows Change Hunting evidence/ })).toBeVisible();
   await expect(page.getByRole("img", { name: /Schöningen/ })).toBeVisible();
 });
+
+test("keeps dates legible and the deep-time atlas usable on portrait screens", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/exhibits/becoming-human#episode-trackmakers");
+
+  await expect(page.getByText("WHEN")).toBeVisible();
+  await expect(page.getByText("3.66 MILLION YEARS AGO").first()).toBeVisible();
+  await page.getByRole("button", { name: "TIME" }).click();
+
+  const atlas = page.getByRole("dialog", { name: "Research atlas" });
+  await expect(atlas.getByText(/Earth is about 4.54 billion years old/i)).toBeVisible();
+  const humanTimeline = atlas.getByLabel("Scrollable human evolution timeline");
+  await expect(humanTimeline).toBeVisible();
+  const timelineSize = await humanTimeline.evaluate((element) => ({
+    clientWidth: element.clientWidth,
+    scrollWidth: element.scrollWidth,
+  }));
+  expect(timelineSize.scrollWidth).toBeGreaterThan(timelineSize.clientWidth);
+
+  await atlas.getByRole("button", { name: /28.*Printing Copies Knowledge at Scale/i }).click();
+  await expect(page.getByRole("heading", { name: "Printing Copies Knowledge at Scale" })).toBeVisible();
+});

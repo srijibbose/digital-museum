@@ -43,11 +43,12 @@ describe("Becoming Human content system", () => {
     );
 
     expect(licenseLedger).toEqual(becomingHumanAssets);
-    expect(becomingHumanAssets).toHaveLength(47);
+    expect(becomingHumanAssets).toHaveLength(57);
     expect(becomingHumanAssets.filter((asset) => asset.prototypeOnly)).toHaveLength(21);
     expect(becomingHumanAssets.filter((asset) => asset.runtimePath.endsWith(".glb") && !asset.prototypeOnly)).toHaveLength(0);
     expect(becomingHumanAssets.filter((asset) => asset.runtimePath.includes("/evidence/"))).toHaveLength(12);
     expect(becomingHumanAssets.filter((asset) => !asset.prototypeOnly && asset.runtimePath.includes("/chronicle/"))).toHaveLength(13);
+    expect(becomingHumanAssets.filter((asset) => !asset.prototypeOnly && asset.runtimePath.includes("/media/becoming-human/") && !asset.runtimePath.includes("/chronicle/") && !asset.runtimePath.includes("/evidence/") && !asset.runtimePath.includes("/objects/"))).toHaveLength(10);
     expect(becomingHumanAssets.some((asset) => asset.sourcePath.endsWith("becoming-human-v2-object-stage.blend"))).toBe(true);
     for (const asset of becomingHumanAssets) {
       expect(asset.commercialUse).toBe(true);
