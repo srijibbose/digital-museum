@@ -2,6 +2,7 @@ import type { ExhibitDefinition } from "@/content/exhibits";
 import { LivingAtlasPoster } from "./LivingAtlasPoster";
 import { ThirteenMinutesPoster } from "./ThirteenMinutesPoster";
 import { JetEnginePoster } from "./JetEnginePoster";
+import { BecomingHumanPoster } from "./BecomingHumanPoster";
 
 export function ExhibitPoster({ exhibit }: { exhibit: ExhibitDefinition }) {
   switch (exhibit.visualTheme.variant) {
@@ -11,6 +12,8 @@ export function ExhibitPoster({ exhibit }: { exhibit: ExhibitDefinition }) {
       return <ThirteenMinutesPoster />;
     case "jet-engine":
       return <JetEnginePoster />;
+    case "becoming-human":
+      return <BecomingHumanPoster />;
     default:
       return (
         <div className="poster-generic" aria-hidden="true">

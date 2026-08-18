@@ -24,9 +24,14 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
   it("keeps Living Atlas published but out of the featured lobby", () => {
     const featured = getFeaturedExhibits();
 
-    expect(featured.map((exhibit) => exhibit.slug)).toEqual(["thirteen-minutes"]);
+    expect(featured.map((exhibit) => exhibit.slug)).toEqual([
+      "becoming-human",
+      "jet-engine",
+      "thirteen-minutes",
+    ]);
     expect(isExhibitEnabled("living-atlas")).toBe(true);
     expect(getActiveWings(featured).map(({ wing }) => wing.title)).toEqual([
+      "Origins & Futures",
       "Systems & Machines",
     ]);
   });
@@ -52,9 +57,10 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
 
   it("aggregates active wings properly", () => {
     const wings = getActiveWings();
-    expect(wings.length).toBe(2);
+    expect(wings.length).toBe(3);
     const titles = wings.map((w) => w.wing.title);
     expect(titles).toContain("The Body");
     expect(titles).toContain("Systems & Machines");
+    expect(titles).toContain("Origins & Futures");
   });
 });

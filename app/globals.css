@@ -327,6 +327,96 @@ a {
     radial-gradient(circle at 50% 50%, #131b24, #07090c 75%);
 }
 
+.exhibit-card--becoming-human .exhibit-card__visual {
+  background:
+    radial-gradient(circle at 52% 48%, rgba(214, 90, 37, 0.22), transparent 9%),
+    radial-gradient(ellipse at 50% 50%, #1b1714, #080809 67%);
+}
+
+/* Becoming Human poster */
+.poster-becoming-human {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(238, 233, 220, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(238, 233, 220, 0.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+}
+
+.poster-bh__time {
+  position: absolute;
+  z-index: 4;
+  top: 52%;
+  right: 24px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(238, 233, 220, 0.48);
+  font-family: monospace;
+  font-size: 0.54rem;
+  letter-spacing: 0.08em;
+  transform: rotate(-90deg) translateY(-46%);
+}
+
+.poster-bh__time i { height: 1px; flex: 1; background: rgba(238, 233, 220, 0.28); }
+
+.poster-bh__artifact {
+  position: absolute;
+  top: 48%;
+  left: 52%;
+  width: min(73%, 430px);
+  aspect-ratio: 0.9;
+  transform: translate(-50%, -50%);
+}
+
+.poster-bh__core {
+  position: absolute;
+  z-index: 2;
+  top: 49%;
+  left: 50%;
+  width: 34%;
+  aspect-ratio: 0.86;
+  background: linear-gradient(125deg, #858079 0 14%, #2a2f32 15% 31%, #535a5c 32% 47%, #151719 48% 65%, #78746e 66%);
+  clip-path: polygon(31% 0, 79% 9%, 100% 46%, 74% 100%, 29% 92%, 0 67%, 7% 20%);
+  transform: translate(-50%, -50%) rotate(7deg);
+}
+
+.poster-bh__ring {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 76%;
+  height: 41%;
+  border: 1px solid rgba(238, 233, 220, 0.65);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotate(63deg);
+}
+
+.poster-bh__ring--two { width: 60%; height: 68%; border-color: rgba(211, 112, 68, 0.8); transform: translate(-50%, -50%) rotate(-18deg); }
+.poster-bh__ember { position: absolute; z-index: 4; top: 52%; left: 45%; width: 18px; height: 18px; border-radius: 50%; background: #ff5c25; box-shadow: 0 0 18px #ff5c25, 0 0 46px rgba(255, 86, 31, 0.55); }
+
+.poster-bh__strata { position: absolute; bottom: 2%; left: 50%; width: 72%; height: 27%; transform: translateX(-50%); }
+.poster-bh__strata i { position: absolute; right: calc(var(--level) * 3%); bottom: calc(var(--level) * 6px); left: calc(var(--level) * 3%); height: 36%; border: 1px solid rgba(238, 233, 220, 0.14); border-radius: 50%; background: #111214; }
+.poster-bh__strata i:nth-child(1) { --level: 0; }.poster-bh__strata i:nth-child(2) { --level: 1; }.poster-bh__strata i:nth-child(3) { --level: 2; }.poster-bh__strata i:nth-child(4) { --level: 3; border-color: rgba(238, 233, 220, 0.68); }.poster-bh__strata i:nth-child(5) { --level: 4; }.poster-bh__strata i:nth-child(6) { --level: 5; }
+
+.poster-bh__title {
+  position: absolute;
+  z-index: 5;
+  bottom: 68px;
+  left: 28px;
+  display: grid;
+  color: #f0ede6;
+  font-size: clamp(1.9rem, 3.8vw, 3.7rem);
+  font-weight: 400;
+  letter-spacing: -0.07em;
+  line-height: 0.78;
+}
+
+.poster-bh__title strong { color: #a5a19a; font-weight: 400; }
+
 .exhibit-card__meta-badges {
   position: relative;
   z-index: 3;
