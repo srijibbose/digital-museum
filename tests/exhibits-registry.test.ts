@@ -28,11 +28,14 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
       "becoming-human",
       "jet-engine",
       "thirteen-minutes",
+      "moon",
+      "earth",
     ]);
     expect(isExhibitEnabled("living-atlas")).toBe(true);
     expect(getActiveWings(featured).map(({ wing }) => wing.title)).toEqual([
       "Origins & Futures",
       "Systems & Machines",
+      "Space",
     ]);
   });
 
@@ -57,10 +60,11 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
 
   it("aggregates active wings properly", () => {
     const wings = getActiveWings();
-    expect(wings.length).toBe(3);
+    expect(wings.length).toBe(4);
     const titles = wings.map((w) => w.wing.title);
     expect(titles).toContain("The Body");
     expect(titles).toContain("Systems & Machines");
     expect(titles).toContain("Origins & Futures");
+    expect(titles).toContain("Space");
   });
 });
