@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Moon, Sun } from "lucide-react";
+import { Compass, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { atlas, getMode, getVisibleHotspots, getWorld } from "@/content/space/atlas";
@@ -120,7 +120,7 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
 
           <div className={styles.compass} aria-label="Orientation north">
             <span>N</span>
-            <i aria-hidden="true" />
+            <Compass size={56} strokeWidth={0.9} aria-hidden="true" />
           </div>
 
           <div className={styles.worldStage}>

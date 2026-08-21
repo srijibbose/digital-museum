@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { PlanetaryWorld, WorldId } from "@/lib/space/atlas-schema";
 import styles from "./atlas.module.css";
 
@@ -14,6 +14,14 @@ export function WorldIndex({
   onSelectWorld: (worldId: WorldId) => void;
 }) {
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
+
+  useEffect(() => {
+    const activeIndex = worlds.findIndex((world) => world.id === selectedWorldId);
+    const activeButton = buttons.current[activeIndex];
+    if (typeof activeButton?.scrollIntoView === "function") {
+      activeButton.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [selectedWorldId, worlds]);
 
   function moveFrom(index: number, delta: number) {
     const next = (index + delta + worlds.length) % worlds.length;

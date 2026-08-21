@@ -150,6 +150,17 @@
   display: grid;
   height: calc(100svh - 76px);
   grid-template-columns: clamp(176px, 13.6vw, 220px) minmax(0, 1fr) clamp(310px, 25.4vw, 390px);
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.instrumentGrid > * {
+  min-height: 0;
+}
+
+.instrumentGrid > div:last-child {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .sectionLabel {
@@ -349,18 +360,7 @@
   top: -18px;
 }
 
-.compass i,
-.compass i::before {
-  display: block;
-  width: 1px;
-  height: 48px;
-  background: var(--atlas-ink);
-  content: "";
-}
-
-.compass i::before {
-  transform: rotate(90deg);
-}
+.compass svg { color: var(--atlas-ink); }
 
 .worldStage {
   position: absolute;
@@ -926,25 +926,9 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 68px;
-  height: 68px;
-  border: 1px solid rgba(255, 255, 255, 0.68);
-  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.78);
   transform: translate(-50%, -50%);
 }
-
-.plateReticle::before,
-.plateReticle::after {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  background: rgba(255, 255, 255, 0.72);
-  content: "";
-  transform: translate(-50%, -50%);
-}
-
-.plateReticle::before { width: 92px; height: 1px; }
-.plateReticle::after { width: 1px; height: 92px; }
 
 .observationMeta {
   display: flex;
@@ -1080,7 +1064,7 @@
 
   .toolGroup button span,
   .dragHint span {
-    display: none;
+    font-size: 0.54rem;
   }
 
   .fieldGuide,

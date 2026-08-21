@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Check, CircleDot } from "lucide-react";
+import { ArrowUpRight, Check, CircleDot, Crosshair } from "lucide-react";
 import type {
   EvidenceStatus,
   PlanetaryWorld,
@@ -103,7 +103,7 @@ export function FieldGuide({
         <section className={styles.observationCard} aria-label={`${world.name} observation plate`}>
           <div className={styles.miniPlate}>
             <img src={world.assets.fallback} alt={`${world.name} scientific observation map`} />
-            <span className={styles.plateReticle} aria-hidden="true" />
+            <Crosshair className={styles.plateReticle} size={74} strokeWidth={0.8} aria-hidden="true" />
           </div>
           <div className={styles.observationMeta}>
             <span>Observation plate</span>
