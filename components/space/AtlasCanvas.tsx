@@ -10,7 +10,7 @@ import { comparisonRadii } from "@/lib/space/atlas-scale";
 import { latLonToVector3 } from "@/lib/space/geo";
 import { useOrientationReporter } from "@/lib/space/orientation-reporter";
 import { applyRadialRingUvs, SATURN_RING_TILT_RADIANS } from "@/lib/space/ring-geometry";
-import { SOLAR_DISC_U_SCALE, SOLAR_DISC_V_SCALE } from "@/lib/space/solar-projection";
+import { SOLAR_DISC_U_SCALE, SOLAR_DISC_VERTEX_SHADER, SOLAR_DISC_V_SCALE, solarFlowPulse } from "@/lib/space/solar-projection";
 import { surfaceMaterialKind } from "@/lib/space/surface-lighting";
 import {
   officialSaturnGlobeRadius,
@@ -127,20 +127,14 @@ function SolarSurfaceMaterial({
       blending={additive ? THREE.AdditiveBlending : THREE.NormalBlending}
       depthWrite={!additive}
       toneMapped={false}
-      vertexShader={`
-        varying vec3 vNormalObject;
-        void main() {
-          vNormalObject = normalize(normal);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `}
+      vertexShader={SOLAR_DISC_VERTEX_SHADER}
       fragmentShader={`
         uniform sampler2D surfaceMap;
         uniform vec3 tint;
         uniform float surfaceOpacity;
-        varying vec3 vNormalObject;
+        varying vec3 vNormalView;
         void main() {
-          vec3 n = normalize(vNormalObject);
+          vec3 n = normalize(vNormalView);
           vec2 solarUv = vec2(
             0.5 + n.x * ${SOLAR_DISC_U_SCALE.toFixed(3)},
             0.5 - n.y * ${SOLAR_DISC_V_SCALE.toFixed(3)}
@@ -155,43 +149,26 @@ function SolarSurfaceMaterial({
 
 function SolarFlow({ texture, radius, enabled }: { texture: THREE.Texture; radius: number; enabled: boolean }) {
   const flow = useRef<THREE.Mesh>(null);
-  const prominences = useRef<THREE.Group>(null);
 
-  useFrame((state, delta) => {
-    if (!enabled) return;
-    if (flow.current) flow.current.rotation.y += delta * 0.035;
-    if (prominences.current) {
-      prominences.current.rotation.y -= delta * 0.06;
-      const pulse = 1 + Math.sin(state.clock.elapsedTime * 0.9) * 0.035;
-      prominences.current.scale.setScalar(pulse);
-    }
+  useFrame((state) => {
+    if (!flow.current) return;
+
+    const appearance = solarFlowPulse(enabled ? state.clock.elapsedTime : 0);
+    flow.current.scale.setScalar(appearance.scale);
+    const material = flow.current.material as THREE.ShaderMaterial;
+    material.uniforms.surfaceOpacity.value = appearance.opacity;
   });
 
   return (
     <>
       <mesh ref={flow} scale={1.004}>
         <sphereGeometry args={[radius, 128, 84]} />
-        <SolarSurfaceMaterial texture={texture} tint="#ffbb73" opacity={0.14} additive />
+        <SolarSurfaceMaterial texture={texture} tint="#ffbb73" opacity={0.12} additive />
       </mesh>
       <mesh scale={1.055}>
         <sphereGeometry args={[radius, 96, 64]} />
         <meshBasicMaterial color="#ff6a25" transparent opacity={0.11} side={THREE.BackSide} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
       </mesh>
-      <group ref={prominences}>
-        {[
-          { position: [0.84, 0.42, 0.28], rotation: [0.2, 0.85, -0.38] },
-          { position: [-0.7, -0.48, 0.46], rotation: [-0.34, -0.72, 0.72] },
-        ].map((prominence, index) => (
-          <mesh
-            key={index}
-            position={prominence.position.map((value) => value * radius) as [number, number, number]}
-            rotation={prominence.rotation as [number, number, number]}
-          >
-            <torusGeometry args={[radius * 0.17, radius * 0.012, 10, 64, Math.PI * 1.45]} />
-            <meshBasicMaterial color={index === 0 ? "#ff7a2d" : "#ffb15c"} transparent opacity={0.68} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
-          </mesh>
-        ))}
-      </group>
     </>
   );
 }
