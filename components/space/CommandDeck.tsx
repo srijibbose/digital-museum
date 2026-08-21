@@ -2,6 +2,8 @@
 
 import {
   Columns2,
+  Pause,
+  Play,
   RotateCcw,
   ScanSearch,
   ZoomIn,
@@ -17,18 +19,25 @@ export function CommandDeck({
   world,
   activeModeId,
   compareOpen,
+  motionEnabled,
+  reducedMotion,
   onSelectMode,
   onCameraCommand,
   onToggleCompare,
+  onToggleMotion,
 }: {
   world: PlanetaryWorld;
   activeModeId: string;
   compareOpen: boolean;
+  motionEnabled: boolean;
+  reducedMotion: boolean;
   onSelectMode: (modeId: string) => void;
   onCameraCommand: (command: CameraAction) => void;
   onToggleCompare: () => void;
+  onToggleMotion: () => void;
 }) {
   const activeMode = world.modes.find((mode) => mode.id === activeModeId) ?? world.modes[0];
+  const explainsWavelength = world.id === "sun" && ["171", "193", "304"].includes(activeMode.id);
 
   return (
     <div className={styles.commandWrap}>
@@ -59,6 +68,19 @@ export function CommandDeck({
             <RotateCcw size={20} aria-hidden="true" />
             <span>Reset</span>
           </button>
+          {activeMode.motion !== "none" ? (
+            <button
+              type="button"
+              onClick={onToggleMotion}
+              aria-label={motionEnabled ? "Turn motion off" : "Turn motion on"}
+              aria-pressed={motionEnabled}
+              disabled={reducedMotion}
+              title={reducedMotion ? "Motion is disabled by your reduced-motion preference." : undefined}
+            >
+              {motionEnabled ? <Pause size={20} aria-hidden="true" /> : <Play size={20} aria-hidden="true" />}
+              <span>Motion</span>
+            </button>
+          ) : null}
         </div>
 
         <div className={styles.modeRail} role="tablist" aria-label={`${world.name} viewing modes`}>
@@ -78,11 +100,28 @@ export function CommandDeck({
         </div>
       </div>
 
-      <p className={styles.modeDescription} aria-live="polite">
-        <strong>{activeMode.label} mode</strong>
-        <span>{activeMode.description}</span>
-        <em>{activeMode.evidence}</em>
-      </p>
+      <div className={styles.modeExplanation} aria-live="polite">
+        <p>
+          <strong>What changed</strong>
+          <span>{activeMode.visibleChange}</span>
+          <em>{activeMode.evidence}</em>
+        </p>
+        {activeMode.legend.length > 0 ? (
+          <ul className={styles.modeLegend} aria-label={`${activeMode.label} legend`}>
+            {activeMode.legend.map((item) => (
+              <li key={`${item.label}-${item.detail}`}>
+                {item.color ? <i style={{ background: item.color }} aria-hidden="true" /> : null}
+                <span><strong>{item.label}</strong>{item.detail}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        {explainsWavelength ? (
+          <small className={styles.wavelengthNote}>
+            Å is an ångström, a unit of wavelength equal to one ten-billionth of a metre. These are extreme-ultraviolet observations, not natural-colour views.
+          </small>
+        ) : null}
+      </div>
     </div>
   );
 }

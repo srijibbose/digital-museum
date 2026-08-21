@@ -1,84 +1,56 @@
-# Thirteen Minutes — Design QA
+# Atlas of Worlds design QA
 
 ## Scope
 
-- Source of visual truth: `docs/superpowers/specs/assets/thirteen-minutes-descent-window-reference.png`
-- Product requirements: `loupe-exhibit-thirteen-minutes.md`
-- Route: `/exhibits/thirteen-minutes`
-- Final implementation state: Program Alarm, live WebGL, dark cockpit theme
+- Source direction: `C:\Users\Srijib\.codex\generated_images\01a023a7-0224-7a11-909e-cdfd04631913\exec-665523d3-bc33-46e9-9c6b-1c9101de1986.png`
+- Saturn source direction: `C:\Users\Srijib\.codex\generated_images\01a023a7-0224-7a11-909e-cdfd04631913\exec-8b39e18f-5729-401a-b7b0-3681f0bd950b.png`
+- Implementation route: `http://127.0.0.1:3000/exhibits/atlas-of-worlds`
+- Implementation code: `components/space`, `content/space`, and `lib/space`
+- Desktop viewport: 1280 × 720 CSS pixels at DPR 1.25 in the Codex in-app browser
+- Mobile viewport: 390 × 844 CSS pixels at DPR 1 in the Codex in-app browser
 
-## Evidence
+## Images and density
 
-- Source/implementation full comparison: `.design-audit/thirteen-minutes/15-final-full-comparison.png`
-- Focused model + HUD comparison: `.design-audit/thirteen-minutes/16-final-model-hud-comparison.png`
-- Focused transcript comparison: `.design-audit/thirteen-minutes/17-final-transcript-comparison.png`
-- Final production desktop frame: `.design-audit/thirteen-minutes/22-program-alarm-production-final.png`
-- Final production mobile frame: `.design-audit/thirteen-minutes/20-mobile-timeline-production.png`
-- Blender model preview: `.design-audit/thirteen-minutes/09-blender-model-preview.webp`
+- The stage uses locally delivered NASA, USGS, LRO, MOLA, SDO, Cassini, Voyager, Magellan, and Earth-observation assets; visible feature media is WebP encoded and accompanied by source, credit, evidence, and processing metadata.
+- Saturn uses the bundled official NASA GLB, including the authored diffuse map and native ring meshes, rather than a stretched portrait or synthetic CSS treatment.
+- Desktop density retains one primary globe, a compact feature rail, a bottom instrument deck, and one Field Guide. Mobile collapses these into a single vertical reading order while preserving the horizontal world and mode rails.
 
-The source was generated at 1487×1058. The app browser's normal desktop surface is 1280×720; the earlier same-state comparisons used the 1472×850 preview surface. To make the full comparison like-for-like, the source was normalized with a symmetric 15 px horizontal crop and a 208 px bottom crop. The focused transcript comparison uses equal bottom-aligned 280 px crops; the model/HUD comparison uses equal 1000×700 crops.
+## Verified states and evidence
 
-## Findings and iterations
+- Full desktop / Sun photosphere: `.design-audit/atlas-of-worlds-refinement/implementation-sun-final2.png`
+- Focused Sun feature: `.design-audit/atlas-of-worlds-refinement/implementation-sun-feature-focused-pass2.png`
+- Earth survey lighting: `.design-audit/atlas-of-worlds-refinement/implementation-earth-survey-pass3.png`
+- Mercury temperature and missions: `.design-audit/atlas-of-worlds-refinement/implementation-mercury-temperature.png`, `.design-audit/atlas-of-worlds-refinement/implementation-mercury-missions.png`
+- Lunar topography with displaced LOLA relief: `.design-audit/atlas-of-worlds-refinement/implementation-moon-topography-final.png`
+- Focused Jupiter Great Red Spot: `.design-audit/atlas-of-worlds-refinement/implementation-jupiter-storm-mode-focus-final.png`
+- Saturn rings and focused polar feature: `.design-audit/atlas-of-worlds-refinement/implementation-saturn-rings-final2.png`, `.design-audit/atlas-of-worlds-refinement/implementation-saturn-hexagon-focused-final3.png`
+- Uranus calibrated rotation-axis guide: `.design-audit/atlas-of-worlds-refinement/implementation-uranus-axial-tilt-final.png`
+- Mobile Neptune selection and centered rail: `.design-audit/atlas-of-worlds-refinement/implementation-mobile-neptune-centered-390x844-final.png`
+- Reference comparisons: `.design-audit/atlas-of-worlds-refinement/comparison-primary-final.png`, `.design-audit/atlas-of-worlds-refinement/comparison-saturn-final.png`
+- Scientific feature media contact sheet: `.design-audit/atlas-of-worlds-refinement/feature-media-contact-sheet.png`
 
-1. P1 — the first 3D pass read as a primitive stack instead of Eagle. Rebuilt the ascent shell in Blender as an irregular faceted cabin, added foil facets, strengthened the dish/ladder silhouette, and re-exported the GLB and poster.
-2. P2 — persistent exhibit identity was missing inside the immersive timeline. Added the Loupe/Thirteen Minutes identity block and tuned its compact desktop breakpoint.
-3. P2 — transcript copy could collide with persistent HUD elements on short desktop and mobile viewports. Added short-height transcript separation, a compact computer-load panel, and a mobile HUD occlusion mask.
-4. P2 — the 3D bundle could initialize before the visitor reached the timeline. Added intersection-gated loading; first paint now contains the complete hero and zero canvases.
-5. P2 — a rail jump inherited the global smooth-scroll rule and could drift into the next beat. Forced a deterministic jump and added regression coverage.
-6. P2 — restoring a mid-timeline scroll position could initialize a stale beat. The active beat now synchronizes from the section containing the viewport center on every smooth-scroll update.
+## Comparison history
 
-After the final iteration there are no open P0, P1, or P2 visual findings. The custom model remains intentionally flatter and more mechanical than the reference image, matching the brief's low-poly Blender direction and the performance budget rather than imitating a photoreal scan.
+1. Fixed the locale-dependent server/client number mismatch that caused hydration errors.
+2. Replaced the Sun's invalid equirectangular sampling with a full-disc observation projection; the black hemisphere disappeared and solar flow/prominence motion remained available behind the motion toggle.
+3. Reduced selected labels from screen-centered overlays to compact surface anchors, backed by a persistent feature rail and detailed Field Guide media.
+4. Made Survey lighting genuinely unlit for full-surface inspection, resolving Earth's overly dark default while retaining Natural lighting for relief.
+5. Separated Mercury temperature and mission behaviors, then calibrated Jupiter's Great Red Spot marker against the delivered cylindrical observation map.
+6. Replaced Saturn's broken portrait projection with NASA's native Saturn-and-rings GLB, corrected framing and material transparency, and made focus calculations respect authored axial and presentation rotations.
+7. Verified the responsive world rail at 390 × 844, centered text beneath thumbnails, kept horizontal scrolling inside the rail, and added enough edge padding to center the first and last worlds.
+8. Hardened the final interaction contract after independent review: orientation now reports only on mount or an OrbitControls change, a mode switch invalidates stale feature focus, Mercury's inferred temperature layer hides unrelated lighting controls, and Neptune no longer advertises an undelivered ring layer.
+9. Added a calibrated, depth-visible rotation axis and equatorial reference guide to Uranus's axial-tilt mode so the 97.77-degree geometry is directly legible in the rendered model.
+10. Made Moon Topography and Mars Terrain physically distinct from their Surface modes through authored bump strength and real geometry displacement, including under Survey lighting.
+11. Made Jupiter and Neptune storm modes immediately focus their authored vortex observations on entry; marker visibility now follows each mode's authored feature contract.
 
-## Functional and responsive checks
+## Findings
 
-- Progress rail, previous/next, Home/End/arrow navigation, inspect/escape, planned-vs-actual comparison, and both 1202 computer-detail controls exercised in the production browser.
-- Forward scroll changed Approach → Program Alarm; backward scroll returned Program Alarm → Approach.
-- 390×844 mobile viewport: no horizontal overflow; HUD, rail, transcript, model, computer load, and bottom controls remain readable and separated.
-- Server-rendered/no-JS HTML contains the hook, all six walkthrough beats, every quote, and static per-beat telemetry; it contains no canvas.
-- Reduced-motion and missing-model paths are covered by executable tests and show static content/poster fallbacks.
-- Final production console: zero errors. The only warnings are an upstream React Three Fiber/Three.js `THREE.Clock` deprecation notice.
-- Final automated result: 14 test files, 55 tests passed; optimized Next.js build and TypeScript validation passed.
+- P1 visual defects: none.
+- P2 visual defects: none.
+- Core navigation, world selection, viewing modes, light policies, motion controls, feature selection, zoom/reset/compare controls, Field Guide media, and keyboard world navigation were exercised.
+- Automated verification passed: 35 test files / 144 tests, TypeScript `--noEmit`, Next.js 16.3 production build, and Git whitespace validation.
+- The only browser-console entry is Three.js's upstream `THREE.Clock` deprecation warning emitted from a dependency chunk; there are no application errors or hydration warnings in the fresh verified state.
 
-final result: passed
+## Final result
 
----
-
-# Atlas of Worlds — Design QA
-
-## Scope
-
-- Visual target: `.design-audit/atlas-of-worlds/target.png`
-- Route: `/exhibits/atlas-of-worlds?world=moon`
-- Reference state: Moon, Surface, light theme
-- Matched comparison viewport: 1490×1058
-- Production responsive checkpoints: 1440×900 and 390×844
-
-## Evidence
-
-- Approved target: `.design-audit/atlas-of-worlds/target.png`
-- Same-viewport implementation: `.design-audit/atlas-of-worlds/implementation-matched.png`
-- Production desktop frame: `.design-audit/atlas-of-worlds/implementation.png`
-- Comparison layout: `.design-audit/atlas-of-worlds/comparison.html`
-
-The approved target and final implementation were inspected together at the same Moon/light/surface state. The final pass aligns the major geometry: 76 px museum header, compact World Index, approximately 620 px central specimen, persistent right Field Guide, lighting controls, and the bottom scientific command deck.
-
-## Findings and iterations
-
-1. P1 — the desktop grid's implicit row expanded past the instrument height, hiding most of the command deck below the first viewport. Added a bounded grid row and explicit minimum-height/overflow ownership; the stage and guide now end exactly at the viewport edge.
-2. P1 — the initial mobile World Index began at the Sun even when the Moon was selected, leaving the active world partially cut off. The selected world now scrolls to the horizontal center on load and keyboard/button selection.
-3. P2 — the first desktop specimen was oversized at tall viewport ratios and pushed lighting and commands below the visual target. The authored stage is now capped at 620 px and the command/light baselines match the target comparison.
-4. P2 — compact breakpoints hid primary tool labels. Labels now remain visible under their Lucide icons at 390 px.
-5. P2 — early compass and observation-reticle marks used CSS geometry. Replaced both with the product's installed Lucide icon system.
-
-There are no open P0, P1, or P2 findings. Two intentional P3 differences remain: the default Field Guide starts with a truthful world overview instead of preselecting a feature from an inactive mode, and the Moon retains the warmer natural LROC colour product rather than forcing the grayscale treatment in the concept image.
-
-## Functional and responsive checks
-
-- World selection, world-specific mode switching, hotspot-to-Field-Guide detail, URL synchronization, dark theme, comparison-world selection, normalized/relative scale, light azimuth/elevation, zoom, reset, and arrow-key navigation were exercised.
-- 1440×900 desktop: stage, World Index, command deck, and Field Guide are simultaneously visible; no first-viewport clipping.
-- 390×844 mobile: selected world centered, horizontal world and mode rails usable, all primary tool labels visible, complete Field Guide follows the stage, and horizontal overflow is zero.
-- Browser console: zero errors. The only warning is the upstream React Three Fiber/Three.js `THREE.Clock` deprecation notice.
-- Automated result before final build: 28 test files, 113 tests passed; TypeScript validation passed.
-- Optimized Next.js production build passed with the unified dynamic route and permanent Earth/Moon redirects.
-
-final result: passed
+passed

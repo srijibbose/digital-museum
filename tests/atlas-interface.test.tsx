@@ -1,9 +1,74 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AtlasExperience } from "@/components/space/AtlasExperience";
 
 describe("Atlas of Worlds instrument shell", () => {
+  it("uses a clear Loupe home identity and explains the active scientific view", () => {
+    render(<AtlasExperience initialWorld="sun" />);
+
+    expect(screen.getByRole("link", { name: /loupe museum home/i })).toHaveAttribute("href", "/");
+    expect(screen.getByText("Atlas of Worlds")).not.toHaveAttribute("href");
+    expect(screen.getByText(/self-luminous visible surface/i)).toBeInTheDocument();
+    expect(screen.queryByRole("slider", { name: /sunlight/i })).not.toBeInTheDocument();
+  });
+
+  it("keeps selectable visible features in an edge rail instead of static globe labels", async () => {
+    const user = userEvent.setup();
+    render(<AtlasExperience initialWorld="sun" />);
+
+    const rail = screen.getByRole("navigation", { name: /visible features/i });
+    const feature = within(rail).getByRole("button", { name: /active region/i });
+    expect(screen.queryByRole("button", { name: /explore active region/i })).not.toBeInTheDocument();
+
+    await user.click(feature);
+    expect(feature).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("heading", { name: /active region/i })).toBeInTheDocument();
+  });
+
+  it("offers Survey light for Earth and angle controls only where they are scientifically useful", async () => {
+    const user = userEvent.setup();
+    render(<AtlasExperience initialWorld="earth" />);
+
+    const survey = screen.getByRole("button", { name: /survey light/i });
+    expect(survey).toHaveAttribute("aria-pressed", "true");
+    expect(screen.queryByRole("slider", { name: /sunlight elevation/i })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /^moon/i }));
+    await user.click(screen.getByRole("tab", { name: /^lighting$/i }));
+    expect(screen.getByRole("slider", { name: /sunlight elevation/i })).toBeInTheDocument();
+  });
+
+  it("explains extreme-ultraviolet wavelength modes and exposes authored motion", async () => {
+    const user = userEvent.setup();
+    render(<AtlasExperience initialWorld="sun" />);
+
+    await user.click(screen.getByRole("tab", { name: /171 å/i }));
+    expect(screen.getByText(/ångström/i)).toBeInTheDocument();
+    expect(screen.getByText(/about 0.6 million k/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /turn motion off/i })).toBeInTheDocument();
+  });
+
+  it("shows feature-specific NASA media in the Field Guide", async () => {
+    const user = userEvent.setup();
+    render(<AtlasExperience initialWorld="earth" />);
+
+    const rail = screen.getByRole("navigation", { name: /visible features/i });
+    await user.click(within(rail).getByRole("button", { name: /himalaya/i }));
+    expect(screen.getByRole("img", { name: /landsat view of mount everest/i })).toHaveAttribute(
+      "src",
+      "/media/space/atlas/features/earth-himalaya.webp",
+    );
+
+    await user.click(screen.getByRole("button", { name: /^jupiter/i }));
+    const jupiterRail = screen.getByRole("navigation", { name: /visible features/i });
+    await user.click(within(jupiterRail).getByRole("button", { name: /great red spot/i }));
+    expect(screen.getByRole("img", { name: /juno.*great red spot/i })).toHaveAttribute(
+      "src",
+      "/media/space/atlas/features/jupiter-great-red-spot.webp",
+    );
+  });
+
   it("adapts the scientific mode rail to the selected world", async () => {
     const user = userEvent.setup();
     render(<AtlasExperience initialWorld="moon" />);
@@ -25,7 +90,8 @@ describe("Atlas of Worlds instrument shell", () => {
     render(<AtlasExperience initialWorld="moon" />);
 
     await user.click(screen.getByRole("tab", { name: /missions/i }));
-    await user.click(screen.getByRole("button", { name: /explore apollo 11/i }));
+    const rail = screen.getByRole("navigation", { name: /visible features/i });
+    await user.click(within(rail).getByRole("button", { name: /apollo 11/i }));
 
     const guide = screen.getByRole("complementary", { name: /field guide/i });
     expect(within(guide).getByRole("heading", { name: /apollo 11/i })).toBeInTheDocument();
@@ -66,5 +132,26 @@ describe("Atlas of Worlds instrument shell", () => {
       "true",
     );
     expect(screen.getByRole("heading", { name: /^mars$/i })).toBeInTheDocument();
+  });
+
+  it("centres mobile world selection inside its own rail without moving the page", async () => {
+    const user = userEvent.setup();
+    const scrollTo = vi.fn();
+    const scrollIntoView = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, "scrollTo", {
+      configurable: true,
+      value: scrollTo,
+    });
+    Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
+      configurable: true,
+      value: scrollIntoView,
+    });
+
+    render(<AtlasExperience initialWorld="earth" />);
+    const worldIndex = screen.getByRole("navigation", { name: /world index/i });
+    await user.click(within(worldIndex).getByRole("button", { name: /^neptune/i }));
+
+    expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: "smooth" }));
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 });

@@ -4,6 +4,7 @@ import type { WorldId } from "@/lib/space/atlas-schema";
 import type { ComparisonScalePolicy } from "@/lib/space/atlas-scale";
 
 export type AtlasTheme = "light" | "dark";
+export type LightingMode = "natural" | "survey";
 export type CameraCommandType = "idle" | "zoom-in" | "zoom-out" | "reset";
 
 export type AtlasState = {
@@ -14,8 +15,12 @@ export type AtlasState = {
   theme: AtlasTheme;
   reducedMotion: boolean;
   simplifiedView: boolean;
+  lightingMode: LightingMode;
   lightAzimuth: number;
   lightElevation: number;
+  motionEnabled: boolean;
+  focusCommand: { hotspotId: string | null; sequence: number };
+  orientation: { latitude: number; longitude: number };
   compareOpen: boolean;
   compareWorldId: WorldId;
   compareScalePolicy: ComparisonScalePolicy;
@@ -27,7 +32,12 @@ export type AtlasState = {
   setTheme: (theme: AtlasTheme) => void;
   setReducedMotion: (value: boolean) => void;
   setSimplifiedView: (value: boolean) => void;
+  setLightingMode: (mode: LightingMode) => void;
   setLight: (azimuth: number, elevation: number) => void;
+  toggleMotion: () => void;
+  focusHotspot: (hotspotId: string) => void;
+  clearFocus: () => void;
+  setOrientation: (latitude: number, longitude: number) => void;
   openCompare: () => void;
   closeCompare: () => void;
   setCompareWorld: (worldId: WorldId) => void;
@@ -62,8 +72,12 @@ export function createAtlasStore(
     theme: "light",
     reducedMotion: false,
     simplifiedView: false,
+    lightingMode: initialWorld === "earth" ? "survey" : "natural",
     lightAzimuth: 34,
     lightElevation: 28,
+    motionEnabled: true,
+    focusCommand: { hotspotId: null, sequence: 0 },
+    orientation: { latitude: 0, longitude: 0 },
     compareOpen: false,
     compareWorldId: alternateWorld(initialWorld),
     compareScalePolicy: "normalized",
@@ -77,6 +91,12 @@ export function createAtlasStore(
         worldId,
         activeModeId: world.defaultModeId,
         selectedHotspotId: null,
+        lightingMode: worldId === "earth" ? "survey" : "natural",
+        focusCommand: {
+          hotspotId: null,
+          sequence: state.focusCommand.sequence + 1,
+        },
+        orientation: { latitude: 0, longitude: 0 },
         compareWorldId,
         cameraCommand: { type: "reset", sequence: state.cameraCommand.sequence + 1 },
       }));
@@ -87,13 +107,37 @@ export function createAtlasStore(
       const mode = world.modes.find((item) => item.id === modeId);
       if (!mode) return;
       const selectedHotspotId = get().selectedHotspotId;
+      const visibleHotspots = getVisibleHotspots(world, modeId);
       const remainsVisible = selectedHotspotId
-        ? getVisibleHotspots(world, modeId).some((hotspot) => hotspot.id === selectedHotspotId)
+        ? visibleHotspots.some((hotspot) => hotspot.id === selectedHotspotId)
         : true;
-      set({
+      const entryFocusHotspotId = mode.focusHotspotId && visibleHotspots.some(
+        (hotspot) => hotspot.id === mode.focusHotspotId,
+      )
+        ? mode.focusHotspotId
+        : null;
+      set((state) => ({
         activeModeId: modeId,
-        selectedHotspotId: remainsVisible ? selectedHotspotId : null,
-      });
+        selectedHotspotId: entryFocusHotspotId ?? (remainsVisible ? selectedHotspotId : null),
+        ...(entryFocusHotspotId || !remainsVisible
+          ? {
+              focusCommand: {
+                hotspotId: entryFocusHotspotId,
+                sequence: state.focusCommand.sequence + 1,
+              },
+            }
+          : {}),
+        ...(entryFocusHotspotId
+          ? {
+              visitedByWorld: {
+                ...state.visitedByWorld,
+                [state.worldId]: state.visitedByWorld[state.worldId].includes(entryFocusHotspotId)
+                  ? state.visitedByWorld[state.worldId]
+                  : [...state.visitedByWorld[state.worldId], entryFocusHotspotId],
+              },
+            }
+          : {}),
+      }));
     },
 
     selectHotspot: (hotspotId) => {
@@ -116,12 +160,51 @@ export function createAtlasStore(
 
     toggleTheme: () => set({ theme: get().theme === "light" ? "dark" : "light" }),
     setTheme: (theme) => set({ theme }),
-    setReducedMotion: (reducedMotion) => set({ reducedMotion }),
+    setReducedMotion: (reducedMotion) =>
+      set({
+        reducedMotion,
+        ...(reducedMotion ? { motionEnabled: false } : {}),
+      }),
     setSimplifiedView: (simplifiedView) => set({ simplifiedView }),
+    setLightingMode: (lightingMode) => set({ lightingMode }),
     setLight: (azimuth, elevation) =>
       set({
         lightAzimuth: ((azimuth % 360) + 360) % 360,
         lightElevation: Math.max(-90, Math.min(90, elevation)),
+      }),
+    toggleMotion: () => {
+      if (get().reducedMotion) return;
+      set({ motionEnabled: !get().motionEnabled });
+    },
+    focusHotspot: (hotspotId) => {
+      const worldId = get().worldId;
+      const world = getWorld(worldId);
+      if (!world.hotspots.some((hotspot) => hotspot.id === hotspotId)) return;
+      get().selectHotspot(hotspotId);
+      set((state) => ({
+        focusCommand: {
+          hotspotId,
+          sequence: state.focusCommand.sequence + 1,
+        },
+      }));
+    },
+    clearFocus: () =>
+      set((state) => ({
+        selectedHotspotId: null,
+        focusCommand: {
+          hotspotId: null,
+          sequence: state.focusCommand.sequence + 1,
+        },
+      })),
+    setOrientation: (latitude, longitude) =>
+      set({
+        orientation: {
+          latitude: Math.max(-90, Math.min(90, latitude)),
+          longitude:
+            longitude >= -180 && longitude <= 180
+              ? longitude
+              : ((longitude + 180) % 360 + 360) % 360 - 180,
+        },
       }),
     openCompare: () => set({ compareOpen: true }),
     closeCompare: () => set({ compareOpen: false }),

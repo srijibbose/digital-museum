@@ -1,4 +1,4 @@
-import type { TextureAsset, WorldId } from "@/lib/space/atlas-schema";
+import type { HotspotMedia, TextureAsset, WorldId } from "@/lib/space/atlas-schema";
 
 export type AtlasAssetKey =
   | "sun-color"
@@ -32,6 +32,114 @@ export type AtlasModelAsset = {
   sourceUrl: string;
   credit: string;
   processing: string;
+};
+
+export type AtlasFeatureMediaKey =
+  | "sun-active-region"
+  | "mercury-caloris"
+  | "venus-maat-mons"
+  | "earth-himalaya"
+  | "moon-apollo-11"
+  | "mars-olympus-mons"
+  | "jupiter-great-red-spot"
+  | "saturn-hexagon"
+  | "uranus-rings"
+  | "neptune-great-dark-spot";
+
+const featurePath = (key: AtlasFeatureMediaKey) =>
+  `/media/space/atlas/features/${key}.webp`;
+
+export const atlasFeatureMedia: Record<AtlasFeatureMediaKey, HotspotMedia> = {
+  "sun-active-region": {
+    path: featurePath("sun-active-region"),
+    alt: "Solar Dynamics Observatory view of active region 13615 flaring on the Sun",
+    caption: "SDO/AIA 131 Å view of an M7.4 flare erupting from active region 13615 on 20 March 2024.",
+    credit: "NASA/GSFC/Solar Dynamics Observatory",
+    sourceUrl: "https://svs.gsfc.nasa.gov/5244/",
+    evidence: "processed",
+    processing: "NASA print frame resized and encoded as WebP; the source point-spread-function correction is retained.",
+  },
+  "mercury-caloris": {
+    path: featurePath("mercury-caloris"),
+    alt: "MESSENGER enhanced-color mosaic of Mercury's Caloris Basin",
+    caption: "MESSENGER enhanced-color mosaic showing the lava-flooded Caloris Basin and excavated low-reflectance material.",
+    credit: "NASA/JHUAPL/Carnegie Institution of Washington",
+    sourceUrl: "https://science.nasa.gov/photojournal/all-about-that-basin/",
+    evidence: "processed",
+    processing: "Official enhanced-color mosaic resized and encoded as WebP without additional recoloring.",
+  },
+  "venus-maat-mons": {
+    path: featurePath("venus-maat-mons"),
+    alt: "Magellan radar and altimetry perspective view of Maat Mons on Venus",
+    caption: "Magellan radar and altimetry reconstruction of Maat Mons; the scientific source exaggerates vertical relief ten times.",
+    credit: "NASA/JPL",
+    sourceUrl: "https://science.nasa.gov/photojournal/venus-3-d-perspective-view-of-maat-mons/",
+    evidence: "processed",
+    processing: "Official simulated-color perspective resized and encoded as WebP; the source's 10× vertical exaggeration is disclosed.",
+  },
+  "earth-himalaya": {
+    path: featurePath("earth-himalaya"),
+    alt: "Landsat view of Mount Everest and the surrounding Himalaya mountain range",
+    caption: "Landsat 7 view of Everest, Lhotse, and Nuptse, sharpened with panchromatic data by NASA Earth Observatory.",
+    credit: "NASA Earth Observatory / Landsat 7 team",
+    sourceUrl: "https://science.nasa.gov/earth/earth-observatory/mt-everest/",
+    evidence: "processed",
+    processing: "Official NASA Earth Observatory composite resized and encoded as WebP; its near-infrared enhancement is retained.",
+  },
+  "moon-apollo-11": {
+    path: featurePath("moon-apollo-11"),
+    alt: "Lunar Reconnaissance Orbiter image of the Apollo 11 landing site",
+    caption: "LRO high-noon view of Tranquility Base, including the Apollo 11 site and nearby West Crater.",
+    credit: "NASA/GSFC/Arizona State University",
+    sourceUrl: "https://science.nasa.gov/photojournal/high-noon-at-tranquility-base/",
+    evidence: "observed",
+    processing: "Official LROC JPEG resized and encoded as WebP without scientific alteration.",
+  },
+  "mars-olympus-mons": {
+    path: featurePath("mars-olympus-mons"),
+    alt: "Mariner 9 image of the nested central calderas of Olympus Mons on Mars",
+    caption: "Mariner 9 view of Olympus Mons's central caldera, where the youngest collapse pit is about 30 kilometres across.",
+    credit: "NASA/JPL-Caltech",
+    sourceUrl: "https://science.nasa.gov/resource/mariner-4-image-of-the-central-caldera-of-olympus-mons-on-mars/",
+    evidence: "observed",
+    processing: "Official mission image resized and encoded as WebP without additional annotation.",
+  },
+  "jupiter-great-red-spot": {
+    path: featurePath("jupiter-great-red-spot"),
+    alt: "Juno close-up mosaic of Jupiter's Great Red Spot and turbulent wake",
+    caption: "Two JunoCam images mosaicked to resolve the Great Red Spot and the turbulent flows immediately west of it.",
+    credit: "NASA/JPL-Caltech/SwRI/MSSS; processing Kevin M. Gill, CC BY",
+    sourceUrl: "https://science.nasa.gov/photojournal/the-great-red-spot/",
+    evidence: "processed",
+    processing: "Official enhanced-color JunoCam mosaic resized and encoded as WebP without further color adjustment.",
+  },
+  "saturn-hexagon": {
+    path: featurePath("saturn-hexagon"),
+    alt: "Cassini false-color polar view of Saturn's six-sided north-polar jet stream",
+    caption: "Cassini's highest-resolution complete polar view of Saturn's hexagon, assembled from ultraviolet through near-infrared filters.",
+    credit: "NASA/JPL-Caltech/SSI/Hampton University",
+    sourceUrl: "https://science.nasa.gov/photojournal/in-full-view-saturns-streaming-hexagon/",
+    evidence: "processed",
+    processing: "Official multi-filter false-color frame resized and encoded as WebP without additional recoloring.",
+  },
+  "uranus-rings": {
+    path: featurePath("uranus-rings"),
+    alt: "Voyager 2 high-phase observation of fine dust lanes in the Uranus ring system",
+    caption: "Voyager 2's 96-second high-phase exposure reveals fine dust lanes distributed through Uranus's rings.",
+    credit: "NASA/JPL",
+    sourceUrl: "https://science.nasa.gov/photojournal/uranus-ring-system/",
+    evidence: "observed",
+    processing: "Official Voyager observation resized and encoded as WebP; source exposure streaks are retained.",
+  },
+  "neptune-great-dark-spot": {
+    path: featurePath("neptune-great-dark-spot"),
+    alt: "Voyager 2 full-disk view of Neptune showing the Great Dark Spot and companion clouds",
+    caption: "Voyager 2 green-and-orange-filter composite showing the Great Dark Spot, bright companion cloud, and Scooter feature.",
+    credit: "NASA/JPL",
+    sourceUrl: "https://science.nasa.gov/photojournal/neptune-full-disk-view/",
+    evidence: "processed",
+    processing: "Official two-filter Voyager composite resized and encoded as WebP without additional recoloring.",
+  },
 };
 
 const path = (name: AtlasAssetKey) => `/media/space/atlas/${name}.webp`;

@@ -1,25 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { atlas, getMode, getVisibleHotspots, getWorld } from "@/content/space/atlas";
 import type { WorldId } from "@/lib/space/atlas-schema";
 import { createAtlasStore } from "@/lib/space/atlas-store";
+import { formatAtlasInteger } from "@/lib/space/number-format";
 import { CommandDeck } from "./CommandDeck";
 import { CompareTray } from "./CompareTray";
+import { FeatureRail } from "./FeatureRail";
 import { FieldGuide } from "./FieldGuide";
+import { LightingControl } from "./LightingControl";
+import { OrientationReadout } from "./OrientationReadout";
 import { AtlasStage } from "./AtlasStage";
 import { WorldIndex } from "./WorldIndex";
 import styles from "./atlas.module.css";
-
-function markerPosition(lat: number, lon: number) {
-  return {
-    left: `${50 + (lon / 180) * 31}%`,
-    top: `${50 - (lat / 90) * 34}%`,
-  };
-}
 
 export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
   const [store] = useState(() => createAtlasStore(initialWorld));
@@ -29,8 +26,12 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
   const visitedByWorld = useStore(store, (state) => state.visitedByWorld);
   const theme = useStore(store, (state) => state.theme);
   const reducedMotion = useStore(store, (state) => state.reducedMotion);
+  const lightingMode = useStore(store, (state) => state.lightingMode);
   const lightAzimuth = useStore(store, (state) => state.lightAzimuth);
   const lightElevation = useStore(store, (state) => state.lightElevation);
+  const motionEnabled = useStore(store, (state) => state.motionEnabled);
+  const focusCommand = useStore(store, (state) => state.focusCommand);
+  const orientation = useStore(store, (state) => state.orientation);
   const compareOpen = useStore(store, (state) => state.compareOpen);
   const compareWorldId = useStore(store, (state) => state.compareWorldId);
   const compareScalePolicy = useStore(store, (state) => state.compareScalePolicy);
@@ -38,10 +39,14 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
 
   const setWorld = useStore(store, (state) => state.setWorld);
   const setMode = useStore(store, (state) => state.setMode);
-  const selectHotspot = useStore(store, (state) => state.selectHotspot);
+  const focusHotspot = useStore(store, (state) => state.focusHotspot);
+  const clearFocus = useStore(store, (state) => state.clearFocus);
   const toggleTheme = useStore(store, (state) => state.toggleTheme);
   const setReducedMotion = useStore(store, (state) => state.setReducedMotion);
+  const setLightingMode = useStore(store, (state) => state.setLightingMode);
   const setLight = useStore(store, (state) => state.setLight);
+  const toggleMotion = useStore(store, (state) => state.toggleMotion);
+  const setOrientation = useStore(store, (state) => state.setOrientation);
   const openCompare = useStore(store, (state) => state.openCompare);
   const closeCompare = useStore(store, (state) => state.closeCompare);
   const setCompareWorld = useStore(store, (state) => state.setCompareWorld);
@@ -76,9 +81,14 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
       aria-label="Atlas of Worlds interactive exhibit"
     >
       <header className={styles.atlasHeader}>
-        <Link className={styles.atlasTitle} href="/" aria-label="Return to the digital museum">
-          Atlas of Worlds
-        </Link>
+        <div className={styles.atlasIdentity}>
+          <Link className="museum-mark" href="/" aria-label="Loupe museum home">
+            <span className="museum-mark__orb" aria-hidden="true" />
+            <span>LOUPE</span>
+          </Link>
+          <i className={styles.identityDivider} aria-hidden="true" />
+          <span className={styles.atlasTitle}>Atlas of Worlds</span>
+        </div>
         <nav className={styles.primaryNav} aria-label="Exhibit sections">
           <a href="#atlas-stage" aria-current="page">Collection</a>
           <a href="#field-guide">Guided tours</a>
@@ -103,6 +113,7 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
         <WorldIndex
           worlds={atlas.worlds}
           selectedWorldId={worldId}
+          reducedMotion={reducedMotion}
           onSelectWorld={setWorld}
         />
 
@@ -118,10 +129,10 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
             <strong>{world.classification}</strong>
           </div>
 
-          <div className={styles.compass} aria-label="Orientation north">
-            <span>N</span>
-            <Compass size={56} strokeWidth={0.9} aria-hidden="true" />
-          </div>
+          <OrientationReadout
+            latitude={orientation.latitude}
+            longitude={orientation.longitude}
+          />
 
           <div className={styles.worldStage}>
             <div className={styles.worldHalo} aria-hidden="true" />
@@ -129,62 +140,41 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
               world={world}
               mode={activeMode}
               selectedHotspotId={selectedHotspotId}
+              lightingMode={lightingMode}
               lightAzimuth={lightAzimuth}
               lightElevation={lightElevation}
               reducedMotion={reducedMotion}
+              motionEnabled={motionEnabled}
+              focusCommand={focusCommand}
               cameraCommand={cameraCommand}
               compareWorld={compareWorld}
               compareScalePolicy={compareScalePolicy}
-              onSelectHotspot={selectHotspot}
+              onSelectHotspot={focusHotspot}
+              onOrientationChange={setOrientation}
+              onManualOrbit={clearFocus}
             />
-            <div className={styles.markerLayer} aria-label={`${world.name} visible features`}>
-              {visibleHotspots.map((hotspot, index) => (
-                <button
-                  type="button"
-                  key={hotspot.id}
-                  className={styles.featureMarker}
-                  data-selected={hotspot.id === selectedHotspotId || undefined}
-                  style={markerPosition(hotspot.lat, hotspot.lon)}
-                  aria-label={`Explore ${hotspot.label}`}
-                  onClick={() => selectHotspot(hotspot.id)}
-                >
-                  <span>{index + 1}</span>
-                  <strong>{hotspot.label}</strong>
-                </button>
-              ))}
-            </div>
           </div>
 
+          <FeatureRail
+            hotspots={visibleHotspots}
+            selectedHotspotId={selectedHotspotId}
+            onSelect={focusHotspot}
+            onClear={clearFocus}
+          />
+
           <div className={styles.scaleBar} aria-label={`Scale reference for ${world.name}`}>
-            <span>{Math.round(world.physical.radiusKm / 2).toLocaleString()} km</span>
+            <span>{formatAtlasInteger(Math.round(world.physical.radiusKm / 2))} km</span>
             <i aria-hidden="true" />
           </div>
 
-          <div className={styles.lightControl}>
-            <Sun size={17} aria-hidden="true" />
-            <label>
-              <span>Sunlight</span>
-              <input
-                type="range"
-                min="0"
-                max="359"
-                value={lightAzimuth}
-                aria-label="Sunlight azimuth"
-                onChange={(event) => setLight(Number(event.target.value), lightElevation)}
-              />
-            </label>
-            <label>
-              <span>Elevation</span>
-              <input
-                type="range"
-                min="-10"
-                max="80"
-                value={lightElevation}
-                aria-label="Sunlight elevation"
-                onChange={(event) => setLight(lightAzimuth, Number(event.target.value))}
-              />
-            </label>
-          </div>
+          <LightingControl
+            policy={activeMode.lighting}
+            mode={lightingMode}
+            azimuth={lightAzimuth}
+            elevation={lightElevation}
+            onModeChange={setLightingMode}
+            onAngleChange={setLight}
+          />
 
           {compareOpen ? (
             <CompareTray
@@ -202,9 +192,12 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
             world={world}
             activeModeId={activeModeId}
             compareOpen={compareOpen}
+            motionEnabled={motionEnabled}
+            reducedMotion={reducedMotion}
             onSelectMode={setMode}
             onCameraCommand={issueCameraCommand}
             onToggleCompare={compareOpen ? closeCompare : openCompare}
+            onToggleMotion={toggleMotion}
           />
 
           <p className={styles.liveStatus} aria-live="polite">

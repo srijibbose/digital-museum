@@ -7,21 +7,30 @@ import styles from "./atlas.module.css";
 export function WorldIndex({
   worlds,
   selectedWorldId,
+  reducedMotion,
   onSelectWorld,
 }: {
   worlds: PlanetaryWorld[];
   selectedWorldId: WorldId;
+  reducedMotion: boolean;
   onSelectWorld: (worldId: WorldId) => void;
 }) {
+  const listRef = useRef<HTMLDivElement | null>(null);
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
     const activeIndex = worlds.findIndex((world) => world.id === selectedWorldId);
     const activeButton = buttons.current[activeIndex];
-    if (typeof activeButton?.scrollIntoView === "function") {
-      activeButton.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    const list = listRef.current;
+    if (activeButton && list && typeof list.scrollTo === "function") {
+      const centeredLeft =
+        activeButton.offsetLeft - (list.clientWidth - activeButton.offsetWidth) / 2;
+      list.scrollTo({
+        left: Math.max(0, centeredLeft),
+        behavior: reducedMotion ? "auto" : "smooth",
+      });
     }
-  }, [selectedWorldId, worlds]);
+  }, [reducedMotion, selectedWorldId, worlds]);
 
   function moveFrom(index: number, delta: number) {
     const next = (index + delta + worlds.length) % worlds.length;
@@ -32,7 +41,7 @@ export function WorldIndex({
   return (
     <nav className={styles.worldIndex} aria-label="World Index">
       <p className={styles.sectionLabel}>World index</p>
-      <div className={styles.worldList}>
+      <div ref={listRef} className={styles.worldList}>
         {worlds.map((world, index) => {
           const active = world.id === selectedWorldId;
           return (

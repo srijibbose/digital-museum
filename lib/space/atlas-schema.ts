@@ -20,6 +20,25 @@ export const evidenceStatusSchema = z.enum([
   "illustrative",
 ]);
 
+export const lightingPolicySchema = z.enum([
+  "hidden",
+  "natural-survey",
+  "angle",
+]);
+
+export const motionKindSchema = z.enum([
+  "none",
+  "solar",
+  "atmosphere",
+  "clouds",
+]);
+
+export const modeLegendItemSchema = z.object({
+  label: z.string().min(2),
+  detail: z.string().min(3),
+  color: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+});
+
 export const textureAssetSchema = z.object({
   path: z.string().startsWith("/media/space/atlas/"),
   sourceUrl: z.string().url(),
@@ -28,6 +47,16 @@ export const textureAssetSchema = z.object({
   processing: z.string().min(8),
   nativeDimensions: z.string().min(3),
   deliveredDimensions: z.string().min(3),
+});
+
+export const hotspotMediaSchema = z.object({
+  path: z.string().startsWith("/media/space/atlas/features/"),
+  alt: z.string().min(20),
+  caption: z.string().min(20),
+  credit: z.string().min(3),
+  sourceUrl: z.string().url(),
+  evidence: evidenceStatusSchema,
+  processing: z.string().min(8),
 });
 
 export const worldAssetsSchema = z.object({
@@ -41,7 +70,13 @@ export const worldModeSchema = z.object({
   id: z.string().min(2),
   label: z.string().min(2),
   description: z.string().min(12),
+  visibleChange: z.string().min(20),
   evidence: evidenceStatusSchema,
+  lighting: lightingPolicySchema,
+  motion: motionKindSchema,
+  legend: z.array(modeLegendItemSchema).default([]),
+  reliefScale: z.number().min(0).max(0.2).optional(),
+  focusHotspotId: z.string().min(2).optional(),
   effect: z.enum([
     "surface",
     "texture",
@@ -51,6 +86,7 @@ export const worldModeSchema = z.object({
     "interior",
     "lighting",
     "hotspots",
+    "missions",
     "rings",
     "tilt",
     "temperature",
@@ -77,6 +113,9 @@ export const worldHotspotSchema = z.object({
   category: z.string().min(2),
   lat: z.number().min(-90).max(90),
   lon: z.number().min(-180).max(180),
+  renderLat: z.number().min(-90).max(90).optional(),
+  renderLon: z.number().min(-180).max(180).optional(),
+  renderRadius: z.number().min(0.05).max(3).optional(),
   summary: z.string().min(12).max(180),
   detail: z.string().min(30),
   evidence: evidenceStatusSchema,
@@ -84,6 +123,7 @@ export const worldHotspotSchema = z.object({
   sourceIds: z.array(z.string().min(2)).min(1),
   modeIds: z.array(z.string().min(2)).min(1),
   measurements: z.array(measurementSchema).min(1),
+  media: hotspotMediaSchema.optional(),
 });
 
 const physicalSchema = z.object({
@@ -198,6 +238,18 @@ export const planetaryWorldSchema = z
         }
       });
     });
+
+    world.modes.forEach((mode, index) => {
+      if (!mode.focusHotspotId) return;
+      const hotspot = world.hotspots.find((candidate) => candidate.id === mode.focusHotspotId);
+      if (!hotspot || !hotspot.modeIds.includes(mode.id)) {
+        context.addIssue({
+          code: "custom",
+          path: ["modes", index, "focusHotspotId"],
+          message: `Focus hotspot ${mode.focusHotspotId} must exist and be visible in ${mode.id}`,
+        });
+      }
+    });
   });
 
 export const atlasCollectionSchema = z.object({
@@ -208,9 +260,12 @@ export const atlasCollectionSchema = z.object({
 
 export type WorldId = z.infer<typeof worldIdSchema>;
 export type EvidenceStatus = z.infer<typeof evidenceStatusSchema>;
+export type LightingPolicy = z.infer<typeof lightingPolicySchema>;
+export type MotionKind = z.infer<typeof motionKindSchema>;
+export type ModeLegendItem = z.infer<typeof modeLegendItemSchema>;
 export type TextureAsset = z.infer<typeof textureAssetSchema>;
+export type HotspotMedia = z.infer<typeof hotspotMediaSchema>;
 export type WorldMode = z.infer<typeof worldModeSchema>;
 export type WorldHotspot = z.infer<typeof worldHotspotSchema>;
 export type PlanetaryWorld = z.infer<typeof planetaryWorldSchema>;
 export type AtlasCollection = z.infer<typeof atlasCollectionSchema>;
-

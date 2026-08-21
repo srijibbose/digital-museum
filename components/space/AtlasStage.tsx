@@ -15,18 +15,24 @@ import { AtlasFallback } from "./AtlasFallback";
 import styles from "./atlas.module.css";
 
 export type RenderLayers = {
+  effect: WorldMode["effect"];
+  lightingPolicy: WorldMode["lighting"];
+  motion: WorldMode["motion"];
   baseTexture: string;
   bumpTexture?: string;
+  bumpScale: number;
+  displacementScale: number;
+  reliefEnhanced: boolean;
   cloudTexture?: string;
   ringTexture?: string;
   atmosphere: boolean;
   emissive: boolean;
+  selfLit: boolean;
   interior: boolean;
   magnetic: boolean;
   night: boolean;
   rings: boolean;
   showHotspots: boolean;
-  useOfficialModel: boolean;
 };
 
 export type AtlasCanvasRuntimeProps = {
@@ -34,13 +40,18 @@ export type AtlasCanvasRuntimeProps = {
   mode: WorldMode;
   layers: RenderLayers;
   selectedHotspotId: string | null;
+  lightingMode: AtlasState["lightingMode"];
   lightAzimuth: number;
   lightElevation: number;
   reducedMotion: boolean;
+  motionEnabled: boolean;
+  focusCommand: AtlasState["focusCommand"];
   cameraCommand: AtlasState["cameraCommand"];
   compareWorld: PlanetaryWorld | null;
   compareScalePolicy: ComparisonScalePolicy;
   onSelectHotspot: (hotspotId: string) => void;
+  onOrientationChange: (latitude: number, longitude: number) => void;
+  onManualOrbit: () => void;
 };
 
 const InteractiveAtlasCanvas = dynamic(() => import("./AtlasCanvas"), {
@@ -56,26 +67,34 @@ export function resolveRenderLayers(
   world: PlanetaryWorld,
   mode: WorldMode,
 ): RenderLayers {
-  const texture = mode.textureKey
+  const texture = mode.effect === "rings"
+    ? world.assets.color
+    : mode.textureKey
     ? world.assets.layers[mode.textureKey] ?? world.assets.color
     : world.assets.color;
   const ringTexture = world.assets.layers.rings;
   const cloudTexture = world.assets.layers.clouds;
+  const authoredBumpScale = "bumpScale" in world.renderer ? world.renderer.bumpScale : 0;
 
   return {
+    effect: mode.effect,
+    lightingPolicy: mode.lighting,
+    motion: mode.motion,
     baseTexture: texture,
     bumpTexture: world.assets.bump,
+    bumpScale: mode.reliefScale ?? authoredBumpScale,
+    displacementScale: mode.reliefScale ? mode.reliefScale * 0.55 : 0,
+    reliefEnhanced: mode.reliefScale !== undefined,
     cloudTexture,
     ringTexture,
     atmosphere: mode.effect === "atmosphere" || mode.effect === "clouds",
     emissive: world.renderer.kind === "sun" || mode.effect === "night",
+    selfLit: world.renderer.kind === "sun" || mode.effect === "night",
     interior: mode.effect === "interior",
     magnetic: mode.effect === "magnetic",
     night: mode.effect === "night",
     rings: mode.effect === "rings" || world.renderer.kind === "rings",
-    showHotspots: mode.effect === "hotspots" || mode.effect === "temperature" || mode.effect === "lighting",
-    useOfficialModel:
-      mode.id === world.defaultModeId && world.id !== "sun" && world.id !== "moon",
+    showHotspots: world.hotspots.some((hotspot) => hotspot.modeIds.includes(mode.id)),
   };
 }
 

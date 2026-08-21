@@ -28,13 +28,18 @@ describe("Atlas renderer contract", () => {
         world={world}
         mode={getMode(world, "surface")}
         selectedHotspotId={null}
+        lightingMode="natural"
         lightAzimuth={34}
         lightElevation={28}
         reducedMotion={false}
+        motionEnabled
+        focusCommand={{ hotspotId: null, sequence: 0 }}
         cameraCommand={{ type: "idle", sequence: 0 }}
         compareWorld={null}
         compareScalePolicy="normalized"
         onSelectHotspot={() => undefined}
+        onOrientationChange={() => undefined}
+        onManualOrbit={() => undefined}
       />,
     );
 
@@ -50,13 +55,18 @@ describe("Atlas renderer contract", () => {
         world={world}
         mode={getMode(world, "surface")}
         selectedHotspotId={null}
+        lightingMode="natural"
         lightAzimuth={34}
         lightElevation={28}
         reducedMotion={false}
+        motionEnabled
+        focusCommand={{ hotspotId: null, sequence: 0 }}
         cameraCommand={{ type: "idle", sequence: 0 }}
         compareWorld={null}
         compareScalePolicy="normalized"
         onSelectHotspot={() => undefined}
+        onOrientationChange={() => undefined}
+        onManualOrbit={() => undefined}
       />,
     );
 
@@ -93,6 +103,7 @@ describe("Atlas renderer contract", () => {
     });
     expect(resolveRenderLayers(moon, getMode(moon, "interior"))).toMatchObject({ interior: true });
     expect(resolveRenderLayers(saturn, getMode(saturn, "rings"))).toMatchObject({
+      baseTexture: saturn.assets.color,
       ringTexture: saturn.assets.layers.rings,
       rings: true,
     });
@@ -103,6 +114,57 @@ describe("Atlas renderer contract", () => {
       baseTexture: sun.assets.layers["171"],
       emissive: true,
     });
+  });
+
+  it("maps reviewed modes to distinct lighting, motion, and scientific effects", () => {
+    const sun = getWorld("sun");
+    const mercury = getWorld("mercury");
+    const jupiter = getWorld("jupiter");
+    const saturn = getWorld("saturn");
+
+    expect(resolveRenderLayers(sun, getMode(sun, "photosphere"))).toMatchObject({
+      selfLit: true,
+      lightingPolicy: "hidden",
+      motion: "solar",
+    });
+    expect(resolveRenderLayers(mercury, getMode(mercury, "temperature"))).toMatchObject({
+      effect: "temperature",
+    });
+    expect(resolveRenderLayers(mercury, getMode(mercury, "missions"))).toMatchObject({
+      effect: "missions",
+    });
+    expect(resolveRenderLayers(jupiter, getMode(jupiter, "storms"))).toMatchObject({
+      motion: "atmosphere",
+    });
+    expect(resolveRenderLayers(saturn, getMode(saturn, "magnetosphere"))).toMatchObject({
+      magnetic: true,
+      rings: true,
+    });
+  });
+
+  it("turns authored relief modes into materially stronger terrain", () => {
+    const moon = getWorld("moon");
+    const mars = getWorld("mars");
+
+    const moonSurface = resolveRenderLayers(moon, getMode(moon, "surface"));
+    const moonTopography = resolveRenderLayers(moon, getMode(moon, "topography"));
+    const marsSurface = resolveRenderLayers(mars, getMode(mars, "surface"));
+    const marsTerrain = resolveRenderLayers(mars, getMode(mars, "terrain"));
+
+    expect(moonTopography.bumpScale).toBeGreaterThan(moonSurface.bumpScale);
+    expect(moonTopography.reliefEnhanced).toBe(true);
+    expect(moonTopography.displacementScale).toBeGreaterThan(0);
+    expect(moonSurface.displacementScale).toBe(0);
+    expect(marsTerrain.bumpScale).toBeGreaterThan(marsSurface.bumpScale);
+    expect(marsTerrain.reliefEnhanced).toBe(true);
+    expect(marsTerrain.displacementScale).toBeGreaterThan(0);
+  });
+
+  it("shows feature markers only when the active mode authors visible features", () => {
+    const jupiter = getWorld("jupiter");
+
+    expect(resolveRenderLayers(jupiter, getMode(jupiter, "storms")).showHotspots).toBe(true);
+    expect(resolveRenderLayers(jupiter, getMode(jupiter, "interior")).showHotspots).toBe(false);
   });
 
   it("publishes a useful non-visual renderer description", () => {

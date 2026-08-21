@@ -3,12 +3,14 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   atlasAssetPaths,
+  atlasFeatureMedia,
   atlasModelLedger,
   atlasModelPaths,
   atlasTextureLedger,
   type AtlasAssetKey,
   type AtlasModelKey,
 } from "@/content/space/atlas-assets";
+import { atlas } from "@/content/space/atlas";
 
 function publicPath(assetPath: string) {
   return path.join(process.cwd(), "public", assetPath.replace(/^\//, ""));
@@ -82,5 +84,26 @@ describe("Atlas planetary assets", () => {
       expect(atlasModelLedger[key].credit.length, key).toBeGreaterThan(8);
       expect(atlasModelLedger[key].processing.length, key).toBeGreaterThan(12);
     }
+  });
+
+  it("bundles sourced feature-specific Field Guide media", () => {
+    expect(Object.keys(atlasFeatureMedia)).toHaveLength(10);
+
+    for (const [key, media] of Object.entries(atlasFeatureMedia)) {
+      const filePath = publicPath(media.path);
+      expect(media.path, key).toMatch(/^\/media\/space\/atlas\/features\/.+\.webp$/);
+      expect(existsSync(filePath), key).toBe(true);
+      expect(statSync(filePath).size, key).toBeGreaterThan(50_000);
+      expect(isWebP(filePath), key).toBe(true);
+      expect(media.sourceUrl, key).toMatch(/^https:\/\//);
+      expect(media.credit.length, key).toBeGreaterThanOrEqual(8);
+      expect(media.caption.length, key).toBeGreaterThan(20);
+      expect(media.alt.length, key).toBeGreaterThan(20);
+    }
+
+    const delivered = atlas.worlds.flatMap((world) =>
+      world.hotspots.flatMap((hotspot) => hotspot.media ? [hotspot.media.path] : []),
+    );
+    expect(new Set(delivered)).toEqual(new Set(Object.values(atlasFeatureMedia).map((media) => media.path)));
   });
 });

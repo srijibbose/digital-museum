@@ -82,13 +82,13 @@ expect(getMode(sun, "photosphere").lighting).toBe("hidden");
 expect(getMode(sun, "171").legend).toEqual(
   expect.arrayContaining([expect.objectContaining({ label: "171 Å" })]),
 );
-expect(getMode(getWorld("mercury"), "temperature").renderEffect).toBe("thermal");
-expect(getMode(getWorld("mercury"), "missions").renderEffect).toBe("mission");
+expect(getMode(getWorld("mercury"), "temperature").effect).toBe("temperature");
+expect(getMode(getWorld("mercury"), "missions").effect).toBe("missions");
 ```
 
 - [ ] **Step 2: Run `npm test -- tests/atlas-content.test.ts`**
 
-Expected: FAIL because `visibleChange`, `lighting`, `motion`, `legend`, and `renderEffect` are absent.
+Expected: FAIL because `visibleChange`, `lighting`, `motion`, and `legend` are absent and Mercury Missions still shares the generic hotspot effect.
 
 - [ ] **Step 3: Extend the schemas**
 
@@ -96,8 +96,8 @@ Expected: FAIL because `visibleChange`, `lighting`, `motion`, `legend`, and `ren
 export const lightingPolicySchema = z.enum(["hidden", "natural-survey", "angle"]);
 export const motionKindSchema = z.enum(["none", "solar", "atmosphere", "clouds"]);
 export const renderEffectSchema = z.enum([
-  "surface", "texture", "clouds", "night", "hotspots", "thermal",
-  "mission", "atmosphere", "magnetic", "rings", "tilt", "interior",
+  "surface", "texture", "clouds", "night", "hotspots", "temperature",
+  "missions", "atmosphere", "magnetic", "rings", "tilt", "interior", "lighting",
 ]);
 
 export const hotspotMediaSchema = z.object({
@@ -112,7 +112,7 @@ export const hotspotMediaSchema = z.object({
 
 - [ ] **Step 4: Author every mode's explicit behavior**
 
-Use the exact per-world matrix from the refinement spec. Sun modes use `lighting: "hidden"`; Moon Lighting uses `lighting: "angle"`; Night lights and Interior use `hidden`; other exterior modes use `natural-survey`. Mercury Temperature uses `renderEffect: "thermal"`; mission modes use `mission`; Sun/Jupiter motion-capable modes declare `solar` or `atmosphere`.
+Use the exact per-world matrix from the refinement spec. Sun modes use `lighting: "hidden"`; Moon Lighting uses `lighting: "angle"`; Night lights and Interior use `hidden`; other exterior modes use `natural-survey`. Mercury Temperature retains the dedicated `effect: "temperature"`; mission modes use `effect: "missions"`; Sun/Jupiter motion-capable modes declare `solar` or `atmosphere`.
 
 - [ ] **Step 5: Re-run the focused test and full content/schema tests**
 
@@ -321,7 +321,7 @@ git commit -m "fix(space): add stable ring and focus geometry"
 - Modify: `tests/atlas-renderer.test.tsx`
 
 **Interfaces:**
-- `RenderLayers` gains `renderEffect`, `lightingPolicy`, and `motion`.
+- `RenderLayers` gains `effect`, `lightingPolicy`, and `motion`.
 - `AtlasCanvasRuntimeProps` gains `lightingMode`, `motionEnabled`, `focusCommand`, `onOrientationChange`, and `onManualOrbit`.
 - `AtlasCanvas` owns the only visual marker/callout projection.
 
@@ -333,8 +333,8 @@ expect(resolveRenderLayers(sun, getMode(sun, "photosphere"))).toMatchObject({
   lightingPolicy: "hidden",
   motion: "solar",
 });
-expect(resolveRenderLayers(mercury, getMode(mercury, "temperature"))).toMatchObject({ renderEffect: "thermal" });
-expect(resolveRenderLayers(mercury, getMode(mercury, "missions"))).toMatchObject({ renderEffect: "mission" });
+expect(resolveRenderLayers(mercury, getMode(mercury, "temperature"))).toMatchObject({ effect: "temperature" });
+expect(resolveRenderLayers(mercury, getMode(mercury, "missions"))).toMatchObject({ effect: "missions" });
 expect(resolveRenderLayers(jupiter, getMode(jupiter, "storms"))).toMatchObject({ motion: "atmosphere" });
 expect(resolveRenderLayers(saturn, getMode(saturn, "magnetosphere"))).toMatchObject({
   magnetic: true,

@@ -6,6 +6,7 @@ import type {
   PlanetaryWorld,
   WorldHotspot,
 } from "@/lib/space/atlas-schema";
+import { formatAtlasInteger } from "@/lib/space/number-format";
 import styles from "./atlas.module.css";
 
 const evidenceLabels: Record<EvidenceStatus, string> = {
@@ -37,6 +38,7 @@ export function FieldGuide({
   const source = selectedHotspot
     ? world.sources.find((item) => selectedHotspot.sourceIds.includes(item.id)) ?? world.sources[0]
     : world.sources[0];
+  const media = selectedHotspot?.media;
 
   return (
     <aside className={styles.fieldGuide} aria-label="Field Guide">
@@ -91,7 +93,7 @@ export function FieldGuide({
           <>
             <p className={styles.guideDetail}>{world.overview}</p>
             <dl className={styles.measureTable}>
-              <div><dt>Mean radius</dt><dd>{world.physical.radiusKm.toLocaleString()} km</dd></div>
+              <div><dt>Mean radius</dt><dd>{formatAtlasInteger(world.physical.radiusKm)} km</dd></div>
               <div><dt>Gravity</dt><dd>{world.physical.gravity}</dd></div>
               <div><dt>Day</dt><dd>{world.physical.dayLength}</dd></div>
               <div><dt>Mean temperature</dt><dd>{world.physical.meanTemperature}</dd></div>
@@ -100,15 +102,27 @@ export function FieldGuide({
           </>
         )}
 
-        <section className={styles.observationCard} aria-label={`${world.name} observation plate`}>
+        <section
+          className={styles.observationCard}
+          data-feature={media ? "true" : undefined}
+          aria-label={`${world.name} observation plate`}
+        >
           <div className={styles.miniPlate}>
-            <img src={world.assets.fallback} alt={`${world.name} scientific observation map`} />
-            <Crosshair className={styles.plateReticle} size={74} strokeWidth={0.8} aria-hidden="true" />
+            <img
+              src={media?.path ?? world.assets.fallback}
+              alt={media?.alt ?? `${world.name} scientific observation map`}
+            />
+            {!media ? (
+              <Crosshair className={styles.plateReticle} size={74} strokeWidth={0.8} aria-hidden="true" />
+            ) : null}
           </div>
           <div className={styles.observationMeta}>
-            <span>Observation plate</span>
-            <strong>{selectedHotspot?.category ?? world.classification}</strong>
+            <span>{media ? "Feature observation" : "Observation plate"}</span>
+            <strong>{media?.evidence ?? selectedHotspot?.category ?? world.classification}</strong>
           </div>
+          {media ? (
+            <p className={styles.mediaCaption}>{media.caption} <span>{media.credit}</span></p>
+          ) : null}
         </section>
 
         <section className={styles.structure} aria-labelledby="structure-title">
@@ -127,10 +141,16 @@ export function FieldGuide({
           </ol>
         </section>
 
-        <a className={styles.sourceLink} href={source.url} target="_blank" rel="noreferrer">
+        <a
+          className={styles.sourceLink}
+          id="atlas-sources"
+          href={media?.sourceUrl ?? source.url}
+          target="_blank"
+          rel="noreferrer"
+        >
           <span>
             <small>Source</small>
-            {source.publisher}
+            {media?.credit ?? source.publisher}
           </span>
           <ArrowUpRight size={15} aria-hidden="true" />
         </a>
