@@ -36,10 +36,13 @@ export type AtlasState = {
 };
 
 function createVisitLedger(): Record<WorldId, string[]> {
-  return Object.fromEntries(atlas.worlds.map((world) => [world.id, []])) as Record<
-    WorldId,
-    string[]
-  >;
+  return atlas.worlds.reduce<Record<WorldId, string[]>>(
+    (ledger, world) => {
+      ledger[world.id] = [];
+      return ledger;
+    },
+    {} as Record<WorldId, string[]>,
+  );
 }
 
 function alternateWorld(primary: WorldId): WorldId {
@@ -131,4 +134,3 @@ export function createAtlasStore(
       })),
   }));
 }
-
