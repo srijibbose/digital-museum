@@ -380,6 +380,74 @@
   filter: blur(28px);
 }
 
+.rendererSurface,
+.canvasLayer,
+.rendererLoading,
+.atlasFallback {
+  position: absolute;
+  inset: 0;
+}
+
+.rendererSurface,
+.canvasLayer {
+  z-index: 2;
+}
+
+.canvasLayer canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  cursor: grab;
+}
+
+.canvasLayer canvas:active {
+  cursor: grabbing;
+}
+
+.rendererLoading {
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  color: var(--atlas-muted);
+  font-family: var(--display);
+  font-size: 0.76rem;
+  letter-spacing: 0.03em;
+}
+
+.atlasFallback {
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  margin: 0;
+}
+
+.atlasFallback img {
+  width: 86%;
+  height: 86%;
+  border-radius: 50%;
+  background: #171717;
+  box-shadow:
+    0 34px 35px -24px rgba(34, 31, 27, 0.42),
+    inset -42px -18px 70px rgba(0, 0, 0, 0.48);
+  filter: saturate(0.9) contrast(1.04);
+  object-fit: cover;
+}
+
+.atlasFallback figcaption {
+  position: absolute;
+  right: 18%;
+  bottom: 5%;
+  left: 18%;
+  padding: 6px 10px;
+  border: 1px solid var(--atlas-line);
+  border-radius: 4px;
+  background: var(--atlas-float);
+  color: var(--atlas-muted);
+  font-size: 0.58rem;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
 .shellPreview {
   position: absolute;
   inset: 7%;

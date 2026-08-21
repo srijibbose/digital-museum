@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "zustand";
 import { atlas, getMode, getVisibleHotspots, getWorld } from "@/content/space/atlas";
 import type { WorldId } from "@/lib/space/atlas-schema";
@@ -10,6 +10,7 @@ import { createAtlasStore } from "@/lib/space/atlas-store";
 import { CommandDeck } from "./CommandDeck";
 import { CompareTray } from "./CompareTray";
 import { FieldGuide } from "./FieldGuide";
+import { AtlasStage } from "./AtlasStage";
 import { WorldIndex } from "./WorldIndex";
 import styles from "./atlas.module.css";
 
@@ -27,6 +28,7 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
   const selectedHotspotId = useStore(store, (state) => state.selectedHotspotId);
   const visitedByWorld = useStore(store, (state) => state.visitedByWorld);
   const theme = useStore(store, (state) => state.theme);
+  const reducedMotion = useStore(store, (state) => state.reducedMotion);
   const lightAzimuth = useStore(store, (state) => state.lightAzimuth);
   const lightElevation = useStore(store, (state) => state.lightElevation);
   const compareOpen = useStore(store, (state) => state.compareOpen);
@@ -52,6 +54,7 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
   const selectedHotspot =
     world.hotspots.find((hotspot) => hotspot.id === selectedHotspotId) ?? null;
   const visitedCount = visitedByWorld[world.id].length;
+  const compareWorld = compareOpen ? getWorld(compareWorldId) : null;
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
@@ -63,13 +66,6 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
     url.searchParams.set("world", worldId);
     window.history.replaceState(window.history.state, "", url);
   }, [worldId]);
-
-  const stageTexture = useMemo(() => {
-    if (activeMode.textureKey) {
-      return world.assets.layers[activeMode.textureKey] ?? world.assets.color;
-    }
-    return world.assets.color;
-  }, [activeMode.textureKey, world]);
 
   return (
     <section
@@ -129,10 +125,17 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
 
           <div className={styles.worldStage}>
             <div className={styles.worldHalo} aria-hidden="true" />
-            <img
-              className={styles.shellPreview}
-              src={stageTexture}
-              alt={`${world.name} ${activeMode.label.toLowerCase()} scientific globe`}
+            <AtlasStage
+              world={world}
+              mode={activeMode}
+              selectedHotspotId={selectedHotspotId}
+              lightAzimuth={lightAzimuth}
+              lightElevation={lightElevation}
+              reducedMotion={reducedMotion}
+              cameraCommand={cameraCommand}
+              compareWorld={compareWorld}
+              compareScalePolicy={compareScalePolicy}
+              onSelectHotspot={selectHotspot}
             />
             <div className={styles.markerLayer} aria-label={`${world.name} visible features`}>
               {visibleHotspots.map((hotspot, index) => (
