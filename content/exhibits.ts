@@ -6,7 +6,7 @@ export interface ExhibitWing {
 }
 
 export interface ExhibitVisualTheme {
-  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "generic";
+  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -174,58 +174,30 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     },
   },
   {
-    id: "moon",
-    slug: "moon",
+    id: "atlas-of-worlds",
+    slug: "atlas-of-worlds",
     exhibitNumber: "EXH. 005",
     wing: WINGS.space,
-    title: "The Moon",
-    tagline: "Real spacecraft imagery, not a sculpt.",
+    title: "Atlas of Worlds",
+    tagline: "Ten worlds. One scientific instrument.",
     synopsis:
-      "Turn a globe built from actual Lunar Reconnaissance Orbiter photography, fly to Apollo and Chandrayaan-3 landing sites by their real coordinates, and see why the lunar 'seas' were never wet.",
-    curatorNote: "Built from a real LRO/USGS photographic mosaic — no generated or sculpted geometry.",
-    readingTime: "8–12 min experience",
-    interactionType: "Interactive Globe · Real Coordinates · Mission Sites",
-    tags: ["The Moon", "Apollo Program", "Chandrayaan-3", "Interactive 3D"],
-    route: "/exhibits/moon",
+      "Move from the Sun to Neptune in a single high-fidelity observatory, switching between terrain, atmosphere, missions, interiors, rings, light, and magnetic fields.",
+    curatorNote: "Built from locally delivered NASA, USGS, LRO, MOLA, SDO, Cassini, Voyager, and Magellan observations with evidence status shown in the interface.",
+    readingTime: "20–30 min open exploration",
+    interactionType: "Interactive 3D Observatory · Scientific Layers · World Comparison",
+    tags: ["Solar System", "Planetary Science", "NASA Imagery", "Interactive 3D"],
+    route: "/exhibits/atlas-of-worlds",
     enabled: true,
     featured: true,
     order: 4,
     visualTheme: {
-      variant: "generic",
-      accentColor: "#cfd8e3",
-      badgeText: "SPACE WING",
+      variant: "atlas-of-worlds",
+      accentColor: "#bd552b",
+      badgeText: "PREMIUM PLANETARIUM",
       metrics: [
-        { label: "Mission Sites", value: "3" },
-        { label: "Named Craters", value: "4" },
-        { label: "Distance", value: "384,400 km" },
-      ],
-    },
-  },
-  {
-    id: "earth",
-    slug: "earth",
-    exhibitNumber: "EXH. 006",
-    wing: WINGS.space,
-    title: "Earth",
-    tagline: "One planet, seen the way satellites see it.",
-    synopsis:
-      "NASA's Blue Marble and Black Marble composites on a globe you can turn — from the Himalayas to the Mariana Trench, then flip to city lights after dark.",
-    curatorNote: "Built from NASA's Blue Marble and Black Marble satellite composites.",
-    readingTime: "8–12 min experience",
-    interactionType: "Interactive Globe · Day/Night Toggle · Real Coordinates",
-    tags: ["Earth", "Geography", "Satellite Imagery", "Interactive 3D"],
-    route: "/exhibits/earth",
-    enabled: true,
-    featured: true,
-    order: 5,
-    visualTheme: {
-      variant: "generic",
-      accentColor: "#6fb8d9",
-      badgeText: "SPACE WING",
-      metrics: [
-        { label: "Deepest Point", value: "10,935 m" },
-        { label: "Highest Point", value: "8,849 m" },
-        { label: "Fresh Water Locked", value: "60%" },
+        { label: "Worlds", value: "10" },
+        { label: "Science Modes", value: "60+" },
+        { label: "Source Layers", value: "23" },
       ],
     },
   },

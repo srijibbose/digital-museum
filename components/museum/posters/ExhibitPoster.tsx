@@ -3,6 +3,7 @@ import { LivingAtlasPoster } from "./LivingAtlasPoster";
 import { ThirteenMinutesPoster } from "./ThirteenMinutesPoster";
 import { JetEnginePoster } from "./JetEnginePoster";
 import { BecomingHumanPoster } from "./BecomingHumanPoster";
+import { AtlasOfWorldsPoster } from "./AtlasOfWorldsPoster";
 
 export function ExhibitPoster({ exhibit }: { exhibit: ExhibitDefinition }) {
   switch (exhibit.visualTheme.variant) {
@@ -14,6 +15,8 @@ export function ExhibitPoster({ exhibit }: { exhibit: ExhibitDefinition }) {
       return <JetEnginePoster />;
     case "becoming-human":
       return <BecomingHumanPoster />;
+    case "atlas-of-worlds":
+      return <AtlasOfWorldsPoster />;
     default:
       return (
         <div className="poster-generic" aria-hidden="true">

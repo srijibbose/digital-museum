@@ -28,9 +28,10 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
       "becoming-human",
       "jet-engine",
       "thirteen-minutes",
-      "moon",
-      "earth",
+      "atlas-of-worlds",
     ]);
+    expect(featured.map((exhibit) => exhibit.slug)).not.toContain("moon");
+    expect(featured.map((exhibit) => exhibit.slug)).not.toContain("earth");
     expect(isExhibitEnabled("living-atlas")).toBe(true);
     expect(getActiveWings(featured).map(({ wing }) => wing.title)).toEqual([
       "Origins & Futures",
