@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SOLAR_DISC_VERTEX_SHADER, solarDiscUv, solarFlowPulse } from "@/lib/space/solar-projection";
+import { solarDiscUv, solarFlowPulse, solarSurfaceProjection } from "@/lib/space/solar-projection";
 
 describe("Atlas solar-disc projection", () => {
   it("keeps the full visible hemisphere inside the observed central solar disc", () => {
@@ -13,8 +13,16 @@ describe("Atlas solar-disc projection", () => {
     expect(solarFlowPulse(Math.PI / 1.6)).toEqual({ scale: 1.0055, opacity: 0.14 });
   });
 
-  it("projects the observed disc in view space so rotation cannot expose its planar limb", () => {
-    expect(SOLAR_DISC_VERTEX_SHADER).toContain("normalMatrix * normal");
-    expect(SOLAR_DISC_VERTEX_SHADER).not.toContain("normalize(normal);");
+  it("changes projection planes as the rotating surface approaches a photographed limb", () => {
+    expect(solarSurfaceProjection(0.6, 0, 0.8)).toEqual({
+      dominantAxis: "z",
+      dominantUv: { u: 0.585, v: 0.5 },
+      weights: { x: 0.24, y: 0, z: 0.76 },
+    });
+    expect(solarSurfaceProjection(0.8, 0, -0.6)).toEqual({
+      dominantAxis: "x",
+      dominantUv: { u: 0.415, v: 0.5 },
+      weights: { x: 0.76, y: 0, z: 0.24 },
+    });
   });
 });

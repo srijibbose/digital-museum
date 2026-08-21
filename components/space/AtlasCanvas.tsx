@@ -10,7 +10,7 @@ import { comparisonRadii } from "@/lib/space/atlas-scale";
 import { latLonToVector3 } from "@/lib/space/geo";
 import { useOrientationReporter } from "@/lib/space/orientation-reporter";
 import { applyRadialRingUvs, SATURN_RING_TILT_RADIANS } from "@/lib/space/ring-geometry";
-import { SOLAR_DISC_U_SCALE, SOLAR_DISC_VERTEX_SHADER, SOLAR_DISC_V_SCALE, solarFlowPulse } from "@/lib/space/solar-projection";
+import { SOLAR_DISC_U_SCALE, SOLAR_DISC_V_SCALE, solarFlowPulse } from "@/lib/space/solar-projection";
 import { surfaceMaterialKind } from "@/lib/space/surface-lighting";
 import {
   officialSaturnGlobeRadius,
@@ -127,19 +127,42 @@ function SolarSurfaceMaterial({
       blending={additive ? THREE.AdditiveBlending : THREE.NormalBlending}
       depthWrite={!additive}
       toneMapped={false}
-      vertexShader={SOLAR_DISC_VERTEX_SHADER}
+      vertexShader={`
+        varying vec3 vNormalObject;
+        void main() {
+          vNormalObject = normalize(normal);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `}
       fragmentShader={`
         uniform sampler2D surfaceMap;
         uniform vec3 tint;
         uniform float surfaceOpacity;
-        varying vec3 vNormalView;
+        varying vec3 vNormalObject;
         void main() {
-          vec3 n = normalize(vNormalView);
-          vec2 solarUv = vec2(
-            0.5 + n.x * ${SOLAR_DISC_U_SCALE.toFixed(3)},
+          vec3 n = normalize(vNormalObject);
+          vec3 blendWeight = pow(abs(n), vec3(4.0));
+          blendWeight /= max(blendWeight.x + blendWeight.y + blendWeight.z, 0.0001);
+          float signX = n.x < 0.0 ? -1.0 : 1.0;
+          float signY = n.y < 0.0 ? -1.0 : 1.0;
+          float signZ = n.z < 0.0 ? -1.0 : 1.0;
+          vec2 solarUvX = vec2(
+            0.5 + n.z * signX * ${SOLAR_DISC_U_SCALE.toFixed(3)},
             0.5 - n.y * ${SOLAR_DISC_V_SCALE.toFixed(3)}
           );
-          vec3 observedSurface = pow(texture2D(surfaceMap, solarUv).rgb, vec3(0.56)) * 1.44;
+          vec2 solarUvY = vec2(
+            0.5 + n.x * ${SOLAR_DISC_U_SCALE.toFixed(3)},
+            0.5 - n.z * signY * ${SOLAR_DISC_V_SCALE.toFixed(3)}
+          );
+          vec2 solarUvZ = vec2(
+            0.5 + n.x * signZ * ${SOLAR_DISC_U_SCALE.toFixed(3)},
+            0.5 - n.y * ${SOLAR_DISC_V_SCALE.toFixed(3)}
+          );
+          vec3 blendedSurface =
+            texture2D(surfaceMap, solarUvX).rgb * blendWeight.x +
+            texture2D(surfaceMap, solarUvY).rgb * blendWeight.y +
+            texture2D(surfaceMap, solarUvZ).rgb * blendWeight.z;
+          vec3 observedSurface = pow(blendedSurface, vec3(0.56)) * 1.44;
           gl_FragColor = vec4(observedSurface * tint, surfaceOpacity);
         }
       `}
