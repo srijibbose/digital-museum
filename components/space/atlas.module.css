@@ -365,9 +365,9 @@
 .worldStage {
   position: absolute;
   z-index: 2;
-  top: clamp(54px, 6.5vh, 80px);
+  top: clamp(48px, 5.2vh, 62px);
   left: 50%;
-  width: min(67vh, 66vw, 690px);
+  width: min(67vh, 66vw, 620px);
   aspect-ratio: 1;
   transform: translateX(-50%);
 }
@@ -515,7 +515,7 @@
 .scaleBar {
   position: absolute;
   z-index: 4;
-  bottom: 140px;
+  bottom: 220px;
   left: 52px;
   color: var(--atlas-muted);
   font-family: var(--display);
@@ -537,7 +537,7 @@
   position: absolute;
   z-index: 6;
   right: 38px;
-  bottom: 139px;
+  bottom: 218px;
   display: grid;
   width: 158px;
   grid-template-columns: 28px 1fr;
@@ -570,7 +570,7 @@
   position: absolute;
   z-index: 10;
   right: 38px;
-  bottom: 14px;
+  bottom: 64px;
   left: 38px;
 }
 
@@ -696,7 +696,7 @@
   position: absolute;
   z-index: 12;
   right: 38px;
-  bottom: 124px;
+  bottom: 174px;
   left: 38px;
   display: flex;
   min-height: 76px;
