@@ -6,7 +6,7 @@ export interface ExhibitWing {
 }
 
 export interface ExhibitVisualTheme {
-  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "generic";
+  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -52,6 +52,12 @@ export const WINGS: Record<string, ExhibitWing> = {
     code: "Wing 03",
     title: "Origins & Futures",
     description: "Deep time, human evolution, cumulative culture, and the systems shaping what comes next",
+  },
+  space: {
+    id: "wing-04",
+    code: "Wing 04",
+    title: "Space",
+    description: "Real planetary imagery and mission data, explored as physical specimens",
   },
 };
 
@@ -164,6 +170,34 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
         { label: "Initial Alt", value: "50,000 ft" },
         { label: "Descent Velocity", value: "3,700 mph" },
         { label: "Alarm Code", value: "PROG 1202" },
+      ],
+    },
+  },
+  {
+    id: "atlas-of-worlds",
+    slug: "atlas-of-worlds",
+    exhibitNumber: "EXH. 005",
+    wing: WINGS.space,
+    title: "Atlas of Worlds",
+    tagline: "Ten worlds. One scientific instrument.",
+    synopsis:
+      "Move from the Sun to Neptune in a single high-fidelity observatory, switching between terrain, atmosphere, missions, interiors, rings, light, and magnetic fields.",
+    curatorNote: "Built from locally delivered NASA, USGS, LRO, MOLA, SDO, Cassini, Voyager, and Magellan observations with evidence status shown in the interface.",
+    readingTime: "20–30 min open exploration",
+    interactionType: "Interactive 3D Observatory · Scientific Layers · World Comparison",
+    tags: ["Solar System", "Planetary Science", "NASA Imagery", "Interactive 3D"],
+    route: "/exhibits/atlas-of-worlds",
+    enabled: true,
+    featured: true,
+    order: 4,
+    visualTheme: {
+      variant: "atlas-of-worlds",
+      accentColor: "#bd552b",
+      badgeText: "PREMIUM PLANETARIUM",
+      metrics: [
+        { label: "Worlds", value: "10" },
+        { label: "Science Modes", value: "60+" },
+        { label: "Source Layers", value: "23" },
       ],
     },
   },

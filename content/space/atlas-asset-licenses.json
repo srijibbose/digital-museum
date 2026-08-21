@@ -1,0 +1,48 @@
+{
+  "generatedAt": "2026-08-21",
+  "policy": "Every visible world asset is delivered locally. Scientific transformations and observational gaps are disclosed in the runtime ledger.",
+  "sources": [
+    {
+      "provider": "NASA Scientific Visualization Studio",
+      "items": ["Sun SDO/AIA/HMI", "Moon LROC/LOLA", "Earth VIIRS clouds", "Mars MOLA"],
+      "terms": "NASA media usage guidelines; credit retained in the exhibit source ledger.",
+      "url": "https://svs.gsfc.nasa.gov/reproduction.html"
+    },
+    {
+      "provider": "NASA Earth Observatory",
+      "items": ["Blue Marble", "Black Marble"],
+      "terms": "NASA imagery; source and mission credit retained.",
+      "url": "https://earthobservatory.nasa.gov/image-use-policy"
+    },
+    {
+      "provider": "NASA 3D Resources / VTAD",
+      "items": ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"],
+      "terms": "Official NASA public 3D resources, served locally without modifying the GLB payloads.",
+      "url": "https://science.nasa.gov/3d-resources/"
+    },
+    {
+      "provider": "USGS Astrogeology Science Center",
+      "items": ["Mercury MESSENGER mosaics", "Mars Viking mosaic"],
+      "terms": "United States Government scientific data; agency and mission credit retained.",
+      "url": "https://www.usgs.gov/information-policies-and-instructions/copyrights-and-credits"
+    },
+    {
+      "provider": "NASA/JPL Photojournal",
+      "items": ["Cassini Jupiter cylindrical map", "Caloris Basin", "Maat Mons", "Apollo 11 landing site", "Olympus Mons caldera", "Great Red Spot", "Saturn hexagon", "Voyager Uranus rings", "Voyager Neptune Great Dark Spot"],
+      "terms": "NASA/JPL media; item-level credit retained.",
+      "url": "https://www.jpl.nasa.gov/jpl-image-use-policy/"
+    },
+    {
+      "provider": "NASA Earth Observatory / Landsat",
+      "items": ["Mount Everest and the Himalaya"],
+      "terms": "NASA Earth Observatory imagery; Landsat mission and processing credit retained.",
+      "url": "https://earthobservatory.nasa.gov/image-use-policy"
+    },
+    {
+      "provider": "NASA Scientific Visualization Studio / SDO",
+      "items": ["Active Region 13615 M7.4 flare"],
+      "terms": "NASA media usage guidelines; SDO and processing credit retained.",
+      "url": "https://svs.gsfc.nasa.gov/reproduction.html"
+    }
+  ]
+}
