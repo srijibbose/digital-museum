@@ -29,6 +29,7 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
       "jet-engine",
       "thirteen-minutes",
       "atlas-of-worlds",
+      "dinosaurs",
     ]);
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("moon");
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("earth");
@@ -51,11 +52,19 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(anatomy).toBeDefined();
     expect(anatomy?.title).toBe("The Living Atlas");
     expect(anatomy?.wing.code).toBe("Wing 01");
+
+    const dinosaurs = getExhibitBySlug("dinosaurs");
+    expect(dinosaurs).toMatchObject({
+      title: "Dinosaurs, Reconsidered",
+      wing: { code: "Wing 03" },
+      visualTheme: { variant: "dinosaurs" },
+    });
   });
 
   it("verifies exhibit enabled status", () => {
     expect(isExhibitEnabled("thirteen-minutes")).toBe(true);
     expect(isExhibitEnabled("living-atlas")).toBe(true);
+    expect(isExhibitEnabled("dinosaurs")).toBe(true);
     expect(isExhibitEnabled("non-existent-exhibit")).toBe(false);
   });
 

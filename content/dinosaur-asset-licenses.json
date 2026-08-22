@@ -1,0 +1,17 @@
+{
+  "reviewed": "2026-08-22",
+  "scope": "Dinosaur exhibit institutional 3D scans, documented derivatives, and local fallback images",
+  "notes": [
+    "CC BY-NC assets are used only for this educational exhibit and retain visible attribution.",
+    "Smithsonian and Dundee CC0 records remain attributed as a provenance practice.",
+    "No generated reconstruction image is used as specimen evidence.",
+    "The homepage life reconstruction is CC BY 4.0 and is labelled illustrative rather than observed evidence.",
+    "The corrected Allosaurus viewer is a CC BY-NC derivative of the Osaka Museum scan; the original historical mount remains linked in provenance.",
+    "Local GLB files are unmodified museum deliveries; remote Sketchfab viewers retain their source platform attribution."
+  ],
+  "licenses": {
+    "CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
+    "CC-BY-NC-4.0": "https://creativecommons.org/licenses/by-nc/4.0/"
+  }
+}

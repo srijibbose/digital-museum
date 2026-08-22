@@ -6,7 +6,7 @@ export interface ExhibitWing {
 }
 
 export interface ExhibitVisualTheme {
-  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
+  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "dinosaurs" | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -198,6 +198,34 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
         { label: "Worlds", value: "10" },
         { label: "Science Modes", value: "60+" },
         { label: "Source Layers", value: "23" },
+      ],
+    },
+  },
+  {
+    id: "dinosaurs",
+    slug: "dinosaurs",
+    exhibitNumber: "EXH. 006",
+    wing: WINGS.origins,
+    title: "Dinosaurs, Reconsidered",
+    tagline: "A lost world, assembled from evidence.",
+    synopsis:
+      "Select eight documented museum specimens and inspect what skeletons, bones, tracks, comparative anatomy, and evolutionary relationships can—and cannot—establish.",
+    curatorNote: "Institutional scans retain specimen identities, licences, and object types; soft tissue and behaviour remain explicitly labelled inference.",
+    readingTime: "12–18 min specimen atlas",
+    interactionType: "Museum 3D Scans · Osteology · Trace Analysis · Comparative Anatomy",
+    tags: ["Dinosaurs", "Deep Time", "Paleontology", "Evolutionary Biology"],
+    route: "/exhibits/dinosaurs",
+    enabled: true,
+    featured: true,
+    order: 5,
+    visualTheme: {
+      variant: "dinosaurs",
+      accentColor: "#d78451",
+      badgeText: "INSTITUTIONAL SPECIMEN ATLAS",
+      metrics: [
+        { label: "Specimens", value: "08" },
+        { label: "Evidence Views", value: "05" },
+        { label: "Museum Partners", value: "05" },
       ],
     },
   },

@@ -10,13 +10,17 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: "list",
   use: {
-    baseURL: externalBaseUrl ?? "http://127.0.0.1:3000",
+    // Next's development runtime is intentionally strict about its public
+    // origin. Keep the test browser on the same localhost origin as the
+    // reusable dev server so client navigation and hydrated controls are
+    // exercised, rather than a shell page at 127.0.0.1.
+    baseURL: externalBaseUrl ?? "http://localhost:3000",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
   webServer: externalBaseUrl ? undefined : {
     command: "node node_modules/next/dist/bin/next start -p 3000",
-    url: "http://127.0.0.1:3000",
+    url: "http://localhost:3000",
     reuseExistingServer: true,
     timeout: 120_000,
   },
