@@ -1,9 +1,10 @@
 "use client";
 
+import { memo } from "react";
 import type { AnatomyStructure } from "@/lib/anatomy/anatomy-schema";
 import styles from "./anatomy.module.css";
 
-export function StructureRail({
+export const StructureRail = memo(function StructureRail({
   structures,
   selectedId,
   onSelect,
@@ -34,4 +35,4 @@ export function StructureRail({
       </div>
     </div>
   );
-}
+});

@@ -8,6 +8,7 @@ import {
   type ReactNode,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import type {
@@ -31,6 +32,7 @@ export type AnatomyCanvasProps = {
   cameraCommand: AnatomyState["cameraCommand"];
   onSelectStructure: (structureId: string) => void;
   onReady?: () => void;
+  renderingActive?: boolean;
 };
 
 const InteractiveAnatomyCanvas = dynamic(() => import("./AnatomyCanvas"), {
@@ -45,7 +47,12 @@ const InteractiveAnatomyCanvas = dynamic(() => import("./AnatomyCanvas"), {
 type BoundaryState = { failed: boolean };
 
 class AnatomyCanvasBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode; onError?: (error: Error, info: ErrorInfo) => void },
+  {
+    children: ReactNode;
+    fallback: ReactNode;
+    resetKey: string;
+    onError?: (error: Error, info: ErrorInfo) => void;
+  },
   BoundaryState
 > {
   state: BoundaryState = { failed: false };
@@ -56,6 +63,12 @@ class AnatomyCanvasBoundary extends Component<
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     this.props.onError?.(error, info);
+  }
+
+  componentDidUpdate(previousProps: Readonly<typeof this.props>) {
+    if (this.state.failed && previousProps.resetKey !== this.props.resetKey) {
+      this.setState({ failed: false });
+    }
   }
 
   override render() {
@@ -84,6 +97,8 @@ export function anatomyRenderDescription(
 export function AnatomyStage(props: AnatomyCanvasProps) {
   const [webglAvailable, setWebglAvailable] = useState<boolean | null>(null);
   const [readySystemId, setReadySystemId] = useState<string | null>(null);
+  const [renderingActive, setRenderingActive] = useState(true);
+  const rendererSurface = useRef<HTMLDivElement>(null);
   const modelReady = readySystemId === props.system.id;
   const handleModelReady = useCallback(
     () => setReadySystemId(props.system.id),
@@ -94,6 +109,30 @@ export function AnatomyStage(props: AnatomyCanvasProps) {
     const calibration = window.setTimeout(() => setWebglAvailable(supportsWebgl()), 0);
     return () => window.clearTimeout(calibration);
   }, []);
+
+  useEffect(() => {
+    if (!webglAvailable) return;
+    const visibility = { page: !document.hidden, viewport: true };
+    const update = () => setRenderingActive(visibility.page && visibility.viewport);
+    const onVisibilityChange = () => {
+      visibility.page = !document.hidden;
+      update();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    const observer = typeof IntersectionObserver === "function"
+      ? new IntersectionObserver(([entry]) => {
+          visibility.viewport = entry?.isIntersecting ?? true;
+          update();
+        }, { threshold: 0.01 })
+      : null;
+    if (rendererSurface.current) observer?.observe(rendererSurface.current);
+
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      observer?.disconnect();
+    };
+  }, [webglAvailable]);
 
   if (webglAvailable === null) {
     return (
@@ -107,6 +146,7 @@ export function AnatomyStage(props: AnatomyCanvasProps) {
 
   return (
     <div
+      ref={rendererSurface}
       className={styles.rendererSurface}
       data-ready={modelReady || undefined}
       role="img"
@@ -118,10 +158,14 @@ export function AnatomyStage(props: AnatomyCanvasProps) {
         </div>
       ) : null}
       <AnatomyCanvasBoundary
-        key={props.system.id}
+        resetKey={props.system.id}
         fallback={<AnatomyFallback system={props.system} reason="model" />}
       >
-        <InteractiveAnatomyCanvas {...props} onReady={handleModelReady} />
+        <InteractiveAnatomyCanvas
+          {...props}
+          renderingActive={renderingActive}
+          onReady={handleModelReady}
+        />
       </AnatomyCanvasBoundary>
       {props.system.id === "immune"
       && props.selectedStructure.selectors.some((selector) => selector.model === "lymph-node")

@@ -12,7 +12,12 @@ export function AnatomyFallback({
 }) {
   return (
     <figure className={styles.fallback}>
-      <img src={system.fallback} alt={`Source-validation render of the ${system.label.toLowerCase()}`} />
+      <img
+        src={system.fallback}
+        alt={`Source-validation render of the ${system.label.toLowerCase()}`}
+        decoding="async"
+        loading="lazy"
+      />
       <figcaption>
         {reason === "model"
           ? "The interactive reference model could not be decoded. This deterministic render preserves the same HRA source geometry."

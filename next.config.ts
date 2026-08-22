@@ -8,6 +8,25 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 90, 92],
   },
+  async headers() {
+    const anatomyAssetCache = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=31536000, immutable",
+      },
+    ];
+
+    return [
+      {
+        source: "/models/anatomy/:path*",
+        headers: anatomyAssetCache,
+      },
+      {
+        source: "/media/anatomy/:path*",
+        headers: anatomyAssetCache,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

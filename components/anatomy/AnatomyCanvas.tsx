@@ -2,7 +2,6 @@
 
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Canvas, type ThreeEvent, useFrame, useThree } from "@react-three/fiber";
-import { useStore } from "zustand";
 import {
   Suspense,
   useCallback,
@@ -15,9 +14,6 @@ import {
 import * as THREE from "three";
 import {
   anatomy,
-  getAnatomyStructure,
-  getAnatomySystem,
-  getAnatomyView,
   structureForMesh,
   structureMatchesMesh,
 } from "@/content/anatomy";
@@ -42,6 +38,7 @@ const THORACIC_VESSEL_TOKENS = [
 type MaterialSet = ReturnType<typeof createMaterials>;
 type RegisteredScene = { model: AnatomyModelKey; scene: THREE.Group };
 type SceneProps = AnatomyCanvasProps & {
+  materials: MaterialSet;
   stateRef: MutableRefObject<AnatomyCanvasProps>;
 };
 
@@ -350,7 +347,7 @@ function useRegisteredScenes(
   materials: MaterialSet,
   props: SceneProps,
 ) {
-  const appliedState = useRef("");
+  const invalidate = useThree((state) => state.invalidate);
   const applyState = useCallback((state: AnatomyCanvasProps) => {
     entries.forEach(({ model, scene }) => {
       scene.traverse((object) => {
@@ -362,24 +359,25 @@ function useRegisteredScenes(
     });
   }, [entries, materials]);
 
+  const stateKey = [
+    props.system.id,
+    props.view.id,
+    props.selectedStructure.id,
+    props.renderingActive === false ? "paused" : "active",
+    props.reducedMotion ? "reduced-motion" : "full-motion",
+    ...props.system.modelKeys.map((model) => props.layers[model] ? "1" : "0"),
+  ].join("|");
+
   useLayoutEffect(() => {
     applyState(props.stateRef.current);
-  }, [applyState, props.stateRef]);
+    invalidate();
+  }, [applyState, invalidate, props.stateRef, stateKey]);
 
   useFrame(({ clock }) => {
     const state = props.stateRef.current;
-    const stateKey = [
-      state.system.id,
-      state.view.id,
-      state.selectedStructure.id,
-      ...state.system.modelKeys.map((model) => state.layers[model] ? "1" : "0"),
-    ].join("|");
-    if (stateKey !== appliedState.current) {
-      appliedState.current = stateKey;
-      applyState(state);
-    }
-
-    const animate = state.view.id === "pathway" && !state.reducedMotion;
+    const animate = state.renderingActive !== false
+      && state.view.id === "pathway"
+      && !state.reducedMotion;
     const time = clock.elapsedTime * 1.55;
     const intensity = (phase: number, floor = 0.08) => (
       animate ? floor + Math.max(0, Math.sin(time - phase)) * 0.74 : floor
@@ -409,6 +407,25 @@ function useRegisteredScenes(
   });
 }
 
+function RenderScheduler({ active }: { active: boolean }) {
+  const invalidate = useThree((state) => state.invalidate);
+
+  useEffect(() => {
+    invalidate();
+    if (!active) return;
+
+    let frame = 0;
+    const render = () => {
+      invalidate();
+      frame = window.requestAnimationFrame(render);
+    };
+    frame = window.requestAnimationFrame(render);
+    return () => window.cancelAnimationFrame(frame);
+  }, [active, invalidate]);
+
+  return null;
+}
+
 function useReady(onReady: AnatomyCanvasProps["onReady"]) {
   useEffect(() => {
     onReady?.();
@@ -430,7 +447,7 @@ function ThoracicAnatomy(props: SceneProps) {
   const heartSource = useGLTF(MODEL_PATHS.heart).scene;
   const lungSource = useGLTF(MODEL_PATHS.lung).scene;
   const vasculatureSource = useGLTF(MODEL_PATHS.vasculature).scene;
-  const materials = useMemo(() => createMaterials(), []);
+  const { materials } = props;
   const entries = useMemo<RegisteredScene[]>(() => [
     { model: "lung", scene: cloneScene(lungSource, "lung") },
     { model: "heart", scene: cloneScene(heartSource, "heart") },
@@ -450,7 +467,7 @@ function DigestiveAnatomy(props: SceneProps) {
   const pancreasSource = useGLTF(MODEL_PATHS.pancreas).scene;
   const smallIntestineSource = useGLTF(MODEL_PATHS["small-intestine"]).scene;
   const largeIntestineSource = useGLTF(MODEL_PATHS["large-intestine"]).scene;
-  const materials = useMemo(() => createMaterials(), []);
+  const { materials } = props;
   const entries = useMemo<RegisteredScene[]>(() => [
     { model: "liver", scene: cloneScene(liverSource, "liver") },
     { model: "pancreas", scene: cloneScene(pancreasSource, "pancreas") },
@@ -473,7 +490,7 @@ function UrinaryAnatomy(props: SceneProps) {
   const ureterRightSource = useGLTF(MODEL_PATHS["ureter-right"]).scene;
   const bladderSource = useGLTF(MODEL_PATHS["urinary-bladder"]).scene;
   const urethraSource = useGLTF(MODEL_PATHS.urethra).scene;
-  const materials = useMemo(() => createMaterials(), []);
+  const { materials } = props;
   const entries = useMemo<RegisteredScene[]>(() => [
     { model: "kidney-left", scene: cloneScene(kidneyLeftSource, "kidney-left") },
     { model: "kidney-right", scene: cloneScene(kidneyRightSource, "kidney-right") },
@@ -494,7 +511,7 @@ function UrinaryAnatomy(props: SceneProps) {
 function NervousAnatomy(props: SceneProps) {
   const brainSource = useGLTF(MODEL_PATHS.brain).scene;
   const spinalSource = useGLTF(MODEL_PATHS["spinal-cord"]).scene;
-  const materials = useMemo(() => createMaterials(), []);
+  const { materials } = props;
   const entries = useMemo<RegisteredScene[]>(() => [
     { model: "brain", scene: cloneScene(brainSource, "brain") },
     { model: "spinal-cord", scene: cloneScene(spinalSource, "spinal-cord") },
@@ -511,7 +528,7 @@ function NervousAnatomy(props: SceneProps) {
 function SensoryAnatomy(props: SceneProps) {
   const leftSource = useGLTF(MODEL_PATHS["eye-left"]).scene;
   const rightSource = useGLTF(MODEL_PATHS["eye-right"]).scene;
-  const materials = useMemo(() => createMaterials(), []);
+  const { materials } = props;
   const entries = useMemo<RegisteredScene[]>(() => [
     { model: "eye-left", scene: cloneScene(leftSource, "eye-left") },
     { model: "eye-right", scene: cloneScene(rightSource, "eye-right") },
@@ -529,7 +546,7 @@ function ImmuneAnatomy(props: SceneProps) {
   const thymusSource = useGLTF(MODEL_PATHS.thymus).scene;
   const spleenSource = useGLTF(MODEL_PATHS.spleen).scene;
   const nodeSource = useGLTF(MODEL_PATHS["lymph-node"]).scene;
-  const materials = useMemo(() => createMaterials(), []);
+  const { materials } = props;
   const entries = useMemo<RegisteredScene[]>(() => [
     { model: "thymus", scene: cloneScene(thymusSource, "thymus") },
     { model: "spleen", scene: cloneScene(spleenSource, "spleen") },
@@ -549,14 +566,15 @@ function ImmuneAnatomy(props: SceneProps) {
       scale: 2.55 / Math.max(size.x, size.y, size.z, 0.001),
     };
   }, [nodeEntry.scene]);
-  useFrame(() => {
-    const state = props.stateRef.current;
-    const nodeMode = state.selectedStructure.selectors.some(
+  const invalidate = useThree((state) => state.invalidate);
+  const nodeMode = props.selectedStructure.selectors.some(
       (selector) => selector.model === "lymph-node",
-    ) && state.selectedStructure.id !== "immune-organs";
+    ) && props.selectedStructure.id !== "immune-organs";
+  useLayoutEffect(() => {
     if (registeredGroup.current) registeredGroup.current.visible = !nodeMode;
     if (nodeGroup.current) nodeGroup.current.visible = nodeMode;
-  });
+    invalidate();
+  }, [invalidate, nodeMode]);
 
   return (
     <group onClick={meshClickHandler(props)}>
@@ -574,7 +592,7 @@ function ImmuneAnatomy(props: SceneProps) {
 
 function MusculoskeletalAnatomy(props: SceneProps) {
   const skeletonSource = useGLTF(MODEL_PATHS["skeleton-full"]).scene;
-  const materials = useMemo(() => createMaterials(), []);
+  const { materials } = props;
   const entries = useMemo<RegisteredScene[]>(() => [
     { model: "skeleton-full", scene: cloneScene(skeletonSource, "skeleton-full") },
   ], [skeletonSource]);
@@ -622,8 +640,9 @@ function CameraController({
   reducedMotion: boolean;
 }) {
   const controls = useRef<React.ComponentRef<typeof OrbitControls>>(null);
+  const pendingFrame = useRef<number | null>(null);
   const lastFrameState = useRef({ systemId, viewId });
-  const { camera, scene, size } = useThree();
+  const { camera, scene, size, invalidate } = useThree();
   const transition = useRef<{
     startedAt: number;
     duration: number;
@@ -633,12 +652,25 @@ function CameraController({
     toTarget: THREE.Vector3;
   } | null>(null);
 
+  const queueFrame = useCallback(() => {
+    if (pendingFrame.current !== null) return;
+    pendingFrame.current = window.requestAnimationFrame(() => {
+      pendingFrame.current = null;
+      invalidate();
+    });
+  }, [invalidate]);
+
+  useEffect(() => () => {
+    if (pendingFrame.current !== null) window.cancelAnimationFrame(pendingFrame.current);
+  }, []);
+
   const moveCamera = useCallback((position: THREE.Vector3, target: THREE.Vector3) => {
     if (reducedMotion) {
       camera.position.copy(position);
       controls.current?.target.copy(target);
       camera.updateProjectionMatrix();
       controls.current?.update();
+      invalidate();
       return;
     }
     transition.current = {
@@ -649,7 +681,8 @@ function CameraController({
       fromTarget: controls.current?.target.clone() ?? new THREE.Vector3(),
       toTarget: target,
     };
-  }, [camera, reducedMotion]);
+    queueFrame();
+  }, [camera, invalidate, queueFrame, reducedMotion]);
 
   useFrame(() => {
     const active = transition.current;
@@ -661,6 +694,7 @@ function CameraController({
     camera.updateProjectionMatrix();
     controls.current?.update();
     if (progress >= 1) transition.current = null;
+    else queueFrame();
   });
 
   useEffect(() => {
@@ -728,48 +762,43 @@ function CameraController({
 }
 
 export default function AnatomyCanvas(props: AnatomyCanvasProps) {
-  const systemId = useStore(props.store, (state) => state.systemId);
-  const viewId = useStore(props.store, (state) => state.viewId);
-  const selectedStructureId = useStore(props.store, (state) => state.selectedStructureId);
-  const layers = useStore(props.store, (state) => state.layers);
-  const reducedMotion = useStore(props.store, (state) => state.reducedMotion);
-  const cameraCommand = useStore(props.store, (state) => state.cameraCommand);
-  const system = getAnatomySystem(systemId);
-  const view = getAnatomyView(viewId);
-  const selectedStructure = getAnatomyStructure(systemId, selectedStructureId)
-    ?? system.structures[0];
-  const liveProps: AnatomyCanvasProps = {
-    ...props,
-    system,
-    view,
-    selectedStructure,
-    layers,
-    reducedMotion,
-    cameraCommand,
-    onSelectStructure: props.store.getState().selectStructure,
-  };
-  const stateRef = useRef(liveProps);
-  stateRef.current = liveProps;
+  const materials = useMemo(() => createMaterials(), []);
+  const stateRef = useRef(props);
+  stateRef.current = props;
+
   return (
     <Canvas
+      frameloop="demand"
       dpr={[1, 1.8]}
       camera={{ position: [0, 0.05, 5.2], fov: 34, near: 0.05, far: 40 }}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+        preserveDrawingBuffer: false,
+        stencil: false,
+      }}
+      resize={{ scroll: false }}
     >
       <ambientLight intensity={0.24} color="#9fa6ac" />
       <hemisphereLight args={["#c8d1da", "#231a18", 0.64]} />
       <directionalLight position={[-3.5, 5.5, 5]} intensity={2.35} color="#efd4bf" />
       <directionalLight position={[4, 1.5, 3]} intensity={1.05} color="#abc2d8" />
       <pointLight position={[0, -2.5, -2]} intensity={1.15} color="#85413a" />
+      <RenderScheduler
+        active={props.renderingActive !== false
+          && props.view.id === "pathway"
+          && !props.reducedMotion}
+      />
       <Suspense fallback={null}>
-        <RegisteredAnatomy {...liveProps} stateRef={stateRef} />
+        <RegisteredAnatomy {...props} materials={materials} stateRef={stateRef} />
       </Suspense>
       <CameraController
-        command={cameraCommand}
-        systemId={system.id}
-        viewId={view.id}
-        selectedStructureId={selectedStructure.id}
-        reducedMotion={reducedMotion}
+        command={props.cameraCommand}
+        systemId={props.system.id}
+        viewId={props.view.id}
+        selectedStructureId={props.selectedStructure.id}
+        reducedMotion={props.reducedMotion}
       />
     </Canvas>
   );

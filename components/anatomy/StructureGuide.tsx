@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink } from "lucide-react";
+import { memo } from "react";
 import { anatomy } from "@/content/anatomy";
 import type {
   AnatomyStructure,
@@ -15,7 +16,7 @@ function evidenceLabel(view: AnatomyView) {
   return "Reference anatomy";
 }
 
-export function StructureGuide({
+export const StructureGuide = memo(function StructureGuide({
   system,
   structure,
   view,
@@ -90,4 +91,4 @@ export function StructureGuide({
       </div>
     </aside>
   );
-}
+});

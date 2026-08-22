@@ -995,6 +995,8 @@
 .transcriptGrid > article {
   padding: clamp(25px, 4vw, 52px);
   background: #e9e4d9;
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 720px;
 }
 
 .transcriptGrid > article > span {
@@ -1062,6 +1064,8 @@
   gap: 80px;
   padding-top: 65px;
   border-top: 1px solid rgba(21, 21, 21, 0.23);
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 760px;
 }
 
 .sourcePanel h2 {

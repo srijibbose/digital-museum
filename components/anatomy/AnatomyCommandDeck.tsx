@@ -1,6 +1,7 @@
 "use client";
 
 import { Layers3, Rotate3D, Undo2, ZoomIn, ZoomOut } from "lucide-react";
+import { memo } from "react";
 import { anatomy } from "@/content/anatomy";
 import type {
   AnatomyModelKey,
@@ -34,7 +35,7 @@ const LAYER_LABELS: Record<AnatomyModelKey, string> = {
   "skeleton-full": "201 named bones",
 };
 
-export function AnatomyCommandDeck({
+export const AnatomyCommandDeck = memo(function AnatomyCommandDeck({
   system,
   viewId,
   layers,
@@ -95,4 +96,4 @@ export function AnatomyCommandDeck({
       </details>
     </div>
   );
-}
+});
