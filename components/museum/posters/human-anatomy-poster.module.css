@@ -1,0 +1,78 @@
+.poster {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #07090a;
+}
+
+.poster > img {
+  position: absolute;
+  inset: -5% -4% -10% 14%;
+  width: 92%;
+  height: 112%;
+  filter: brightness(0.78) saturate(0.76) contrast(1.08);
+  object-fit: contain;
+  object-position: center;
+}
+
+.poster::before,
+.poster::after {
+  position: absolute;
+  z-index: 2;
+  content: "";
+  pointer-events: none;
+}
+
+.poster::before {
+  inset: 0;
+  background:
+    linear-gradient(rgba(235, 230, 221, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(235, 230, 221, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, #07090a 0%, transparent 28%, transparent 78%, rgba(7, 9, 10, 0.72));
+  background-size: 48px 48px, 48px 48px, auto;
+}
+
+.poster::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(235, 230, 221, 0.13);
+}
+
+.index {
+  position: absolute;
+  z-index: 3;
+  top: 23%;
+  left: 5%;
+  max-width: 110px;
+  color: rgba(235, 230, 221, 0.66);
+}
+
+.index span {
+  color: #b64d3f;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.index p {
+  margin: 7px 0 0;
+  font-family: var(--display);
+  font-size: 0.86rem;
+  line-height: 1.15;
+}
+
+.caption {
+  position: absolute;
+  z-index: 3;
+  right: 22px;
+  bottom: 20px;
+  left: 22px;
+  margin: 0;
+  color: rgba(235, 230, 221, 0.62);
+  font-size: 0.54rem;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}

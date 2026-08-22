@@ -6,7 +6,7 @@ export interface ExhibitWing {
 }
 
 export interface ExhibitVisualTheme {
-  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
+  variant: "human-anatomy" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -63,6 +63,35 @@ export const WINGS: Record<string, ExhibitWing> = {
 
 export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
   {
+    id: "human-anatomy",
+    slug: "human-anatomy",
+    exhibitNumber: "EXH. 006",
+    wing: WINGS.body,
+    title: "Human Anatomy",
+    tagline: "The body is a relationship, not a parts list.",
+    synopsis:
+      "Move through eight body systems, isolate named structures, and trace real anatomical relationships from brain territories to a complete 201-bone skeleton.",
+    curatorNote:
+      "Built from registered HuBMAP Human Reference Atlas geometry derived from the NLM Visible Human Project, with source status, reference-body scope, and model limits shown inside the exhibit.",
+    readingTime: "25–40 min",
+    interactionType: "Registered 3D Anatomy · System Isolation · Source-Linked Field Guide",
+    tags: ["Human Anatomy", "Eight Body Systems", "Scientific 3D", "HuBMAP HRA"],
+    route: "/exhibits/human-anatomy",
+    enabled: true,
+    featured: true,
+    order: 1,
+    visualTheme: {
+      variant: "human-anatomy",
+      accentColor: "#b64d3f",
+      badgeText: "REFERENCE ANATOMY",
+      metrics: [
+        { label: "Systems", value: "08" },
+        { label: "Named meshes", value: "891" },
+        { label: "Sources", value: "HRA · BP3D" },
+      ],
+    },
+  },
+  {
     id: "becoming-human",
     slug: "becoming-human",
     exhibitNumber: "EXH. 004",
@@ -78,7 +107,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/becoming-human",
     enabled: true,
     featured: true,
-    order: 1,
+    order: 2,
     visualTheme: {
       variant: "becoming-human",
       accentColor: "#c96b39",
@@ -87,34 +116,6 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
         { label: "Deep Time", value: "8 MA" },
         { label: "Episodes", value: "35" },
         { label: "Clocks", value: "4" },
-      ],
-    },
-  },
-  {
-    id: "living-atlas",
-    slug: "living-atlas",
-    exhibitNumber: "EXH. 001",
-    wing: WINGS.body,
-    title: "The Living Atlas",
-    tagline: "One body. Many conversations.",
-    synopsis:
-      "Follow a touch, a breath, and a heartbeat through the intricate neural and vascular systems that keep a human body in constant conversation with itself.",
-    curatorNote: "Features real-time heartbeat rhythm simulation and layered 3D anatomy visualization.",
-    readingTime: "12–15 min read",
-    interactionType: "Interactive Anatomy · Real-Time Audio",
-    tags: ["Human Physiology", "Interactive 3D", "Bio-Mechanics", "Soundscape"],
-    route: "/exhibits/living-atlas",
-    enabled: true,
-    featured: false,
-    order: 1,
-    visualTheme: {
-      variant: "living-atlas",
-      accentColor: "#e07a5f",
-      badgeText: "BIOMETRIC EXPLORER",
-      metrics: [
-        { label: "Resting Pulse", value: "72 BPM" },
-        { label: "Neural Speed", value: "120 m/s" },
-        { label: "Vascular Span", value: "60k mi" },
       ],
     },
   },
@@ -133,7 +134,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/jet-engine",
     enabled: true,
     featured: true,
-    order: 2,
+    order: 3,
     visualTheme: {
       variant: "jet-engine",
       accentColor: "#d86f3d",
@@ -161,7 +162,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/thirteen-minutes",
     enabled: true,
     featured: true,
-    order: 3,
+    order: 4,
     visualTheme: {
       variant: "thirteen-minutes",
       accentColor: "#48cae4",
@@ -189,7 +190,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/atlas-of-worlds",
     enabled: true,
     featured: true,
-    order: 4,
+    order: 5,
     visualTheme: {
       variant: "atlas-of-worlds",
       accentColor: "#bd552b",

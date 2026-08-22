@@ -1,0 +1,292 @@
+[
+  {
+    "path": "/models/anatomy/hra-v1.2/heart-male.glb",
+    "title": "Visible Human male heart reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/tree/main/v1.2/models",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry and object names preserved. Runtime materials replace source presentation materials."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/lung-male.glb",
+    "title": "Visible Human male lung and airway reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/tree/main/v1.2/models",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry and object names preserved. Runtime materials distinguish lung segments from central airways."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/blood-vasculature-male.glb",
+    "title": "Visible Human male blood vasculature reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/tree/main/v1.2/models",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry and object names preserved. The initial view filters to thoracic vessels and uses conventional route colours."
+  },
+  {
+    "path": "/media/anatomy/cardiac-reference-render.png",
+    "title": "Loupe cardiac source-validation render",
+    "source": "https://humanatlas.io/3d-reference-library",
+    "publisher": "Loupe using HuBMAP HRA geometry",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Rendered by Loupe from Human Reference Atlas geometry, HuBMAP Consortium",
+    "processing": "Deterministic Blender render with illustrative materials and restrained studio lighting; geometry unchanged."
+  },
+  {
+    "path": "/media/anatomy/thorax-reference-render.png",
+    "title": "Loupe thorax source-validation render",
+    "source": "https://humanatlas.io/3d-reference-library",
+    "publisher": "Loupe using HuBMAP HRA geometry",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Rendered by Loupe from Human Reference Atlas geometry, HuBMAP Consortium",
+    "processing": "Deterministic Blender render combining registered heart, lung, airway, and thoracic vasculature objects; geometry unchanged."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/liver-male.glb",
+    "title": "Visible Human male liver reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Liver.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/pancreas-male.glb",
+    "title": "Visible Human male pancreas reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Pancreas.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/small-intestine-male.glb",
+    "title": "Visible Human male small intestine reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Small_Intestine.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/large-intestine-male.glb",
+    "title": "Adult male large intestine reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/SBU_M_Intestine_Large.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium / Stony Brook University",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/kidney-left-male.glb",
+    "title": "Visible Human male left kidney reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Kidney_L.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/kidney-right-male.glb",
+    "title": "Visible Human male right kidney reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Kidney_R.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/ureter-left-male.glb",
+    "title": "Visible Human male left collecting system and ureter reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Ureter_L.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/ureter-right-male.glb",
+    "title": "Visible Human male right collecting system and ureter reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Ureter_R.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/urinary-bladder-male.glb",
+    "title": "Visible Human male urinary bladder reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Urinary_Bladder.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/urethra-male.glb",
+    "title": "Visible Human male urethra reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Urethra.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, coordinate frame, and object names preserved; sex-specific scope retained."
+  },
+  {
+    "path": "/media/anatomy/digestive-reference-render.png",
+    "title": "Loupe digestive territory source-validation render",
+    "source": "https://humanatlas.io/3d-reference-library",
+    "publisher": "Loupe using HuBMAP HRA geometry",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Rendered by Loupe from Human Reference Atlas geometry, HuBMAP Consortium",
+    "processing": "Deterministic Blender render combining registered liver, pancreas, small intestine, and large intestine; geometry unchanged."
+  },
+  {
+    "path": "/media/anatomy/urinary-reference-render.png",
+    "title": "Loupe urinary territory source-validation render",
+    "source": "https://humanatlas.io/3d-reference-library",
+    "publisher": "Loupe using HuBMAP HRA geometry",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Rendered by Loupe from Human Reference Atlas geometry, HuBMAP Consortium",
+    "processing": "Deterministic Blender render combining registered kidneys, collecting systems, ureters, bladder, and urethra; geometry unchanged."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/brain-male.glb",
+    "title": "Allen adult male brain reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/Allen_M_Brain.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium / Allen Institute",
+    "processing": "Renamed for local delivery; 283 source meshes, geometry, registration, and object names preserved. Runtime materials group related brain territories without altering anatomy."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/spinal-cord-male.glb",
+    "title": "Visible Human male spinal-cord reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Spinal_Cord.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; thirty named cord segments retain source geometry, registration, and object names."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/eye-left-male.glb",
+    "title": "Visible Human male left-eye reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Eye_L.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; 23 separately named ocular meshes retain source geometry and registration. Runtime materials expose transparent optical media without fabricating tissue."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/eye-right-male.glb",
+    "title": "Visible Human male right-eye reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Eye_R.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; 23 separately named ocular meshes retain source geometry and registration. Runtime materials expose transparent optical media without fabricating tissue."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/spleen-male.glb",
+    "title": "Visible Human male spleen reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Spleen.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; source geometry, registration, surfaces, hilum, and object names preserved."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/thymus-male.glb",
+    "title": "Visible Human male thymus reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/VH_M_Thymus.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium",
+    "processing": "Renamed for local delivery; bilateral source lobes retain geometry, registration, and object names."
+  },
+  {
+    "path": "/models/anatomy/hra-v1.2/lymph-node-male.glb",
+    "title": "NIH generalized male lymph-node reference object",
+    "source": "https://github.com/hubmapconsortium/ccf-releases/blob/main/v1.2/models/NIH_M_Lymph_Node.glb",
+    "publisher": "HuBMAP Human Reference Atlas",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Human Reference Atlas, HuBMAP Consortium / NIH",
+    "processing": "Renamed for local delivery; capsule, follicles, paracortex, medulla, lymphatic routes, and vessels remain separate. Presented as a magnified generalized exemplar, not as one body-positioned node."
+  },
+  {
+    "path": "/models/anatomy/z-anatomy/full-skeleton-bodyparts3d.glb",
+    "title": "BodyParts3D whole-body 201-bone skeletal reference",
+    "source": "https://github.com/JohanBellander/BodyExplorer/blob/main/public/skeleton.glb",
+    "publisher": "Database Center for Life Science (DBCLS); browser conversion by BodyExplorer",
+    "license": "CC BY-SA 2.1 Japan",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+    "credit": "BodyParts3D, © The Database Center for Life Science; browser conversion by Johan Bellander / BodyExplorer",
+    "processing": "BodyParts3D bone meshes were converted to a browser-ready GLB by BodyExplorer. Loupe preserves all 201 named bone meshes and changes only coordinate normalization, material, lighting, and presentation scale at runtime."
+  },
+  {
+    "path": "/media/anatomy/full-skeleton-reference-render.png",
+    "title": "Loupe whole-skeleton source-validation render",
+    "source": "https://lifesciencedb.jp/bp3d/",
+    "publisher": "Loupe using BodyParts3D geometry",
+    "license": "CC BY-SA 2.1 Japan",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+    "credit": "Rendered by Loupe from BodyParts3D geometry, © The Database Center for Life Science",
+    "processing": "Deterministic browser capture of the delivered 201-bone BodyParts3D reference using the same coordinate normalization and neutral bone material as the interactive renderer; geometry unchanged."
+  },
+  {
+    "path": "/media/anatomy/nervous-reference-render.png",
+    "title": "Loupe nervous-system source-validation render",
+    "source": "https://humanatlas.io/3d-reference-library",
+    "publisher": "Loupe using HuBMAP HRA geometry",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Rendered by Loupe from Human Reference Atlas geometry, HuBMAP Consortium",
+    "processing": "Deterministic Blender render combining registered Allen brain and spinal-cord source objects; geometry unchanged."
+  },
+  {
+    "path": "/media/anatomy/sensory-reference-render.png",
+    "title": "Loupe paired-eye source-validation render",
+    "source": "https://humanatlas.io/3d-reference-library",
+    "publisher": "Loupe using HuBMAP HRA geometry",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Rendered by Loupe from Human Reference Atlas geometry, HuBMAP Consortium",
+    "processing": "Deterministic Blender render of paired registered ocular source objects; geometry unchanged."
+  },
+  {
+    "path": "/media/anatomy/immune-reference-render.png",
+    "title": "Loupe immune-organ source-validation render",
+    "source": "https://humanatlas.io/3d-reference-library",
+    "publisher": "Loupe using HuBMAP HRA geometry",
+    "license": "CC BY 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "credit": "Rendered by Loupe from Human Reference Atlas geometry, HuBMAP Consortium",
+    "processing": "Deterministic Blender render of thymus and spleen registration plus a generalized lymph-node exemplar; mixed scale is disclosed in the exhibit."
+  }
+]
