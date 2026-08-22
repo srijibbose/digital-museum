@@ -68,7 +68,7 @@ function alternateWorld(primary: WorldId): WorldId {
 }
 
 export function createAtlasStore(
-  initialWorld: WorldId = "moon",
+  initialWorld: WorldId = "venus",
 ): StoreApi<AtlasState> {
   const initialBody = getWorld(initialWorld);
 
@@ -77,7 +77,7 @@ export function createAtlasStore(
     activeModeId: initialBody.defaultModeId,
     selectedHotspotId: null,
     visitedByWorld: createVisitLedger(),
-    theme: "light",
+    theme: "dark",
     reducedMotion: false,
     simplifiedView: false,
     lightingMode: initialWorld === "earth" ? "survey" : "natural",

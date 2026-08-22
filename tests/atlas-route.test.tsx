@@ -25,7 +25,7 @@ describe("Atlas of Worlds route", () => {
     );
   });
 
-  it("falls back to the Moon for an invalid world query", async () => {
+  it("falls back to Venus for an invalid world query", async () => {
     render(
       await AtlasOfWorldsPage({
         searchParams: Promise.resolve({ world: "pluto" }),
@@ -33,7 +33,7 @@ describe("Atlas of Worlds route", () => {
     );
 
     const worldIndex = screen.getByRole("navigation", { name: /world index/i });
-    expect(within(worldIndex).getByRole("button", { name: /^moon/i })).toHaveAttribute(
+    expect(within(worldIndex).getByRole("button", { name: /^venus/i })).toHaveAttribute(
       "aria-current",
       "true",
     );

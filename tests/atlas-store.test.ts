@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import { createAtlasStore } from "@/lib/space/atlas-store";
 
 describe("Atlas instrument store", () => {
-  it("starts on the selected world and its authored default mode", () => {
-    const store = createAtlasStore("earth");
+  it("opens directly on Venus's radar surface in dark theme", () => {
+    const store = createAtlasStore();
 
-    expect(store.getState().worldId).toBe("earth");
-    expect(store.getState().activeModeId).toBe("surface");
-    expect(store.getState().theme).toBe("light");
+    expect(store.getState().worldId).toBe("venus");
+    expect(store.getState().activeModeId).toBe("radar");
+    expect(store.getState().theme).toBe("dark");
   });
 
   it("changes worlds, resets mode and selection, and keeps a visit ledger", () => {
@@ -59,7 +59,7 @@ describe("Atlas instrument store", () => {
     });
     expect(store.getState().lightAzimuth).toBe(124);
     expect(store.getState().lightElevation).toBe(18);
-    expect(store.getState().theme).toBe("dark");
+    expect(store.getState().theme).toBe("light");
   });
 
   it("uses Survey light for Earth and lets the visitor restore Natural light", () => {

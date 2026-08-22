@@ -34,6 +34,16 @@ describe("Atlas of Worlds content collection", () => {
     }
   });
 
+  it("opens Venus on the radar surface before its atmosphere", () => {
+    const venus = getWorld("venus");
+
+    expect(venus.defaultModeId).toBe("radar");
+    expect(venus.modes.slice(0, 2).map((mode) => mode.id)).toEqual([
+      "radar",
+      "atmosphere",
+    ]);
+  });
+
   it("gives every mode an explicit visible change and control policy", () => {
     for (const world of atlas.worlds) {
       for (const mode of world.modes) {

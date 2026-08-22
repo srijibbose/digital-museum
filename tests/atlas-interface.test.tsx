@@ -117,8 +117,9 @@ describe("Atlas of Worlds instrument shell", () => {
     const user = userEvent.setup();
     render(<AtlasExperience initialWorld="moon" />);
 
-    await user.click(screen.getByRole("button", { name: /switch to dark theme/i }));
     expect(screen.getByTestId("atlas-instrument")).toHaveAttribute("data-theme", "dark");
+    await user.click(screen.getByRole("button", { name: /switch to light theme/i }));
+    expect(screen.getByTestId("atlas-instrument")).toHaveAttribute("data-theme", "light");
 
     await user.click(screen.getByRole("button", { name: /compare worlds/i }));
     const selector = screen.getByRole("combobox", { name: /compare with/i });
