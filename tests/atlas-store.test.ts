@@ -111,7 +111,7 @@ describe("Atlas instrument store", () => {
     expect(store.getState().visitedByWorld.jupiter).toContain("great-red-spot");
   });
 
-  it("disables authored motion when the visitor toggles it or requests reduced motion", () => {
+  it("disables automatic globe spin when the visitor toggles it or requests reduced motion", () => {
     const store = createAtlasStore("jupiter");
 
     expect(store.getState().motionEnabled).toBe(true);
@@ -121,5 +121,23 @@ describe("Atlas instrument store", () => {
     store.getState().setReducedMotion(true);
     expect(store.getState().reducedMotion).toBe(true);
     expect(store.getState().motionEnabled).toBe(false);
+  });
+
+  it("preserves a bounded Mars date while clearing the temporary present reference", () => {
+    const store = createAtlasStore("mars");
+
+    expect(store.getState().marsTimeMya).toBe(3700);
+    store.getState().setMarsTimeMya(5000);
+    expect(store.getState().marsTimeMya).toBe(4100);
+    store.getState().setMarsTimeMya(-20);
+    expect(store.getState().marsTimeMya).toBe(0);
+
+    store.getState().setMarsTimeMya(3500);
+    store.getState().setMarsPresentPreview(true);
+    expect(store.getState().marsPresentPreview).toBe(true);
+    store.getState().setWorld("earth");
+
+    expect(store.getState().marsTimeMya).toBe(3500);
+    expect(store.getState().marsPresentPreview).toBe(false);
   });
 });

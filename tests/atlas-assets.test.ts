@@ -24,13 +24,19 @@ function isWebP(filePath: string) {
   );
 }
 
+function isPng(filePath: string) {
+  return readFileSync(filePath).subarray(0, 8).equals(
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+  );
+}
+
 function isGlb(filePath: string) {
   const header = readFileSync(filePath).subarray(0, 4);
   return header.toString("ascii") === "glTF";
 }
 
 describe("Atlas planetary assets", () => {
-  it("bundles every declared texture as a valid local WebP", () => {
+  it("bundles every declared texture as a valid local browser image", () => {
     const declared = new Set<string>();
     for (const assets of Object.values(atlasAssetPaths)) {
       declared.add(assets.color);
@@ -39,13 +45,13 @@ describe("Atlas planetary assets", () => {
       Object.values(assets.layers ?? {}).forEach((asset) => declared.add(asset));
     }
 
-    expect(declared.size).toBe(23);
+    expect(declared.size).toBe(24);
     for (const assetPath of declared) {
       const filePath = publicPath(assetPath);
       expect(existsSync(filePath), assetPath).toBe(true);
       const minimumBytes = assetPath.includes("-rings.webp") ? 2_000 : 10_000;
       expect(statSync(filePath).size, assetPath).toBeGreaterThan(minimumBytes);
-      expect(isWebP(filePath), assetPath).toBe(true);
+      expect(assetPath.endsWith(".png") ? isPng(filePath) : isWebP(filePath), assetPath).toBe(true);
     }
   });
 
@@ -54,9 +60,10 @@ describe("Atlas planetary assets", () => {
       [AtlasAssetKey, NonNullable<(typeof atlasTextureLedger)[AtlasAssetKey]>]
     >;
 
-    expect(records).toHaveLength(23);
+    expect(records).toHaveLength(24);
     for (const [key, asset] of records) {
-      expect(asset.path, key).toBe(`/media/space/atlas/${key}.webp`);
+      const extension = key === "mars-elevation" ? "png" : "webp";
+      expect(asset.path, key).toBe(`/media/space/atlas/${key}.${extension}`);
       expect(asset.sourceUrl, key).toMatch(/^https:\/\//);
       expect(asset.credit.length, key).toBeGreaterThan(8);
       expect(asset.processing.length, key).toBeGreaterThan(12);

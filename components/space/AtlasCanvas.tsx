@@ -7,10 +7,15 @@ import * as THREE from "three";
 import { getVisibleHotspots } from "@/content/space/atlas";
 import { atlasModelPaths } from "@/content/space/atlas-assets";
 import { comparisonRadii } from "@/lib/space/atlas-scale";
+import {
+  resolveLivingMotionRenderer,
+  resolveMotionChannels,
+} from "@/lib/space/celestial-motion";
+import { resolveMarsDeepTimeState } from "@/lib/space/mars-deep-time";
 import { latLonToVector3 } from "@/lib/space/geo";
 import { useOrientationReporter } from "@/lib/space/orientation-reporter";
 import { applyRadialRingUvs, SATURN_RING_TILT_RADIANS } from "@/lib/space/ring-geometry";
-import { SOLAR_DISC_U_SCALE, SOLAR_DISC_V_SCALE, solarFlowPulse } from "@/lib/space/solar-projection";
+import { SOLAR_DISC_U_SCALE, SOLAR_DISC_V_SCALE } from "@/lib/space/solar-projection";
 import { surfaceMaterialKind } from "@/lib/space/surface-lighting";
 import {
   officialSaturnGlobeRadius,
@@ -22,6 +27,9 @@ import {
 import type { PlanetaryWorld, WorldHotspot } from "@/lib/space/atlas-schema";
 import { FEATURE_CALLOUT_DISTANCE_FACTOR, focusVectorQuaternion } from "@/lib/space/world-focus";
 import type { AtlasCanvasRuntimeProps, RenderLayers } from "./AtlasStage";
+import { JovianDynamicWorld } from "./JovianDynamicWorld";
+import { MarsDeepTimeWorld } from "./MarsDeepTimeWorld";
+import { SolarDynamicWorld } from "./SolarDynamicWorld";
 import styles from "./atlas.module.css";
 
 function InteriorWorld({ world, stageRadius }: { world: PlanetaryWorld; stageRadius: number }) {
@@ -167,32 +175,6 @@ function SolarSurfaceMaterial({
         }
       `}
     />
-  );
-}
-
-function SolarFlow({ texture, radius, enabled }: { texture: THREE.Texture; radius: number; enabled: boolean }) {
-  const flow = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (!flow.current) return;
-
-    const appearance = solarFlowPulse(enabled ? state.clock.elapsedTime : 0);
-    flow.current.scale.setScalar(appearance.scale);
-    const material = flow.current.material as THREE.ShaderMaterial;
-    material.uniforms.surfaceOpacity.value = appearance.opacity;
-  });
-
-  return (
-    <>
-      <mesh ref={flow} scale={1.004}>
-        <sphereGeometry args={[radius, 128, 84]} />
-        <SolarSurfaceMaterial texture={texture} tint="#ffbb73" opacity={0.12} additive />
-      </mesh>
-      <mesh scale={1.055}>
-        <sphereGeometry args={[radius, 96, 64]} />
-        <meshBasicMaterial color="#ff6a25" transparent opacity={0.11} side={THREE.BackSide} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
-      </mesh>
-    </>
   );
 }
 
@@ -363,6 +345,7 @@ function ProceduralWorld({
   modeId,
   motionEnabled,
   reducedMotion,
+  marsTimeMya = 0,
   lightingMode,
   onSelectHotspot,
   showMarkers = true,
@@ -374,15 +357,17 @@ function ProceduralWorld({
   modeId: string;
   motionEnabled: boolean;
   reducedMotion: boolean;
+  marsTimeMya?: number;
   lightingMode: AtlasCanvasRuntimeProps["lightingMode"];
   onSelectHotspot: (id: string) => void;
   showMarkers?: boolean;
 }) {
-  const urls = [layers.baseTexture, ...(layers.bumpTexture ? [layers.bumpTexture] : []), ...(layers.cloudTexture ? [layers.cloudTexture] : []), ...(layers.ringTexture ? [layers.ringTexture] : [])];
+  const urls = [layers.baseTexture, ...(layers.bumpTexture ? [layers.bumpTexture] : []), ...(layers.topographyTexture ? [layers.topographyTexture] : []), ...(layers.cloudTexture ? [layers.cloudTexture] : []), ...(layers.ringTexture ? [layers.ringTexture] : [])];
   const loaded = useLoader(THREE.TextureLoader, urls) as THREE.Texture[];
   let cursor = 0;
   const colorTexture = loaded[cursor++];
   const bumpTexture = layers.bumpTexture ? loaded[cursor++] : undefined;
+  const topographyTexture = layers.topographyTexture ? loaded[cursor++] : undefined;
   const cloudTexture = layers.cloudTexture ? loaded[cursor++] : undefined;
   const ringTexture = layers.ringTexture ? loaded[cursor++] : undefined;
   const visibleHotspots = getVisibleHotspots(world, modeId);
@@ -401,6 +386,7 @@ function ProceduralWorld({
   const isGas = world.renderer.kind === "gas" || world.renderer.kind === "rings";
   const flattening = "flattening" in world.renderer ? world.renderer.flattening : 0;
   const materialKind = surfaceMaterialKind(isSun, layers.selfLit, lightingMode);
+  const livingRenderer = resolveLivingMotionRenderer(world.id, modeId, layers.motion);
 
   return (
     <group
@@ -408,10 +394,35 @@ function ProceduralWorld({
       scale={isSaturn ? [1, 1, 1] : [1, 1 - flattening, 1]}
     >
       <group rotation={isSaturn ? [SATURN_MODEL_TILT_RADIANS, 0, 0] : [0, 0, 0]}>
-        {modelKind === "official-saturn" ? (
+        {layers.deepTime && bumpTexture && topographyTexture ? (
+          <MarsDeepTimeWorld
+            radius={stageRadius}
+            colorTexture={colorTexture}
+            elevationTexture={bumpTexture}
+            topographyTexture={topographyTexture}
+            state={resolveMarsDeepTimeState(marsTimeMya)}
+            bumpScale={layers.bumpScale}
+          />
+        ) : modelKind === "official-saturn" ? (
           <OfficialSaturnModel stageRadius={stageRadius} />
         ) : layers.effect === "temperature" ? (
           <TemperatureSurface texture={colorTexture} radius={stageRadius} />
+        ) : livingRenderer === "solar" ? (
+          <SolarDynamicWorld
+            texture={colorTexture}
+            radius={stageRadius}
+            modeId={modeId}
+            enabled={motionEnabled}
+            reducedMotion={reducedMotion}
+          />
+        ) : livingRenderer === "jovian" ? (
+          <JovianDynamicWorld
+            texture={colorTexture}
+            radius={stageRadius}
+            modeId={modeId}
+            enabled={motionEnabled}
+            reducedMotion={reducedMotion}
+          />
         ) : (
           <mesh>
             <sphereGeometry args={[stageRadius, 160, 112]} />
@@ -436,8 +447,7 @@ function ProceduralWorld({
           </mesh>
         )}
 
-        {isSun && layers.motion === "solar" ? <SolarFlow texture={colorTexture} radius={stageRadius} enabled={activeMotion} /> : null}
-        {layers.motion === "atmosphere" && !isSaturn ? <AtmosphericFlow texture={colorTexture} radius={stageRadius} enabled={activeMotion} /> : null}
+        {layers.motion === "atmosphere" && !isSaturn && livingRenderer !== "jovian" ? <AtmosphericFlow texture={colorTexture} radius={stageRadius} enabled={activeMotion} /> : null}
 
         {cloudTexture && (layers.effect === "clouds" || layers.effect === "atmosphere") ? (
           <mesh scale={1.012}>
@@ -446,7 +456,7 @@ function ProceduralWorld({
           </mesh>
         ) : null}
 
-        {world.renderer.atmosphereColor && !isSun ? (
+        {world.renderer.atmosphereColor && !isSun && !layers.deepTime && livingRenderer !== "jovian" ? (
           <mesh scale={1.027}>
             <sphereGeometry args={[stageRadius, 96, 64]} />
             <meshBasicMaterial color={world.renderer.atmosphereColor} transparent opacity={layers.atmosphere ? 0.14 : 0.055} side={THREE.BackSide} blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
@@ -559,6 +569,7 @@ function baseLayers(world: PlanetaryWorld): RenderLayers {
     night: false,
     rings: world.renderer.kind === "rings",
     showHotspots: false,
+    deepTime: false,
   };
 }
 
@@ -584,6 +595,11 @@ function OrientationControls(props: AtlasCanvasRuntimeProps) {
 
 function Scene(props: AtlasCanvasRuntimeProps) {
   const compareOpen = Boolean(props.compareWorld);
+  const motionChannels = resolveMotionChannels({
+    globeMotionEnabled: props.motionEnabled,
+    compareOpen,
+    reducedMotion: props.reducedMotion,
+  });
   const [primaryRadius, secondaryRadius] = props.compareWorld ? comparisonRadii(props.world.physical.radiusKm, props.compareWorld.physical.radiusKm, props.compareScalePolicy) : [1, 1];
   const azimuth = THREE.MathUtils.degToRad(props.lightAzimuth);
   const elevation = THREE.MathUtils.degToRad(props.lightElevation);
@@ -594,8 +610,8 @@ function Scene(props: AtlasCanvasRuntimeProps) {
       <InstrumentLights props={props} lightPosition={lightPosition} />
       <pointLight position={[-4, -2, -3]} intensity={props.layers.selfLit ? 0 : 0.18} color={props.world.accent} />
       <group position={[compareOpen ? -1.24 : 0, 0, 0]} scale={compareOpen ? 0.69 : 1}>
-        <FocusSpinGroup world={props.world} focusCommand={props.focusCommand} reducedMotion={props.reducedMotion} paused={!props.motionEnabled || Boolean(props.selectedHotspotId) || compareOpen}>
-          <ProceduralWorld world={props.world} layers={props.layers} stageRadius={primaryRadius} selectedHotspotId={props.selectedHotspotId} modeId={props.mode.id} motionEnabled={props.motionEnabled} reducedMotion={props.reducedMotion} lightingMode={props.lightingMode} onSelectHotspot={props.onSelectHotspot} showMarkers={!compareOpen} />
+        <FocusSpinGroup world={props.world} focusCommand={props.focusCommand} reducedMotion={props.reducedMotion} paused={!motionChannels.globeSpin || Boolean(props.selectedHotspotId)}>
+          <ProceduralWorld world={props.world} layers={props.layers} stageRadius={primaryRadius} selectedHotspotId={props.selectedHotspotId} modeId={props.mode.id} motionEnabled={motionChannels.livingSurface} reducedMotion={props.reducedMotion} marsTimeMya={props.marsPresentPreview ? 0 : props.marsTimeMya} lightingMode={props.lightingMode} onSelectHotspot={props.onSelectHotspot} showMarkers={!compareOpen} />
         </FocusSpinGroup>
       </group>
 

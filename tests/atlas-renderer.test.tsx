@@ -9,6 +9,7 @@ import {
   worldRenderDescription,
 } from "@/components/space/AtlasStage";
 import { AtlasFallback } from "@/components/space/AtlasFallback";
+import { resolveLivingMotionRenderer } from "@/lib/space/celestial-motion";
 
 class ThrowingTexture extends Component {
   override render(): ReactNode {
@@ -33,6 +34,8 @@ describe("Atlas renderer contract", () => {
         lightElevation={28}
         reducedMotion={false}
         motionEnabled
+        marsTimeMya={3700}
+        marsPresentPreview={false}
         focusCommand={{ hotspotId: null, sequence: 0 }}
         cameraCommand={{ type: "idle", sequence: 0 }}
         compareWorld={null}
@@ -60,6 +63,8 @@ describe("Atlas renderer contract", () => {
         lightElevation={28}
         reducedMotion={false}
         motionEnabled
+        marsTimeMya={3700}
+        marsPresentPreview={false}
         focusCommand={{ hotspotId: null, sequence: 0 }}
         cameraCommand={{ type: "idle", sequence: 0 }}
         compareWorld={null}
@@ -140,6 +145,11 @@ describe("Atlas renderer contract", () => {
       magnetic: true,
       rings: true,
     });
+    expect(resolveRenderLayers(getWorld("mars"), getMode(getWorld("mars"), "deep-time"))).toMatchObject({
+      effect: "deep-time",
+      deepTime: true,
+      atmosphere: false,
+    });
   });
 
   it("turns authored relief modes into materially stronger terrain", () => {
@@ -174,5 +184,68 @@ describe("Atlas renderer contract", () => {
     expect(description).toMatch(/jupiter/i);
     expect(description).toMatch(/storms/i);
     expect(description).toMatch(/drag to rotate/i);
+  });
+
+  it("qualifies generated Sun and Jupiter movement without relabelling static modes", () => {
+    const sun = getWorld("sun");
+    const jupiter = getWorld("jupiter");
+
+    expect(worldRenderDescription(sun, getMode(sun, "171"))).toMatch(
+      /accelerated motion visualization/i,
+    );
+    expect(worldRenderDescription(jupiter, getMode(jupiter, "storms"))).toMatch(
+      /accelerated motion visualization/i,
+    );
+    expect(worldRenderDescription(jupiter, getMode(jupiter, "interior"))).not.toMatch(
+      /accelerated motion visualization/i,
+    );
+  });
+
+  it("selects specialised living renderers only inside the existing relevant modes", () => {
+    const sun = getWorld("sun");
+    const jupiter = getWorld("jupiter");
+
+    expect(resolveLivingMotionRenderer("sun", "304", getMode(sun, "304").motion)).toBe("solar");
+    expect(resolveLivingMotionRenderer("jupiter", "auroras", getMode(jupiter, "auroras").motion)).toBe("jovian");
+    expect(resolveLivingMotionRenderer(
+      "jupiter",
+      "magnetosphere",
+      getMode(jupiter, "magnetosphere").motion,
+    )).toBeNull();
+  });
+
+  it("keeps the source map and motion limitation honest in the static Jupiter fallback", () => {
+    const jupiter = getWorld("jupiter");
+
+    render(<AtlasFallback world={jupiter} mode={getMode(jupiter, "storms")} />);
+
+    expect(screen.getByText(/atmospheric motion requires interactive 3d/i)).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /jupiter storms scientific map/i })).toBeInTheDocument();
+  });
+
+  it("describes solar plasma rather than generic atmospheric motion in the Sun fallback", () => {
+    const sun = getWorld("sun");
+
+    render(<AtlasFallback world={sun} mode={getMode(sun, "171")} />);
+
+    expect(screen.getByText(/solar plasma motion requires interactive 3d/i)).toBeInTheDocument();
+    expect(screen.queryByText(/^atmospheric motion requires/i)).not.toBeInTheDocument();
+  });
+
+  it("describes the selected Mars date and reconstruction honestly", () => {
+    const world = getWorld("mars");
+    const description = worldRenderDescription(world, getMode(world, "deep-time"), 3000);
+
+    expect(description).toMatch(/3 billion years ago/i);
+    expect(description).toMatch(/drying world/i);
+    expect(description).toMatch(/constrained reconstruction/i);
+  });
+
+  it("keeps Mars deep-time meaning available when WebGL is unavailable", () => {
+    const world = getWorld("mars");
+    render(<AtlasFallback world={world} mode={getMode(world, "deep-time")} />);
+
+    expect(screen.getByText(/deep-time reconstruction requires interactive 3d/i)).toBeInTheDocument();
+    expect(screen.getByText(/observed terrain map remains available/i)).toBeInTheDocument();
   });
 });

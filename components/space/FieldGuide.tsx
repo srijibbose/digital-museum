@@ -7,6 +7,7 @@ import type {
   WorldHotspot,
 } from "@/lib/space/atlas-schema";
 import { formatAtlasInteger } from "@/lib/space/number-format";
+import type { MarsDeepTimeState } from "@/lib/space/mars-deep-time";
 import styles from "./atlas.module.css";
 
 const evidenceLabels: Record<EvidenceStatus, string> = {
@@ -29,14 +30,24 @@ export function FieldGuide({
   world,
   selectedHotspot,
   visitedCount,
+  deepTimeState = null,
 }: {
   world: PlanetaryWorld;
   selectedHotspot: WorldHotspot | null;
   visitedCount: number;
+  deepTimeState?: MarsDeepTimeState | null;
 }) {
-  const evidence = selectedHotspot?.evidence ?? "observed";
+  const showingDeepTime = Boolean(deepTimeState && !selectedHotspot);
+  const showingPresentReference = showingDeepTime && deepTimeState?.timeMya === 0;
+  const evidence = showingPresentReference
+    ? "observed"
+    : showingDeepTime
+    ? "inferred"
+    : selectedHotspot?.evidence ?? "observed";
   const source = selectedHotspot
     ? world.sources.find((item) => selectedHotspot.sourceIds.includes(item.id)) ?? world.sources[0]
+    : deepTimeState
+    ? world.sources.find((item) => deepTimeState.sourceIds.includes(item.id)) ?? world.sources[0]
     : world.sources[0];
   const media = selectedHotspot?.media;
 
@@ -51,10 +62,10 @@ export function FieldGuide({
 
       <div className={styles.guideScroll}>
         <div className={styles.guideIdentity}>
-          <span>{world.orderLabel} · {world.classification}</span>
-          <h2>{selectedHotspot?.label ?? world.name}</h2>
+          <span>{showingDeepTime ? `${deepTimeState?.dateLabel} · ${deepTimeState?.period}` : `${world.orderLabel} · ${world.classification}`}</span>
+          <h2>{selectedHotspot?.label ?? deepTimeState?.title ?? world.name}</h2>
           <p className={styles.guideLead}>
-            {selectedHotspot?.summary ?? world.shortDescription}
+            {selectedHotspot?.summary ?? deepTimeState?.description ?? world.shortDescription}
           </p>
         </div>
 
@@ -65,6 +76,10 @@ export function FieldGuide({
           <span>
             {selectedHotspot
               ? `${selectedHotspot.coordinateConfidence} coordinate`
+              : showingPresentReference
+              ? "Present reference"
+              : showingDeepTime
+              ? "Constrained reconstruction"
               : "Scientific overview"}
           </span>
         </div>
@@ -87,6 +102,21 @@ export function FieldGuide({
                   <dd>{measurement.value}</dd>
                 </div>
               ))}
+            </dl>
+          </>
+        ) : showingDeepTime && deepTimeState ? (
+          <>
+            <p className={styles.guideDetail}>
+              {showingPresentReference
+                ? "The reconstruction overlays are removed at present day, leaving the delivered Viking surface, MOLA relief, observed polar caps, and a restrained atmospheric limb."
+                : "Terrain remains anchored to the delivered Viking and MOLA products. Water, ice, haze, and atmospheric density are visual hypotheses constrained by the record below."}
+            </p>
+            <dl className={styles.measureTable}>
+              <div><dt>Date</dt><dd>{deepTimeState.dateLabel}</dd></div>
+              <div><dt>Observed basis</dt><dd>{deepTimeState.evidenceSummary}</dd></div>
+              <div><dt>Reconstruction</dt><dd>{deepTimeState.reconstructionSummary}</dd></div>
+              <div><dt>Confidence</dt><dd>{deepTimeState.confidence}</dd></div>
+              <div><dt>Timeline state</dt><dd>{deepTimeState.interpolationLabel}</dd></div>
             </dl>
           </>
         ) : (
@@ -125,7 +155,7 @@ export function FieldGuide({
           ) : null}
         </section>
 
-        <section className={styles.structure} aria-labelledby="structure-title">
+        {!showingDeepTime ? <section className={styles.structure} aria-labelledby="structure-title">
           <p className={styles.sectionLabel} id="structure-title">Interior structure</p>
           <ol>
             {world.interiorLayers.map((layer) => (
@@ -139,7 +169,7 @@ export function FieldGuide({
               </li>
             ))}
           </ol>
-        </section>
+        </section> : null}
 
         <a
           className={styles.sourceLink}

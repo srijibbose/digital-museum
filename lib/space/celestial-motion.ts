@@ -5,11 +5,7 @@ export type SolarMotionProfile = {
   flowSpeed: number;
   distortion: number;
   pulseSpeed: number;
-  coronaOpacity: number;
-  coronaExtent: number;
-  arcCount: number;
-  arcSpeed: number;
-  prominenceStrength: number;
+  exteriorTreatment: "none";
   tint: string;
 };
 
@@ -24,71 +20,55 @@ export type JovianMotionProfile = {
 const SOLAR_PROFILES = {
   photosphere: {
     flowScale: 8.2,
-    flowSpeed: 0.11,
+    flowSpeed: 0.42,
     distortion: 0.008,
     pulseSpeed: 0.42,
-    coronaOpacity: 0.1,
-    coronaExtent: 1.045,
-    arcCount: 5,
-    arcSpeed: 0.18,
-    prominenceStrength: 0.26,
+    exteriorTreatment: "none",
     tint: "#fff1cf",
   },
   "171": {
     flowScale: 5.4,
-    flowSpeed: 0.075,
+    flowSpeed: 0.32,
     distortion: 0.011,
     pulseSpeed: 0.32,
-    coronaOpacity: 0.16,
-    coronaExtent: 1.075,
-    arcCount: 11,
-    arcSpeed: 0.14,
-    prominenceStrength: 0.34,
+    exteriorTreatment: "none",
     tint: "#e3d86e",
   },
   "193": {
     flowScale: 6.6,
-    flowSpeed: 0.13,
+    flowSpeed: 0.5,
     distortion: 0.009,
     pulseSpeed: 0.68,
-    coronaOpacity: 0.14,
-    coronaExtent: 1.065,
-    arcCount: 8,
-    arcSpeed: 0.22,
-    prominenceStrength: 0.3,
+    exteriorTreatment: "none",
     tint: "#d4df78",
   },
   "304": {
     flowScale: 9.6,
-    flowSpeed: 0.16,
+    flowSpeed: 0.56,
     distortion: 0.013,
     pulseSpeed: 0.55,
-    coronaOpacity: 0.18,
-    coronaExtent: 1.085,
-    arcCount: 9,
-    arcSpeed: 0.25,
-    prominenceStrength: 0.62,
+    exteriorTreatment: "none",
     tint: "#ff7b35",
   },
 } satisfies Record<string, SolarMotionProfile>;
 
 const JOVIAN_PROFILES = {
   clouds: {
-    jetSpeed: 0.36,
+    jetSpeed: 0.62,
     warpStrength: 0.003,
     vortexStrength: 0.22,
     wakeStrength: 0.08,
     auroraStrength: 0,
   },
   storms: {
-    jetSpeed: 0.48,
+    jetSpeed: 0.82,
     warpStrength: 0.006,
     vortexStrength: 0.92,
     wakeStrength: 0.68,
     auroraStrength: 0,
   },
   auroras: {
-    jetSpeed: 0.24,
+    jetSpeed: 0.48,
     warpStrength: 0.002,
     vortexStrength: 0.16,
     wakeStrength: 0.04,
@@ -109,6 +89,10 @@ export function jovianJetVelocity(latitudeDeg: number) {
   const alternating = Math.sin((radians + 4.5 * Math.PI / 180) * 20);
   const polarEnvelope = 0.28 + 0.72 * Math.cos(radians) ** 2;
   return alternating * polarEnvelope;
+}
+
+export function wrapTextureU(value: number) {
+  return ((value % 1) + 1) % 1;
 }
 
 export function jovianVortexSample(
@@ -141,6 +125,23 @@ export function advanceMotionPhase(
   speed = 1,
 ) {
   return enabled ? phase + Math.min(delta, 0.1) * speed : phase;
+}
+
+export function resolveMotionChannels({
+  globeMotionEnabled,
+  compareOpen,
+  reducedMotion,
+}: {
+  globeMotionEnabled: boolean;
+  compareOpen: boolean;
+  reducedMotion: boolean;
+}) {
+  const available = !compareOpen && !reducedMotion;
+
+  return {
+    globeSpin: available && globeMotionEnabled,
+    livingSurface: available,
+  };
 }
 
 export function resolveLivingMotionRenderer(

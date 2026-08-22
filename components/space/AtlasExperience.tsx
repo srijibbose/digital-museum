@@ -8,6 +8,7 @@ import { atlas, getMode, getVisibleHotspots, getWorld } from "@/content/space/at
 import type { WorldId } from "@/lib/space/atlas-schema";
 import { createAtlasStore } from "@/lib/space/atlas-store";
 import { formatAtlasInteger } from "@/lib/space/number-format";
+import { resolveMarsDeepTimeState } from "@/lib/space/mars-deep-time";
 import { CommandDeck } from "./CommandDeck";
 import { CompareTray } from "./CompareTray";
 import { FeatureRail } from "./FeatureRail";
@@ -30,6 +31,8 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
   const lightAzimuth = useStore(store, (state) => state.lightAzimuth);
   const lightElevation = useStore(store, (state) => state.lightElevation);
   const motionEnabled = useStore(store, (state) => state.motionEnabled);
+  const marsTimeMya = useStore(store, (state) => state.marsTimeMya);
+  const marsPresentPreview = useStore(store, (state) => state.marsPresentPreview);
   const focusCommand = useStore(store, (state) => state.focusCommand);
   const orientation = useStore(store, (state) => state.orientation);
   const compareOpen = useStore(store, (state) => state.compareOpen);
@@ -46,6 +49,8 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
   const setLightingMode = useStore(store, (state) => state.setLightingMode);
   const setLight = useStore(store, (state) => state.setLight);
   const toggleMotion = useStore(store, (state) => state.toggleMotion);
+  const setMarsTimeMya = useStore(store, (state) => state.setMarsTimeMya);
+  const setMarsPresentPreview = useStore(store, (state) => state.setMarsPresentPreview);
   const setOrientation = useStore(store, (state) => state.setOrientation);
   const openCompare = useStore(store, (state) => state.openCompare);
   const closeCompare = useStore(store, (state) => state.closeCompare);
@@ -60,6 +65,11 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
     world.hotspots.find((hotspot) => hotspot.id === selectedHotspotId) ?? null;
   const visitedCount = visitedByWorld[world.id].length;
   const compareWorld = compareOpen ? getWorld(compareWorldId) : null;
+  const deepTimeActive = world.id === "mars" && activeMode.id === "deep-time";
+  const marsRenderTime = marsPresentPreview ? 0 : marsTimeMya;
+  const marsDeepTimeState = deepTimeActive
+    ? resolveMarsDeepTimeState(marsRenderTime)
+    : null;
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
@@ -77,6 +87,8 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
       className={styles.instrument}
       data-testid="atlas-instrument"
       data-theme={theme}
+      data-world={world.id}
+      data-mode={activeMode.id}
       style={{ "--world-accent": world.accent } as React.CSSProperties}
       aria-label="Atlas of Worlds interactive exhibit"
     >
@@ -123,6 +135,10 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
           data-testid="atlas-stage"
           data-camera-command={cameraCommand.type}
           data-camera-sequence={cameraCommand.sequence}
+          data-deep-time={deepTimeActive || undefined}
+          data-mars-time={deepTimeActive ? Math.round(marsTimeMya) : undefined}
+          data-mars-render-time={deepTimeActive ? Math.round(marsRenderTime) : undefined}
+          data-mars-preview={deepTimeActive && marsPresentPreview ? "true" : undefined}
         >
           <div className={styles.stageMeta}>
             <span>{world.orderLabel}</span>
@@ -145,6 +161,8 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
               lightElevation={lightElevation}
               reducedMotion={reducedMotion}
               motionEnabled={motionEnabled}
+              marsTimeMya={marsTimeMya}
+              marsPresentPreview={marsPresentPreview}
               focusCommand={focusCommand}
               cameraCommand={cameraCommand}
               compareWorld={compareWorld}
@@ -198,6 +216,10 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
             onCameraCommand={issueCameraCommand}
             onToggleCompare={compareOpen ? closeCompare : openCompare}
             onToggleMotion={toggleMotion}
+            marsTimeMya={marsTimeMya}
+            marsPresentPreview={marsPresentPreview}
+            onMarsTimeChange={setMarsTimeMya}
+            onMarsPresentPreviewChange={setMarsPresentPreview}
           />
 
           <p className={styles.liveStatus} aria-live="polite">
@@ -210,6 +232,7 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
             world={world}
             selectedHotspot={selectedHotspot}
             visitedCount={visitedCount}
+            deepTimeState={marsDeepTimeState}
           />
         </div>
       </div>

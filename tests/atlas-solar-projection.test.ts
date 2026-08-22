@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { solarDiscUv, solarFlowPulse, solarSurfaceProjection } from "@/lib/space/solar-projection";
+import {
+  solarActivitySeeds,
+  solarDiscUv,
+  solarFlowPulse,
+  solarSurfaceProjection,
+} from "@/lib/space/solar-projection";
 
 describe("Atlas solar-disc projection", () => {
   it("keeps the full visible hemisphere inside the observed central solar disc", () => {
@@ -24,5 +29,15 @@ describe("Atlas solar-disc projection", () => {
       dominantUv: { u: 0.415, v: 0.5 },
       weights: { x: 0.76, y: 0, z: 0.24 },
     });
+  });
+
+  it("authors deterministic solar activity without changing the corrected disc projection", () => {
+    expect(solarActivitySeeds("171", false).slice(0, 2)).toEqual([
+      { latitude: -24, longitude: -128, height: 0.19, phase: 0.13 },
+      { latitude: 12, longitude: -76, height: 0.24, phase: 0.37 },
+    ]);
+    expect(solarActivitySeeds("171", true)).toHaveLength(7);
+    expect(solarActivitySeeds("171", false)).toHaveLength(11);
+    expect(solarDiscUv(1, 1)).toEqual({ u: 0.642, v: 0.224 });
   });
 });

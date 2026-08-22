@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { AtlasExperience } from "@/components/space/AtlasExperience";
 
@@ -9,7 +9,7 @@ describe("Atlas of Worlds instrument shell", () => {
 
     expect(screen.getByRole("link", { name: /loupe museum home/i })).toHaveAttribute("href", "/");
     expect(screen.getByText("Atlas of Worlds")).not.toHaveAttribute("href");
-    expect(screen.getByText(/self-luminous visible surface/i)).toBeInTheDocument();
+    expect(screen.getByText(/processed warm-light sdo image/i)).toBeInTheDocument();
     expect(screen.queryByRole("slider", { name: /sunlight/i })).not.toBeInTheDocument();
   });
 
@@ -46,7 +46,21 @@ describe("Atlas of Worlds instrument shell", () => {
     await user.click(screen.getByRole("tab", { name: /171 å/i }));
     expect(screen.getByText(/ångström/i)).toBeInTheDocument();
     expect(screen.getByText(/about 0.6 million k/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /turn motion off/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /pause automatic globe spin/i })).toHaveTextContent("Auto spin");
+  });
+
+  it("keeps living Sun and Jupiter motion inside the existing mode rails", async () => {
+    const user = userEvent.setup();
+    render(<AtlasExperience initialWorld="sun" />);
+
+    expect(screen.getAllByRole("tab")).toHaveLength(6);
+    expect(screen.getAllByRole("button", { name: /pause automatic globe spin/i })).toHaveLength(1);
+    expect(screen.queryByRole("tab", { name: /deep time/i })).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: /^jupiter/i }));
+    expect(screen.getAllByRole("tab")).toHaveLength(6);
+    expect(screen.getAllByRole("button", { name: /pause automatic globe spin/i })).toHaveLength(1);
+    expect(screen.queryByRole("tab", { name: /deep time/i })).not.toBeInTheDocument();
   });
 
   it("shows feature-specific NASA media in the Field Guide", async () => {
@@ -118,6 +132,19 @@ describe("Atlas of Worlds instrument shell", () => {
     expect(screen.getByTestId("atlas-stage")).toHaveAttribute("data-camera-command", "reset");
   });
 
+  it("states when comparison size is normalized and reports the exact physical radius ratio", async () => {
+    const user = userEvent.setup();
+    render(<AtlasExperience initialWorld="sun" />);
+
+    await user.click(screen.getByRole("button", { name: /compare worlds/i }));
+    await user.selectOptions(screen.getByRole("combobox", { name: /compare with/i }), "earth");
+
+    expect(screen.getByText(/equal display radius.*not physical scale/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("radio", { name: /relative size/i }));
+    expect(screen.getByText(/sun is 109\.2× earth's radius/i)).toBeInTheDocument();
+  });
+
   it("supports arrow-key travel through the World Index", async () => {
     const user = userEvent.setup();
     render(<AtlasExperience initialWorld="moon" />);
@@ -153,5 +180,38 @@ describe("Atlas of Worlds instrument shell", () => {
 
     expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: "smooth" }));
     expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("integrates the Mars time machine into the same globe and command deck", async () => {
+    const user = userEvent.setup();
+    render(<AtlasExperience initialWorld="mars" />);
+
+    expect(screen.queryByRole("slider", { name: /mars deep time/i })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: /^deep time$/i }));
+
+    const stage = screen.getByTestId("atlas-stage");
+    const slider = screen.getByRole("slider", { name: /mars deep time/i });
+    expect(stage).toHaveAttribute("data-deep-time", "true");
+    expect(stage).toHaveAttribute("data-mars-time", "3700");
+    fireEvent.change(slider, { target: { value: "1100" } });
+    expect(stage).toHaveAttribute("data-mars-time", "3000");
+
+    const guide = screen.getByRole("complementary", { name: /field guide/i });
+    expect(within(guide).getByRole("heading", { name: /drying world/i })).toBeInTheDocument();
+    expect(within(guide).getAllByText(/3 billion years ago/i)).not.toHaveLength(0);
+    expect(within(guide).getByText(/constrained reconstruction/i)).toBeInTheDocument();
+    expect(within(guide).getByText(/absolute timing varies/i)).toBeInTheDocument();
+
+    const present = screen.getByRole("button", { name: /present reference/i });
+    fireEvent.pointerDown(present);
+    expect(stage).toHaveAttribute("data-mars-preview", "true");
+    expect(stage).toHaveAttribute("data-mars-render-time", "0");
+    fireEvent.pointerUp(present);
+    expect(stage).not.toHaveAttribute("data-mars-preview");
+    expect(stage).toHaveAttribute("data-mars-time", "3000");
+
+    fireEvent.change(slider, { target: { value: "4100" } });
+    expect(within(guide).getByText(/^observed$/i)).toBeInTheDocument();
+    expect(within(guide).getByText(/present reference/i)).toBeInTheDocument();
   });
 });
