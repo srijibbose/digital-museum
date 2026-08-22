@@ -1,9 +1,6 @@
 export type ComparisonScalePolicy = "true-scale" | "normalized";
 
-/**
- * Produces stage radii, not raw astronomical radii. True-scale mode keeps
- * ordering while logarithmically bounding extreme Sun/planet comparisons.
- */
+/** Produces stage radii whose ratio exactly matches the physical radii. */
 export function comparisonRadii(
   primaryRadiusKm: number,
   secondaryRadiusKm: number,
@@ -14,11 +11,6 @@ export function comparisonRadii(
   }
 
   const larger = Math.max(primaryRadiusKm, secondaryRadiusKm);
-  const smaller = Math.min(primaryRadiusKm, secondaryRadiusKm);
-  const displayedLarger = Math.min(2.8, 1 + Math.log10(larger / smaller) * 0.72);
 
-  return primaryRadiusKm > secondaryRadiusKm
-    ? [displayedLarger, 1]
-    : [1, displayedLarger];
+  return [primaryRadiusKm / larger, secondaryRadiusKm / larger];
 }
-

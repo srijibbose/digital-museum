@@ -23,6 +23,14 @@ export function CompareTray({
   onClose: () => void;
 }) {
   const compareWorld = worlds.find((world) => world.id === compareWorldId) ?? worlds[0];
+  const primaryRadius = primaryWorld.physical.radiusKm;
+  const compareRadius = compareWorld.physical.radiusKm;
+  const largerWorld = primaryRadius >= compareRadius ? primaryWorld : compareWorld;
+  const smallerWorld = primaryRadius >= compareRadius ? compareWorld : primaryWorld;
+  const physicalRatio = Math.max(primaryRadius, compareRadius) / Math.min(primaryRadius, compareRadius);
+  const scaleNote = scalePolicy === "normalized"
+    ? "Equal display radius · not physical scale"
+    : `${largerWorld.name} is ${physicalRatio.toFixed(1)}× ${smallerWorld.name}'s radius`;
 
   return (
     <section className={styles.compareTray} data-testid="compare-tray" aria-label="World comparison">
@@ -71,6 +79,8 @@ export function CompareTray({
           Relative size
         </label>
       </fieldset>
+
+      <p className={styles.compareScaleNote} aria-live="polite">{scaleNote}</p>
 
       <button type="button" className={styles.compareClose} aria-label="Close world comparison" onClick={onClose}>
         <X size={17} aria-hidden="true" />

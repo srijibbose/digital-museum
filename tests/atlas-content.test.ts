@@ -79,6 +79,27 @@ describe("Atlas of Worlds content collection", () => {
     );
   });
 
+  it("keeps living Sun and Jupiter motion inside the existing evidence-qualified modes", () => {
+    const sun = getWorld("sun");
+    const jupiter = getWorld("jupiter");
+
+    expect(sun.modes.map((mode) => mode.id)).toEqual([
+      "photosphere",
+      "171",
+      "193",
+      "304",
+      "magnetic",
+      "interior",
+    ]);
+    for (const id of ["photosphere", "171", "193", "304"]) {
+      expect(getMode(sun, id).visibleChange).toMatch(/motion visualization/i);
+    }
+    for (const id of ["clouds", "storms", "auroras"]) {
+      expect(getMode(jupiter, id).visibleChange).toMatch(/motion visualization/i);
+    }
+    expect(getMode(jupiter, "interior").motion).toBe("none");
+  });
+
   it("only advertises ring modes when a delivered ring layer can render them", () => {
     for (const world of atlas.worlds) {
       for (const mode of world.modes.filter((candidate) => candidate.effect === "rings")) {
@@ -94,6 +115,34 @@ describe("Atlas of Worlds content collection", () => {
       renderLat: -18,
       renderLon: 39,
     });
+  });
+
+  it("turns Mars water history into one evidence-qualified Deep Time instrument", () => {
+    const mars = getWorld("mars");
+    const deepTime = getMode(mars, "deep-time");
+
+    expect(deepTime).toMatchObject({
+      label: "Deep time",
+      effect: "deep-time",
+      evidence: "inferred",
+      lighting: "natural-survey",
+      motion: "none",
+    });
+    expect(deepTime.visibleChange).toMatch(/observed terrain/i);
+    expect(deepTime.visibleChange).toMatch(/reconstruction/i);
+    expect(getVisibleHotspots(mars, "deep-time").map((hotspot) => hotspot.id)).toEqual([
+      "jezero",
+      "valles-marineris",
+    ]);
+    expect(mars.modes.some((mode) => mode.id === "water-history")).toBe(false);
+    expect(mars.sources.map((source) => source.id)).toEqual(
+      expect.arrayContaining([
+        "usgs-mars-global-map",
+        "nasa-mars-mola",
+        "nasa-perseverance-water",
+        "nasa-maven",
+      ]),
+    );
   });
 
   it("anchors Saturn's atmospheric and ring features to different physical radii", () => {

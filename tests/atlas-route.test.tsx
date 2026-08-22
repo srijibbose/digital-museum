@@ -49,6 +49,9 @@ describe("Atlas of Worlds route", () => {
     expect(transcript).toHaveTextContent("Sun");
     expect(transcript).toHaveTextContent("Neptune");
     expect(transcript).toHaveTextContent("Apollo 11");
+    expect(transcript).toHaveTextContent("Mars deep-time states");
+    expect(transcript).toHaveTextContent("Valley networks");
+    expect(transcript).toHaveTextContent("Constrained reconstruction");
     expect(transcript).toHaveTextContent(/NASA|USGS/);
     expect(within(transcript as HTMLElement).getAllByRole("article").length).toBeGreaterThanOrEqual(10);
   });

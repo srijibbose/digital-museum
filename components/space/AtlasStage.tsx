@@ -11,6 +11,8 @@ import {
 import type { ComparisonScalePolicy } from "@/lib/space/atlas-scale";
 import type { PlanetaryWorld, WorldMode } from "@/lib/space/atlas-schema";
 import type { AtlasState } from "@/lib/space/atlas-store";
+import { resolveLivingMotionRenderer } from "@/lib/space/celestial-motion";
+import { resolveMarsDeepTimeState } from "@/lib/space/mars-deep-time";
 import { AtlasFallback } from "./AtlasFallback";
 import styles from "./atlas.module.css";
 
@@ -20,6 +22,7 @@ export type RenderLayers = {
   motion: WorldMode["motion"];
   baseTexture: string;
   bumpTexture?: string;
+  topographyTexture?: string;
   bumpScale: number;
   displacementScale: number;
   reliefEnhanced: boolean;
@@ -33,6 +36,7 @@ export type RenderLayers = {
   night: boolean;
   rings: boolean;
   showHotspots: boolean;
+  deepTime: boolean;
 };
 
 export type AtlasCanvasRuntimeProps = {
@@ -45,6 +49,8 @@ export type AtlasCanvasRuntimeProps = {
   lightElevation: number;
   reducedMotion: boolean;
   motionEnabled: boolean;
+  marsTimeMya: number;
+  marsPresentPreview: boolean;
   focusCommand: AtlasState["focusCommand"];
   cameraCommand: AtlasState["cameraCommand"];
   compareWorld: PlanetaryWorld | null;
@@ -82,6 +88,7 @@ export function resolveRenderLayers(
     motion: mode.motion,
     baseTexture: texture,
     bumpTexture: world.assets.bump,
+    topographyTexture: mode.effect === "deep-time" ? world.assets.layers.elevation : undefined,
     bumpScale: mode.reliefScale ?? authoredBumpScale,
     displacementScale: mode.reliefScale ? mode.reliefScale * 0.55 : 0,
     reliefEnhanced: mode.reliefScale !== undefined,
@@ -95,11 +102,21 @@ export function resolveRenderLayers(
     night: mode.effect === "night",
     rings: mode.effect === "rings" || world.renderer.kind === "rings",
     showHotspots: world.hotspots.some((hotspot) => hotspot.modeIds.includes(mode.id)),
+    deepTime: mode.effect === "deep-time",
   };
 }
 
-export function worldRenderDescription(world: PlanetaryWorld, mode: WorldMode) {
-  return `${world.name}, ${mode.label} mode. ${mode.description} Drag to rotate, scroll or use the controls to zoom, and select a numbered feature to inspect it.`;
+export function worldRenderDescription(world: PlanetaryWorld, mode: WorldMode, marsTimeMya?: number) {
+  const deepTimeDescription = mode.effect === "deep-time" && marsTimeMya !== undefined
+    ? (() => {
+        const state = resolveMarsDeepTimeState(marsTimeMya);
+        return `${state.dateLabel}: ${state.title}. Constrained reconstruction over observed terrain. ${state.interpolationLabel}.`;
+      })()
+    : "";
+  const motionQualification = resolveLivingMotionRenderer(world.id, mode.id, mode.motion)
+    ? " Movement is an accelerated motion visualization informed by scientific evidence and layered over the delivered scientific imagery."
+    : "";
+  return `${world.name}, ${mode.label} mode. ${mode.description} ${deepTimeDescription}${motionQualification} Drag to rotate, scroll or use the controls to zoom, and select a numbered feature to inspect it.`;
 }
 
 type BoundaryProps = {
@@ -141,7 +158,8 @@ function supportsWebgl() {
 export function AtlasStage(props: Omit<AtlasCanvasRuntimeProps, "layers">) {
   const [webglAvailable, setWebglAvailable] = useState<boolean | null>(null);
   const layers = resolveRenderLayers(props.world, props.mode);
-  const description = worldRenderDescription(props.world, props.mode);
+  const marsRenderTime = props.marsPresentPreview ? 0 : props.marsTimeMya;
+  const description = worldRenderDescription(props.world, props.mode, marsRenderTime);
 
   useEffect(() => {
     const calibration = window.setTimeout(() => {

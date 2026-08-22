@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { CameraCommandType } from "@/lib/space/atlas-store";
 import type { PlanetaryWorld } from "@/lib/space/atlas-schema";
+import { MarsTimeMachine } from "./MarsTimeMachine";
 import styles from "./atlas.module.css";
 
 type CameraAction = Exclude<CameraCommandType, "idle">;
@@ -25,6 +26,10 @@ export function CommandDeck({
   onCameraCommand,
   onToggleCompare,
   onToggleMotion,
+  marsTimeMya,
+  marsPresentPreview,
+  onMarsTimeChange,
+  onMarsPresentPreviewChange,
 }: {
   world: PlanetaryWorld;
   activeModeId: string;
@@ -35,12 +40,26 @@ export function CommandDeck({
   onCameraCommand: (command: CameraAction) => void;
   onToggleCompare: () => void;
   onToggleMotion: () => void;
+  marsTimeMya: number;
+  marsPresentPreview: boolean;
+  onMarsTimeChange: (value: number) => void;
+  onMarsPresentPreviewChange: (value: boolean) => void;
 }) {
   const activeMode = world.modes.find((mode) => mode.id === activeModeId) ?? world.modes[0];
   const explainsWavelength = world.id === "sun" && ["171", "193", "304"].includes(activeMode.id);
+  const deepTimeActive = world.id === "mars" && activeMode.id === "deep-time";
 
   return (
-    <div className={styles.commandWrap}>
+    <div className={styles.commandWrap} data-deep-time={deepTimeActive || undefined}>
+      {deepTimeActive ? (
+        <MarsTimeMachine
+          value={marsTimeMya}
+          presentPreview={marsPresentPreview}
+          reducedMotion={reducedMotion}
+          onChange={onMarsTimeChange}
+          onPresentPreviewChange={onMarsPresentPreviewChange}
+        />
+      ) : null}
       <div className={styles.commandDeck}>
         <div className={styles.toolGroup} role="toolbar" aria-label="Atlas tools">
           <div className={styles.dragHint} aria-label="Drag the world to rotate">
@@ -72,13 +91,13 @@ export function CommandDeck({
             <button
               type="button"
               onClick={onToggleMotion}
-              aria-label={motionEnabled ? "Turn motion off" : "Turn motion on"}
+              aria-label={motionEnabled ? "Pause automatic globe spin" : "Resume automatic globe spin"}
               aria-pressed={motionEnabled}
               disabled={reducedMotion}
-              title={reducedMotion ? "Motion is disabled by your reduced-motion preference." : undefined}
+              title={reducedMotion ? "Automatic spin is disabled by your reduced-motion preference." : "Atmospheric motion continues independently."}
             >
               {motionEnabled ? <Pause size={20} aria-hidden="true" /> : <Play size={20} aria-hidden="true" />}
-              <span>Motion</span>
+              <span>Auto spin</span>
             </button>
           ) : null}
         </div>

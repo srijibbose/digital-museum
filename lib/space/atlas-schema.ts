@@ -91,6 +91,7 @@ export const worldModeSchema = z.object({
     "tilt",
     "temperature",
     "magnetic",
+    "deep-time",
   ]),
   textureKey: z.string().min(2).optional(),
 });

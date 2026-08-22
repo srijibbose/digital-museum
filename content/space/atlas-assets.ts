@@ -18,6 +18,7 @@ export type AtlasAssetKey =
   | "moon-bump"
   | "mars-color"
   | "mars-bump"
+  | "mars-elevation"
   | "jupiter-color"
   | "saturn-color"
   | "saturn-rings"
@@ -143,6 +144,7 @@ export const atlasFeatureMedia: Record<AtlasFeatureMediaKey, HotspotMedia> = {
 };
 
 const path = (name: AtlasAssetKey) => `/media/space/atlas/${name}.webp`;
+const pngPath = (name: AtlasAssetKey) => `/media/space/atlas/${name}.png`;
 
 export const atlasAssetPaths: Record<WorldId, {
   color: string;
@@ -188,6 +190,7 @@ export const atlasAssetPaths: Record<WorldId, {
     color: path("mars-color"),
     fallback: path("mars-color"),
     bump: path("mars-bump"),
+    layers: { elevation: pngPath("mars-elevation") },
   },
   jupiter: {
     color: path("jupiter-color"),
@@ -343,6 +346,15 @@ export const atlasTextureLedger: Record<AtlasAssetKey, TextureAsset> = {
     processing: "MOLA cylindrical elevation map normalized to a material height range.",
     nativeDimensions: "5760x2880",
   }),
+  "mars-elevation": {
+    path: pngPath("mars-elevation"),
+    sourceUrl: "https://pds-geosciences.wustl.edu/mgs/mgs-m-mola-5-megdr-l3-v1/mgsl_300x/meg004/megt90n000cb.img",
+    credit: "NASA/PDS Geosciences Node / Mars Global Surveyor MOLA team",
+    evidence: "observed",
+    processing: "Official 4-pixel-per-degree MOLA MEGDR signed elevations linearly normalized from -8,068 m to 21,134 m into an 8-bit browser mask.",
+    nativeDimensions: "1440x720",
+    deliveredDimensions: "1440x720",
+  },
   "jupiter-color": texture("jupiter-color", {
     sourceUrl: "https://science.nasa.gov/photojournal/cassinis-best-maps-of-jupiter-cylindrical-map/",
     credit: "NASA/JPL/Space Science Institute",

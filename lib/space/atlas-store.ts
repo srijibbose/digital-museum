@@ -1,5 +1,9 @@
 import { createStore, type StoreApi } from "zustand/vanilla";
 import { atlas, getVisibleHotspots, getWorld } from "@/content/space/atlas";
+import {
+  MARS_DEEP_TIME_ENTRY_MYA,
+  clampMarsTime,
+} from "@/lib/space/mars-deep-time";
 import type { WorldId } from "@/lib/space/atlas-schema";
 import type { ComparisonScalePolicy } from "@/lib/space/atlas-scale";
 
@@ -19,6 +23,8 @@ export type AtlasState = {
   lightAzimuth: number;
   lightElevation: number;
   motionEnabled: boolean;
+  marsTimeMya: number;
+  marsPresentPreview: boolean;
   focusCommand: { hotspotId: string | null; sequence: number };
   orientation: { latitude: number; longitude: number };
   compareOpen: boolean;
@@ -35,6 +41,8 @@ export type AtlasState = {
   setLightingMode: (mode: LightingMode) => void;
   setLight: (azimuth: number, elevation: number) => void;
   toggleMotion: () => void;
+  setMarsTimeMya: (value: number) => void;
+  setMarsPresentPreview: (value: boolean) => void;
   focusHotspot: (hotspotId: string) => void;
   clearFocus: () => void;
   setOrientation: (latitude: number, longitude: number) => void;
@@ -76,6 +84,8 @@ export function createAtlasStore(
     lightAzimuth: 34,
     lightElevation: 28,
     motionEnabled: true,
+    marsTimeMya: MARS_DEEP_TIME_ENTRY_MYA,
+    marsPresentPreview: false,
     focusCommand: { hotspotId: null, sequence: 0 },
     orientation: { latitude: 0, longitude: 0 },
     compareOpen: false,
@@ -97,6 +107,7 @@ export function createAtlasStore(
           sequence: state.focusCommand.sequence + 1,
         },
         orientation: { latitude: 0, longitude: 0 },
+        marsPresentPreview: false,
         compareWorldId,
         cameraCommand: { type: "reset", sequence: state.cameraCommand.sequence + 1 },
       }));
@@ -176,6 +187,9 @@ export function createAtlasStore(
       if (get().reducedMotion) return;
       set({ motionEnabled: !get().motionEnabled });
     },
+    setMarsTimeMya: (marsTimeMya) =>
+      set({ marsTimeMya: clampMarsTime(marsTimeMya) }),
+    setMarsPresentPreview: (marsPresentPreview) => set({ marsPresentPreview }),
     focusHotspot: (hotspotId) => {
       const worldId = get().worldId;
       const world = getWorld(worldId);

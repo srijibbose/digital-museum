@@ -4,6 +4,7 @@ import { AtlasExperience } from "@/components/space/AtlasExperience";
 import { atlas } from "@/content/space/atlas";
 import { isExhibitEnabled } from "@/content/exhibits";
 import { parseWorldQuery } from "@/lib/space/atlas-query";
+import { MARS_DEEP_TIME_ANCHORS, formatMarsTime } from "@/lib/space/mars-deep-time";
 
 export const metadata: Metadata = {
   title: "Atlas of Worlds — Interactive Solar System",
@@ -69,6 +70,24 @@ export default async function AtlasOfWorldsPage({ searchParams }: AtlasPageProps
                   </li>
                 ))}
               </ul>
+              {world.id === "mars" ? (
+                <section aria-label="Mars deep-time states">
+                  <h4>Mars deep-time states</h4>
+                  <p>
+                    Observed terrain is preserved beneath a constrained reconstruction of water,
+                    ice, haze, and atmospheric density.
+                  </p>
+                  <ol>
+                    {MARS_DEEP_TIME_ANCHORS.map((anchor) => (
+                      <li key={anchor.id}>
+                        <b>{anchor.title}</b> — {formatMarsTime(anchor.timeMya)}. {anchor.description}{" "}
+                        Evidence: {anchor.evidenceSummary} Constrained reconstruction: {anchor.reconstructionSummary}{" "}
+                        Confidence: {anchor.confidence}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              ) : null}
             </article>
           ))}
         </div>
