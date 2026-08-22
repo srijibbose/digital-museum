@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   },
   description:
     "Short, immersive exhibits that make hidden systems visible.",
+  icons: { icon: "/icon.svg" },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

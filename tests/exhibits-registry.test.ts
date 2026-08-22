@@ -9,10 +9,12 @@ import {
 } from "@/content/exhibits";
 
 describe("Exhibit Registry & Plug-and-Play System", () => {
-  it("contains registry entries for both Living Atlas and Thirteen Minutes", () => {
+  it("contains the active flagship exhibit entries", () => {
     const ids = EXHIBIT_REGISTRY.map((e) => e.id);
-    expect(ids).toContain("living-atlas");
     expect(ids).toContain("thirteen-minutes");
+    expect(ids).toContain("becoming-human");
+    expect(ids).toContain("atlas-of-worlds");
+    expect(ids).toContain("human-anatomy");
   });
 
   it("returns active exhibits when enabled is true", () => {
@@ -21,10 +23,11 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(active.every((e) => e.enabled)).toBe(true);
   });
 
-  it("keeps Living Atlas published but out of the featured lobby", () => {
+  it("returns the featured lobby exhibits", () => {
     const featured = getFeaturedExhibits();
 
     expect(featured.map((exhibit) => exhibit.slug)).toEqual([
+      "human-anatomy",
       "becoming-human",
       "jet-engine",
       "thirteen-minutes",
@@ -32,8 +35,8 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     ]);
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("moon");
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("earth");
-    expect(isExhibitEnabled("living-atlas")).toBe(true);
     expect(getActiveWings(featured).map(({ wing }) => wing.title)).toEqual([
+      "The Body",
       "Origins & Futures",
       "Systems & Machines",
       "Space",
@@ -47,15 +50,14 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(apollo?.wing.code).toBe("Wing 02");
     expect(apollo?.visualTheme.variant).toBe("thirteen-minutes");
 
-    const anatomy = getExhibitBySlug("living-atlas");
-    expect(anatomy).toBeDefined();
-    expect(anatomy?.title).toBe("The Living Atlas");
-    expect(anatomy?.wing.code).toBe("Wing 01");
+    expect(getExhibitBySlug("living-atlas")).toBeUndefined();
+    expect(getExhibitBySlug("human-anatomy")?.visualTheme.variant).toBe("human-anatomy");
   });
 
   it("verifies exhibit enabled status", () => {
     expect(isExhibitEnabled("thirteen-minutes")).toBe(true);
-    expect(isExhibitEnabled("living-atlas")).toBe(true);
+    expect(isExhibitEnabled("living-atlas")).toBe(false);
+    expect(isExhibitEnabled("human-anatomy")).toBe(true);
     expect(isExhibitEnabled("non-existent-exhibit")).toBe(false);
   });
 
