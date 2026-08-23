@@ -1,0 +1,288 @@
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.searchForm {
+  position: relative;
+  z-index: 8;
+  width: min(100%, 1060px);
+}
+
+.searchField {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  min-height: 72px;
+  align-items: center;
+  gap: 17px;
+  padding: 0 13px 0 24px;
+  border: 1px solid rgba(18, 19, 20, 0.3);
+  border-radius: 2px;
+  background: rgba(246, 242, 233, 0.88);
+  box-shadow: 0 18px 48px rgba(47, 40, 31, 0.1);
+  backdrop-filter: blur(14px);
+}
+
+.searchField:focus-within {
+  border-color: rgba(18, 19, 20, 0.72);
+  box-shadow: 0 0 0 3px rgba(183, 87, 47, 0.13), 0 18px 48px rgba(47, 40, 31, 0.1);
+}
+
+.searchField input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #121314;
+  font: inherit;
+  font-size: clamp(1rem, 1.4vw, 1.22rem);
+}
+
+.searchField input::placeholder {
+  color: #777169;
+  opacity: 1;
+}
+
+.searchField input::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+.searchSubmit {
+  min-height: 46px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 2px;
+  background: #111315;
+  color: #f2eee4;
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid rgba(18, 19, 20, 0.2);
+  border-radius: 2px;
+  background: #f5f1e7;
+  box-shadow: 0 24px 60px rgba(26, 23, 19, 0.18);
+}
+
+.suggestion {
+  display: flex;
+  min-height: 86px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(18, 19, 20, 0.12);
+}
+
+.suggestion:nth-child(odd) {
+  border-right: 1px solid rgba(18, 19, 20, 0.12);
+}
+
+.suggestion:hover,
+.suggestion:focus-visible {
+  background: #eae3d5;
+}
+
+.suggestion span {
+  font-family: var(--display);
+  font-size: 1.16rem;
+}
+
+.suggestion small {
+  overflow: hidden;
+  color: #676158;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.surpriseButton {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 22px;
+  border: 1px solid rgba(18, 19, 20, 0.38);
+  border-radius: 2px;
+  background: transparent;
+  color: #171819;
+  cursor: pointer;
+  font-weight: 650;
+}
+
+.surpriseButton:hover {
+  border-color: #171819;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.card {
+  display: grid;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(238, 233, 220, 0.15);
+  border-radius: 3px;
+  background: #111315;
+  color: #eee9dc;
+  transition: transform 350ms var(--ease-out), border-color 250ms ease;
+}
+
+.card:hover,
+.card:focus-within {
+  border-color: rgba(238, 233, 220, 0.42);
+  transform: translateY(-5px);
+}
+
+.cardVisual {
+  position: relative;
+  min-height: 0;
+  aspect-ratio: 1.2;
+  overflow: hidden;
+  background: #090b0d;
+}
+
+.cardVisual :global(.poster-jet) {
+  padding: 38px 12px 44px;
+}
+
+.cardVisual :global(.poster-jet svg) {
+  min-height: 0;
+}
+
+.cardVisual :global(.poster-apollo__craft) {
+  width: 88px;
+  height: 88px;
+}
+
+.cardVisual :global(.poster-apollo__hud) {
+  top: 46px;
+  left: 16px;
+}
+
+.cardNumber {
+  position: absolute;
+  z-index: 6;
+  top: 16px;
+  left: 16px;
+  padding: 4px 7px;
+  background: rgba(9, 11, 13, 0.68);
+  color: rgba(238, 233, 220, 0.74);
+  font-size: 0.56rem;
+  font-weight: 750;
+  letter-spacing: 0.15em;
+  backdrop-filter: blur(8px);
+}
+
+.cardBody {
+  display: flex;
+  min-height: 270px;
+  flex-direction: column;
+  padding: 22px 20px 18px;
+}
+
+.cardWing {
+  margin: 0 0 12px;
+  color: #a9a297;
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.cardBody h3 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(1.55rem, 2.2vw, 2.35rem);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+}
+
+.cardTagline {
+  display: -webkit-box;
+  min-height: 42px;
+  margin: 12px 0 18px;
+  overflow: hidden;
+  color: #b9b2a7;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #cbc4b9;
+  font-size: 0.68rem;
+}
+
+.cardMeta span:last-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cardLink {
+  display: flex;
+  min-height: 44px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid rgba(238, 233, 220, 0.13);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 700px) {
+  .searchField {
+    grid-template-columns: auto minmax(0, 1fr);
+    min-height: 64px;
+    padding: 0 18px;
+  }
+
+  .searchSubmit {
+    grid-column: 1 / -1;
+    width: calc(100% + 36px);
+    margin: 0 -18px;
+  }
+
+  .suggestions {
+    grid-template-columns: 1fr;
+  }
+
+  .suggestion:nth-child(odd) {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .surpriseButton {
+    width: 100%;
+    min-width: 0;
+    padding-right: 11px;
+    padding-left: 11px;
+    white-space: nowrap;
+  }
+}
