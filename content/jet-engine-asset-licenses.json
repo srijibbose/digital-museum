@@ -1,0 +1,29 @@
+[
+  {
+    "path": "public/assets/jet-engine/turbofan-engine-optimized.glb",
+    "classification": "Artist-authored explanatory reconstruction",
+    "title": "Turbine | Turbofan Engine | Jet Engine",
+    "author": "blenderbirb",
+    "license": "CC BY 4.0",
+    "sha256": "5788D671122FC79D9D092C1F9600EDB02A3F82E31869B9393CCC46E24E7FCE64",
+    "source": "https://sketchfab.com/3d-models/turbine-turbofan-engine-jet-engine-74c6aceed86b4a41aaad3b93afc3e262",
+    "redistributionSource": "https://github.com/Dengineer24/intARactive-models/blob/master/Project/interactive/public/turbine__turbofan_engine__jet_engine/Turbofan%20Engine.glb",
+    "processing": "Downloaded as a self-contained GLB from a public redistribution that preserves the original Sketchfab attribution in the asset metadata. The runtime keeps the authored geometry and material groups, adds museum lighting and cycle-linked explanatory overlays, and does not present the generalized form as a scan, proprietary manufacturing CAD, or a dimensionally exact production engine."
+  },
+  {
+    "path": "components/jet-engine/JetEngineSection.tsx",
+    "classification": "Explanatory reconstruction",
+    "license": "Project-authored source code",
+    "source": "https://www.grc.nasa.gov/www/k-12/airplane/turbdraw.html",
+    "supportingSource": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/airplane_handbook/17_afh_ch16.pdf",
+    "processing": "Retained as the WebGL failure fallback and authored as deterministic SVG from functional station order and component relationships in NASA and FAA diagrams. No source illustration pixels, proprietary geometry, or generative imagery are embedded. Dimensions and blade counts are explanatory rather than manufacturing-accurate."
+  },
+  {
+    "path": "lib/jet-engine/jet-engine-model.ts",
+    "classification": "Modelled cycle",
+    "license": "Project-authored source code",
+    "source": "https://www.grc.nasa.gov/www/k-12/airplane/EngineTheory.pdf",
+    "supportingSource": "https://www.grc.nasa.gov/WWW/k-12/BGP/ngnsim.html",
+    "processing": "Implemented as a transparent zero-dimensional ideal-gas cycle from published NASA educational relationships. Representative inputs and fixed efficiencies are explicitly disclosed; the output is not certified performance data."
+  }
+]
