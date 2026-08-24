@@ -89,6 +89,11 @@ a {
   padding: 26px clamp(22px, 4vw, 68px);
 }
 
+.museum-header--paper {
+  border-bottom: 1px solid rgba(10, 11, 12, 0.14);
+  color: var(--ink);
+}
+
 .museum-mark {
   display: inline-flex;
   align-items: center;
@@ -121,6 +126,56 @@ a {
 
 .museum-nav a:hover {
   color: var(--paper);
+}
+
+.museum-header--paper .museum-nav {
+  color: #67635c;
+}
+
+.museum-header--paper .museum-nav a:hover {
+  color: var(--ink);
+}
+
+.museum-menu {
+  position: relative;
+  display: none;
+}
+
+.museum-menu summary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.museum-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.museum-menu nav {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  display: grid;
+  min-width: 176px;
+  overflow: hidden;
+  border: 1px solid rgba(238, 233, 220, 0.18);
+  border-radius: 3px;
+  background: #111315;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.18);
+  color: var(--paper);
+}
+
+.museum-menu nav a {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(238, 233, 220, 0.1);
+  font-size: 0.76rem;
+}
+
+.museum-menu nav a:last-child {
+  border-bottom: 0;
 }
 
 .lobby-hero {
@@ -802,32 +857,32 @@ a {
 }
 
 @media (max-width: 600px) {
-  .exhibit-card--becoming-human .exhibit-card__visual {
+  .exhibit-card.exhibit-card--becoming-human .exhibit-card__visual {
     min-height: 540px;
   }
 
-  .exhibit-card--becoming-human .poster-bh__artifact {
+  .exhibit-card.exhibit-card--becoming-human .poster-bh__artifact {
     top: 45%;
     width: min(70%, 290px);
   }
 
-  .exhibit-card--becoming-human .exhibit-card__metrics-ribbon {
+  .exhibit-card.exhibit-card--becoming-human .exhibit-card__metrics-ribbon {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
     padding: 0;
   }
 
-  .exhibit-card--becoming-human .metric-cell {
+  .exhibit-card.exhibit-card--becoming-human .metric-cell {
     min-width: 0;
     padding: 12px 9px;
   }
 
-  .exhibit-card--becoming-human .metric-cell__label {
+  .exhibit-card.exhibit-card--becoming-human .metric-cell__label {
     overflow-wrap: anywhere;
     font-size: 0.48rem;
   }
 
-  .exhibit-card--becoming-human .metric-cell__value {
+  .exhibit-card.exhibit-card--becoming-human .metric-cell__value {
     font-size: 0.72rem;
   }
 }
@@ -893,6 +948,10 @@ a {
 
   .museum-nav {
     display: none;
+  }
+
+  .museum-menu {
+    display: block;
   }
 
   .lobby-hero {

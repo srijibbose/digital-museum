@@ -1,9 +1,29 @@
 export interface ExhibitWing {
   id: string;
+  slug: string;
   code: string;
   title: string;
   description: string;
 }
+
+export type ExhibitFormat =
+  | "interactive-3d"
+  | "simulation"
+  | "archival-audio"
+  | "evidence-led"
+  | "comparison"
+  | "field-guide"
+  | "cinematic";
+
+export const EXHIBIT_FORMAT_LABELS: Record<ExhibitFormat, string> = {
+  "interactive-3d": "Interactive 3D",
+  simulation: "Simulation",
+  "archival-audio": "Archival audio",
+  "evidence-led": "Evidence-led",
+  comparison: "Comparison",
+  "field-guide": "Field guide",
+  cinematic: "Cinematic",
+};
 
 export interface ExhibitVisualTheme {
   variant: "human-anatomy" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
@@ -25,7 +45,9 @@ export interface ExhibitDefinition {
   synopsis: string;
   curatorNote: string;
   readingTime: string;
+  durationMinutes: number;
   interactionType: string;
+  formats: ExhibitFormat[];
   tags: string[];
   route: string;
   enabled: boolean;
@@ -37,24 +59,28 @@ export interface ExhibitDefinition {
 export const WINGS: Record<string, ExhibitWing> = {
   body: {
     id: "wing-01",
+    slug: "body",
     code: "Wing 01",
     title: "The Body",
     description: "Biological systems, sensory perception, and internal architectures",
   },
   machines: {
     id: "wing-02",
+    slug: "systems-machines",
     code: "Wing 02",
     title: "Systems & Machines",
     description: "Complex engineered systems, aerospace telemetry, and pivotal human decisions",
   },
   origins: {
     id: "wing-03",
+    slug: "origins-futures",
     code: "Wing 03",
     title: "Origins & Futures",
     description: "Deep time, human evolution, cumulative culture, and the systems shaping what comes next",
   },
   space: {
     id: "wing-04",
+    slug: "space",
     code: "Wing 04",
     title: "Space",
     description: "Real planetary imagery and mission data, explored as physical specimens",
@@ -74,7 +100,9 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     curatorNote:
       "Built from registered HuBMAP Human Reference Atlas geometry derived from the NLM Visible Human Project, with source status, reference-body scope, and model limits shown inside the exhibit.",
     readingTime: "25–40 min",
+    durationMinutes: 35,
     interactionType: "Registered 3D Anatomy · System Isolation · Source-Linked Field Guide",
+    formats: ["interactive-3d", "field-guide", "evidence-led"],
     tags: ["Human Anatomy", "Eight Body Systems", "Scientific 3D", "HuBMAP HRA"],
     route: "/exhibits/human-anatomy",
     enabled: true,
@@ -102,7 +130,9 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
       "Travel from the shared ape branch through walking, fire, hunting, settlement, writing, industry, networks, the computer in your hand, and tools that learn from our record.",
     curatorNote: "A 35-episode flagship journey grounded in fossil evidence, museum objects, archival photography, open research, and one Blender-composed geological scan.",
     readingTime: "Approx. 70 min complete",
+    durationMinutes: 70,
     interactionType: "Cinematic Atlas · Evidence Lens · 35 Instruments",
+    formats: ["cinematic", "evidence-led"],
     tags: ["Human Evolution", "Paleoanthropology", "Cumulative Culture", "AI & Society"],
     route: "/exhibits/becoming-human",
     enabled: true,
@@ -131,7 +161,9 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     curatorNote:
       "A CC BY 4.0 artist-authored 3D reconstruction mapped to NASA and FAA conventions, with cycle-linked particle, pressure, thermal, and shaft overlays. Geometry, assumptions, and limits are identified inside the exhibit; no generative imagery or simulated live telemetry is used.",
     readingTime: "12–18 min open study",
+    durationMinutes: 15,
     interactionType: "Sourced Sectional · Flow Stations · Zero-D Cycle Study",
+    formats: ["interactive-3d", "simulation", "evidence-led"],
     tags: ["Jet Propulsion", "Thermodynamics", "NASA Station Convention", "Scientific Reconstruction"],
     route: "/exhibits/jet-engine",
     enabled: true,
@@ -159,7 +191,9 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
       "Step into the cockpit of the Lunar Module Eagle during the final thirteen minutes before touchdown as unexpected radar overloads trigger the legendary 1202 program alarm.",
     curatorNote: "Synchronized with historical NASA flight transcripts, telemetry logs, and low-poly Eagle lunar descent trajectory.",
     readingTime: "7–10 min read",
+    durationMinutes: 10,
     interactionType: "3D Spacecraft · Telemetry HUD · Archival Audio",
+    formats: ["interactive-3d", "archival-audio", "evidence-led"],
     tags: ["Apollo 11", "Flight Telemetry", "Real-Time 3D", "1202 Program Alarm"],
     route: "/exhibits/thirteen-minutes",
     enabled: true,
@@ -187,7 +221,9 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
       "Move from the Sun to Neptune in a single high-fidelity observatory, switching between terrain, atmosphere, missions, interiors, rings, light, and magnetic fields.",
     curatorNote: "Built from locally delivered NASA, USGS, LRO, MOLA, SDO, Cassini, Voyager, and Magellan observations with evidence status shown in the interface.",
     readingTime: "20–30 min open exploration",
+    durationMinutes: 25,
     interactionType: "Interactive 3D Observatory · Scientific Layers · World Comparison",
+    formats: ["interactive-3d", "comparison", "evidence-led"],
     tags: ["Solar System", "Planetary Science", "NASA Imagery", "Interactive 3D"],
     route: "/exhibits/atlas-of-worlds",
     enabled: true,

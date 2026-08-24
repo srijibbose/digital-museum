@@ -7,17 +7,17 @@ import "@/components/jet-engine/jet-engine-poster.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Loupe — A museum for the quietly curious",
+    default: "Loupe — Interactive digital museum",
     template: "%s — Loupe",
   },
   description:
-    "Short, immersive exhibits that make hidden systems visible.",
+    "Explore interactive, source-grounded digital museum exhibits about the human body, machines, space, and human history.",
   icons: { icon: "/icon.svg" },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         {children}
         <Analytics />

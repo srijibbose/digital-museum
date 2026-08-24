@@ -21,6 +21,8 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     const active = getActiveExhibits();
     expect(active.length).toBeGreaterThanOrEqual(2);
     expect(active.every((e) => e.enabled)).toBe(true);
+    expect(active.every((e) => e.durationMinutes > 0)).toBe(true);
+    expect(active.every((e) => e.formats.length > 0)).toBe(true);
   });
 
   it("returns the featured lobby exhibits", () => {
@@ -69,5 +71,11 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(titles).toContain("Systems & Machines");
     expect(titles).toContain("Origins & Futures");
     expect(titles).toContain("Space");
+    expect(wings.map(({ wing }) => wing.slug)).toEqual([
+      "body",
+      "origins-futures",
+      "systems-machines",
+      "space",
+    ]);
   });
 });
