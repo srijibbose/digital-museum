@@ -11,9 +11,32 @@ import {
   getResearchRecord,
   getResearchRecords,
 } from "@/content/research-records";
+import {
+  getExhibitBySlug,
+  type ExhibitDefinition,
+} from "@/content/exhibits";
 import { createResearchRecordMetadata } from "@/lib/seo/metadata";
 
 const museumEnvironment = { NEXT_PUBLIC_SITE_URL: "https://museum.example" };
+type NonPublicParentState = "disabled" | "private";
+
+async function withNonPublicAtlas<T>(
+  state: NonPublicParentState,
+  run: (exhibit: ExhibitDefinition) => T | Promise<T>,
+) {
+  const exhibit = getExhibitBySlug("atlas-of-worlds")!;
+  const originalEnabled = exhibit.enabled;
+  const originalAccess = exhibit.access;
+
+  try {
+    if (state === "disabled") exhibit.enabled = false;
+    if (state === "private") exhibit.access = { mode: "private" };
+    return await run(exhibit);
+  } finally {
+    exhibit.enabled = originalEnabled;
+    exhibit.access = originalAccess;
+  }
+}
 
 function jsonLdGraphs(container: HTMLElement) {
   return Array.from(
@@ -165,6 +188,40 @@ describe("public research record route", () => {
       params: Promise.resolve({ exhibit: "atlas-of-worlds", record: "not-authored" }),
     })).rejects.toMatchObject({ digest: "NEXT_HTTP_ERROR_FALLBACK;404" });
   });
+
+  it("throws not found when a real record slug is paired with the wrong exhibit", async () => {
+    await expect(ResearchRecordRoute({
+      params: Promise.resolve({ exhibit: "human-anatomy", record: "mars" }),
+    })).rejects.toMatchObject({ digest: "NEXT_HTTP_ERROR_FALLBACK;404" });
+  });
+
+  it.each(["disabled", "private"] as const)(
+    "excludes every record whose parent exhibit is %s from static params",
+    async (state) => withNonPublicAtlas(state, async () => {
+      const params = await generateStaticParams();
+
+      expect(params).toHaveLength(56);
+      expect(params.some(({ exhibit }) => exhibit === "atlas-of-worlds")).toBe(false);
+    }),
+  );
+
+  it.each(["disabled", "private"] as const)(
+    "denies metadata before disclosing a record whose parent exhibit is %s",
+    async (state) => withNonPublicAtlas(state, async () => {
+      await expect(generateMetadata({
+        params: Promise.resolve({ exhibit: "atlas-of-worlds", record: "mars" }),
+      })).rejects.toMatchObject({ digest: "NEXT_HTTP_ERROR_FALLBACK;404" });
+    }),
+  );
+
+  it.each(["disabled", "private"] as const)(
+    "denies detail rendering when the parent exhibit is %s",
+    async (state) => withNonPublicAtlas(state, async () => {
+      await expect(ResearchRecordRoute({
+        params: Promise.resolve({ exhibit: "atlas-of-worlds", record: "mars" }),
+      })).rejects.toMatchObject({ digest: "NEXT_HTTP_ERROR_FALLBACK;404" });
+    }),
+  );
 });
 
 describe("public research library index", () => {
@@ -216,4 +273,30 @@ describe("public research library index", () => {
     expect(mainEntity).toMatchObject({ "@type": "ItemList", numberOfItems: 66 });
     expect(schema).toEqual(visible);
   });
+
+  it.each(["disabled", "private"] as const)(
+    "excludes a %s parent and keeps its reduced ItemList aligned with visible links",
+    async (state) => withNonPublicAtlas(state, () => {
+      const { container } = render(<ResearchLibraryPage />);
+      const visible = Array.from(
+        container.querySelectorAll<HTMLAnchorElement>('a[href^="/research/"]'),
+        (link) => ({
+          name: link.querySelector("strong")?.textContent,
+          pathname: link.getAttribute("href"),
+        }),
+      );
+      const graph = jsonLdGraphs(container).find((item) => item["@type"] === "CollectionPage")!;
+      const mainEntity = graph.mainEntity as Record<string, unknown>;
+      const schema = (mainEntity.itemListElement as Array<Record<string, unknown>>).map((entry) => {
+        const item = entry.item as Record<string, unknown>;
+        return { name: item.name, pathname: new URL(String(item.url)).pathname };
+      });
+
+      expect(screen.queryByRole("heading", { level: 2, name: "Atlas of Worlds" })).not.toBeInTheDocument();
+      expect(visible).toHaveLength(56);
+      expect(visible.some(({ pathname }) => pathname?.startsWith("/research/atlas-of-worlds/"))).toBe(false);
+      expect(mainEntity).toMatchObject({ "@type": "ItemList", numberOfItems: 56 });
+      expect(schema).toEqual(visible);
+    }),
+  );
 });

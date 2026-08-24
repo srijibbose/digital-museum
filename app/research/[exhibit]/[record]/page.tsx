@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getExhibitBySlug } from "@/content/exhibits";
-import {
-  getResearchRecord,
-  getResearchRecords,
-  researchRecordPath,
-} from "@/content/research-records";
+import { researchRecordPath } from "@/content/research-records";
 import { ResearchRecordPage } from "@/components/museum/ResearchRecordPage";
 import { JsonLd } from "@/components/seo/JsonLd";
+import {
+  listPublicResearchRecords,
+  resolvePublicResearchRecord,
+} from "@/lib/research/public-records";
 import {
   createBreadcrumbGraph,
   createResearchRecordGraph,
@@ -19,9 +18,9 @@ type ResearchRecordRouteProps = {
 };
 
 export function generateStaticParams() {
-  return getResearchRecords().map(({ exhibitSlug, slug }) => ({
-    exhibit: exhibitSlug,
-    record: slug,
+  return listPublicResearchRecords().map(({ record }) => ({
+    exhibit: record.exhibitSlug,
+    record: record.slug,
   }));
 }
 
@@ -29,25 +28,24 @@ export async function generateMetadata({
   params,
 }: ResearchRecordRouteProps): Promise<Metadata> {
   const { exhibit, record } = await params;
-  const researchRecord = getResearchRecord(exhibit, record);
+  const resolved = resolvePublicResearchRecord(exhibit, record);
 
-  return researchRecord ? createResearchRecordMetadata(researchRecord) : {};
+  if (!resolved) notFound();
+  return createResearchRecordMetadata(resolved.record);
 }
 
 export default async function ResearchRecordRoute({ params }: ResearchRecordRouteProps) {
   const { exhibit: exhibitSlug, record: recordSlug } = await params;
-  const record = getResearchRecord(exhibitSlug, recordSlug);
-  const exhibit = getExhibitBySlug(exhibitSlug);
+  const resolved = resolvePublicResearchRecord(exhibitSlug, recordSlug);
 
-  if (!record || !exhibit || !exhibit.enabled || exhibit.access.mode === "private") {
-    notFound();
-  }
+  if (!resolved) notFound();
+  const { exhibit, record } = resolved;
 
   const relatedRecords = record.relatedIds.map((relatedId) => {
     const [relatedExhibit, relatedSlug] = relatedId.split(":");
-    const related = getResearchRecord(relatedExhibit!, relatedSlug!);
+    const related = resolvePublicResearchRecord(relatedExhibit!, relatedSlug!);
     if (!related) throw new Error(`Unresolved related research record: ${relatedId}`);
-    return related;
+    return related.record;
   });
   const breadcrumbItems = [
     { name: "Home", pathname: "/" },

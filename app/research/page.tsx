@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getActiveExhibits } from "@/content/exhibits";
-import {
-  getResearchRecordsForExhibit,
-  researchRecordPath,
-} from "@/content/research-records";
+import { researchRecordPath } from "@/content/research-records";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -13,6 +9,10 @@ import {
   createResearchLibraryGraph,
 } from "@/lib/seo/json-ld";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import {
+  listPublicResearchRecords,
+  type PublicResearchRecord,
+} from "@/lib/research/public-records";
 import styles from "./research.module.css";
 
 const LIBRARY_DESCRIPTION =
@@ -31,11 +31,20 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default function ResearchLibraryPage() {
-  const groups = getActiveExhibits().map((exhibit) => ({
-    exhibit,
-    records: getResearchRecordsForExhibit(exhibit.slug),
-  })).filter(({ records }) => records.length > 0);
-  const visibleRecords = groups.flatMap(({ records }) => records);
+  const publicRecords = listPublicResearchRecords();
+  const groups = publicRecords.reduce<Array<{
+    exhibit: PublicResearchRecord["exhibit"];
+    records: PublicResearchRecord["record"][];
+  }>>((result, entry) => {
+    const current = result.at(-1);
+    if (current?.exhibit.id === entry.exhibit.id) {
+      current.records.push(entry.record);
+    } else {
+      result.push({ exhibit: entry.exhibit, records: [entry.record] });
+    }
+    return result;
+  }, []);
+  const visibleRecords = publicRecords.map(({ record }) => record);
 
   return (
     <main className={styles.libraryPage}>

@@ -5,6 +5,10 @@
   --research-ink: #151514;
   --research-muted: #676158;
   --research-rust: #a74425;
+  --research-label-on-dark: #e18462;
+  --research-label-on-paper: #7d2f1a;
+  --research-label-on-rust: #fff1e9;
+  --research-focus-on-rust: #fff8f0;
   --research-line: rgba(21, 21, 20, 0.2);
   min-height: 100svh;
   background: var(--research-paper);
@@ -15,6 +19,10 @@
 .researchPage :where(a, button):focus-visible {
   outline: 3px solid var(--research-rust);
   outline-offset: 4px;
+}
+
+.recordArticle {
+  overflow-wrap: anywhere;
 }
 
 .libraryHero,
@@ -105,6 +113,11 @@
 .libraryGroups {
   background: #11110f;
   color: #f0eadf;
+}
+
+.libraryGroups .groupIndex,
+.sourcesPanel .panelKicker {
+  color: var(--research-label-on-dark);
 }
 
 .libraryGroup {
@@ -344,6 +357,11 @@
   background: var(--research-paper-deep);
 }
 
+.evidencePanel .panelKicker,
+.relatedPanel .panelKicker {
+  color: var(--research-label-on-paper);
+}
+
 .evidencePanel h2 {
   margin-top: 18px;
   font-size: clamp(2.6rem, 4vw, 4.5rem);
@@ -502,7 +520,7 @@
 }
 
 .exhibitCta .panelKicker {
-  color: #ffd0bf;
+  color: var(--research-label-on-rust);
 }
 
 .exhibitCta > p:not(.panelKicker) {
@@ -528,6 +546,12 @@
 .exhibitCta > a:hover {
   background: #fff5e9;
   color: #7d2c15;
+}
+
+.exhibitCta > a:focus-visible {
+  outline: 3px solid var(--research-focus-on-rust);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 7px rgba(17, 17, 15, 0.72);
 }
 
 @media (max-width: 980px) {
