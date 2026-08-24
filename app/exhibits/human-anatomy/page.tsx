@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { AnatomyExperience } from "@/components/anatomy/AnatomyExperience";
 import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
+import { ExhibitDiscoveryFooter } from "@/components/museum/ExhibitDiscoveryFooter";
 import accessStyles from "@/components/museum/exhibit-access.module.css";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -10,6 +11,7 @@ import { getExhibitBySlug } from "@/content/exhibits";
 import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
+import { listPublicResearchRecordsForExhibit } from "@/lib/research/public-records";
 import styles from "@/components/anatomy/anatomy.module.css";
 
 const exhibitDefinition = getExhibitBySlug("human-anatomy")!;
@@ -28,12 +30,15 @@ export const viewport: Viewport = {
 
 export default function HumanAnatomyPage() {
   assertPublicExhibitRouteAvailable(exhibitDefinition);
+  const researchRecords = listPublicResearchRecordsForExhibit(
+    exhibitDefinition.slug,
+  );
 
   return (
     <main className={styles.page}>
       <JsonLd
         data={[
-          createExhibitGraph(exhibitDefinition),
+          createExhibitGraph(exhibitDefinition, researchRecords),
           createBreadcrumbGraph(breadcrumbItems),
         ]}
       />
@@ -114,6 +119,10 @@ export default function HumanAnatomyPage() {
           </ol>
         </div>
       </section>
+      <ExhibitDiscoveryFooter
+        exhibit={exhibitDefinition}
+        records={researchRecords}
+      />
     </main>
   );
 }

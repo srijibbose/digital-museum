@@ -37,16 +37,17 @@
 .identityEyebrow,
 .readingEyebrow {
   margin: 0;
-  color: #a94e32;
   font-size: 0.68rem;
   font-weight: 750;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
+.identityEyebrow { color: #ca7659; }
+.readingEyebrow { color: var(--reading-accent); }
+
 .publicIdentity .identityEyebrow {
   grid-column: 1 / -1;
-  color: #ca7659;
 }
 
 .publicIdentity h1 {
@@ -1112,9 +1113,9 @@
 .readingEdition {
   --reading-ink: #181b1d;
   --reading-soft: #555957;
-  --reading-muted: #737773;
+  --reading-muted: #626663;
   --reading-line: rgb(24 27 29 / 20%);
-  --reading-accent: #a94e32;
+  --reading-accent: #9f452c;
   padding: clamp(4rem, 9vw, 8rem) clamp(1.25rem, 7vw, 7rem) clamp(6rem, 12vw, 11rem);
   background:
     linear-gradient(90deg, transparent 49.9%, rgb(24 27 29 / 4%) 50%, transparent 50.1%),

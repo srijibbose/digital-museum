@@ -1,7 +1,6 @@
 import { ImageResponse } from "next/og";
 import {
-  museumSocialCard,
-  resolveSocialCard,
+  resolveSocialCardOrFallback,
 } from "@/lib/seo/social-card";
 
 export async function GET(
@@ -9,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ kind: string; slug: string[] }> },
 ) {
   const { kind, slug } = await params;
-  const card = resolveSocialCard(kind, slug) ?? museumSocialCard;
+  const card = resolveSocialCardOrFallback(kind, slug);
 
   return new ImageResponse(
     (

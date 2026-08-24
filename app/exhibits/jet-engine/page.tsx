@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import JetEngineExperience from "@/components/jet-engine/JetEngineExperience";
 import { JetEngineReadingEdition } from "@/components/jet-engine/JetEngineReadingEdition";
 import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
+import { ExhibitDiscoveryFooter } from "@/components/museum/ExhibitDiscoveryFooter";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getExhibitBySlug } from "@/content/exhibits";
 import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
+import { listPublicResearchRecordsForExhibit } from "@/lib/research/public-records";
 import styles from "@/components/jet-engine/jet-engine.module.css";
 
 const exhibitDefinition = getExhibitBySlug("jet-engine")!;
@@ -21,12 +23,15 @@ export const metadata: Metadata = createExhibitMetadata(exhibitDefinition);
 
 export default function JetEnginePage() {
   assertPublicExhibitRouteAvailable(exhibitDefinition);
+  const researchRecords = listPublicResearchRecordsForExhibit(
+    exhibitDefinition.slug,
+  );
 
   return (
     <main className={styles.page}>
       <JsonLd
         data={[
-          createExhibitGraph(exhibitDefinition),
+          createExhibitGraph(exhibitDefinition, researchRecords),
           createBreadcrumbGraph(breadcrumbItems),
         ]}
       />
@@ -49,6 +54,10 @@ export default function JetEnginePage() {
         <JetEngineExperience />
       </ExhibitAccessBoundary>
       <JetEngineReadingEdition />
+      <ExhibitDiscoveryFooter
+        exhibit={exhibitDefinition}
+        records={researchRecords}
+      />
     </main>
   );
 }

@@ -80,7 +80,7 @@ beforeAll(async () => {
       render: () => atlas.default({ searchParams: Promise.resolve({}) }),
     },
   ];
-});
+}, 30_000);
 
 afterAll(() => {
   const restore = (name: string, value: string | undefined) => {

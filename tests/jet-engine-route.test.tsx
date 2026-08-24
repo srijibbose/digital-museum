@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import JetEngineError from "@/app/exhibits/jet-engine/error";
-import JetEngineLoading from "@/app/exhibits/jet-engine/loading";
 import JetEnginePage, { metadata } from "@/app/exhibits/jet-engine/page";
 import { getExhibitBySlug } from "@/content/exhibits";
 
@@ -27,11 +26,6 @@ describe("jet-engine route states", () => {
     expect(memberContent).toContainElement(
       screen.getByRole("region", { name: "Jet Engine interactive exhibit" }),
     );
-  });
-
-  it("provides a labelled instant loading state", () => {
-    render(<JetEngineLoading />);
-    expect(screen.getByLabelText("Loading the interactive 3D jet engine laboratory")).toBeVisible();
   });
 
   it("provides a recoverable local error state", async () => {

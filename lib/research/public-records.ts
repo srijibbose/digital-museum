@@ -43,3 +43,10 @@ export function listPublicResearchRecords(): PublicResearchRecord[] {
       }));
     });
 }
+
+export function listPublicResearchRecordsForExhibit(
+  exhibitSlug: string,
+): ResearchRecord[] {
+  const exhibit = resolvePublicExhibit(exhibitSlug);
+  return exhibit ? [...getResearchRecordsForExhibit(exhibit.slug)] : [];
+}

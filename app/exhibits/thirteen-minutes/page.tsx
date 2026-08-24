@@ -7,10 +7,12 @@ import {
   ExhibitAccessBoundary,
   getExhibitAccessRegionId,
 } from "@/components/museum/ExhibitAccessBoundary";
+import { ExhibitDiscoveryFooter } from "@/components/museum/ExhibitDiscoveryFooter";
 import { getExhibitBySlug } from "@/content/exhibits";
 import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
+import { listPublicResearchRecordsForExhibit } from "@/lib/research/public-records";
 import {
   thirteenMinutesContent as exhibit,
   thirteenMinutesSources,
@@ -35,6 +37,9 @@ export const viewport: Viewport = {
 
 export default function ThirteenMinutesPage() {
   assertPublicExhibitRouteAvailable(exhibitDefinition);
+  const researchRecords = listPublicResearchRecordsForExhibit(
+    exhibitDefinition.slug,
+  );
 
   const eagleImage = ARCHIVAL_MEDIA[0];
   const missionControlImage = ARCHIVAL_MEDIA[1];
@@ -47,7 +52,7 @@ export default function ThirteenMinutesPage() {
     <main className={styles.page}>
       <JsonLd
         data={[
-          createExhibitGraph(exhibitDefinition),
+          createExhibitGraph(exhibitDefinition, researchRecords),
           createBreadcrumbGraph(breadcrumbItems),
         ]}
       />
@@ -174,25 +179,10 @@ export default function ThirteenMinutesPage() {
         </div>
       </aside>
 
-      <footer aria-labelledby="related-title" className={styles.related}>
-        <div className={styles.footerTopline}>
-          <span>Continue looking closer</span>
-          <span>Systems &amp; Machines</span>
-        </div>
-        <h2 id="related-title">You might also like</h2>
-        <div className={styles.relatedGrid}>
-          {exhibit.relatedExhibits.map((related) => (
-            <article className={styles.relatedCard} key={related.slug}>
-              <p>{related.status}</p>
-              <h3>{related.title}</h3>
-            </article>
-          ))}
-        </div>
-        <div className={styles.closingLine}>
-          <span>Loupe · A museum for the quietly curious</span>
-          <span>End of exhibit</span>
-        </div>
-      </footer>
+      <ExhibitDiscoveryFooter
+        exhibit={exhibitDefinition}
+        records={researchRecords}
+      />
     </main>
   );
 }

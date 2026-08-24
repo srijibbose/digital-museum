@@ -107,6 +107,7 @@ export function createHomeCollectionGraph(
 
 export function createExhibitGraph(
   exhibit: ExhibitDefinition,
+  records: readonly ResearchRecord[] = [],
   env?: SiteEnvironment,
 ) {
   if (exhibit.access.mode === "private") {
@@ -116,6 +117,13 @@ export function createExhibitGraph(
   const url = absoluteUrl(exhibit.route, env);
   const siteUrl = absoluteUrl("/", env);
   const isAccessibleForFree = exhibit.access.mode === "public";
+  const citations = Array.from(
+    new Set(
+      records
+        .filter((record) => record.exhibitSlug === exhibit.slug)
+        .flatMap((record) => record.sources.map((source) => source.url)),
+    ),
+  );
 
   return {
     "@context": "https://schema.org",
@@ -128,6 +136,12 @@ export function createExhibitGraph(
     isAccessibleForFree,
     isPartOf: { "@id": `${siteUrl}#website` },
     publisher: { "@id": `${siteUrl}#organization` },
+    image: absoluteUrl(`/social/exhibit/${exhibit.slug}`, env),
+    about: exhibit.tags.map((name) => ({
+      "@type": "Thing",
+      name,
+    })),
+    citation: citations,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `${url}#webpage`,
@@ -200,9 +214,16 @@ export function createResearchLibraryGraph(
 
 export function createResearchRecordGraph(
   record: ResearchRecord,
+  exhibit: ExhibitDefinition,
   env?: SiteEnvironment,
 ) {
+  if (record.exhibitSlug !== exhibit.slug) {
+    throw new Error("Research records must match their parent exhibit graph.");
+  }
+
   const url = absoluteUrl(researchRecordPath(record), env);
+  const exhibitUrl = absoluteUrl(exhibit.route, env);
+  const siteUrl = absoluteUrl("/", env);
 
   return {
     "@context": "https://schema.org",
@@ -213,5 +234,21 @@ export function createResearchRecordGraph(
     description: record.summary,
     dateModified: record.lastModified,
     citation: record.sources.map(({ url: sourceUrl }) => sourceUrl),
+    publisher: { "@id": `${siteUrl}#organization` },
+    isPartOf: [
+      {
+        "@type": "CreativeWork",
+        "@id": `${exhibitUrl}#creative-work`,
+        url: exhibitUrl,
+        name: exhibit.title,
+      },
+      { "@id": `${siteUrl}#website` },
+    ],
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${url}#webpage`,
+      url,
+      name: record.title,
+    },
   };
 }

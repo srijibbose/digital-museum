@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { AtlasExperience } from "@/components/space/AtlasExperience";
 import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
+import { ExhibitDiscoveryFooter } from "@/components/museum/ExhibitDiscoveryFooter";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { atlas } from "@/content/space/atlas";
@@ -8,6 +9,7 @@ import { getExhibitBySlug } from "@/content/exhibits";
 import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
+import { listPublicResearchRecordsForExhibit } from "@/lib/research/public-records";
 import { parseWorldQuery } from "@/lib/space/atlas-query";
 import { MARS_DEEP_TIME_ANCHORS, formatMarsTime } from "@/lib/space/mars-deep-time";
 import accessStyles from "@/components/museum/exhibit-access.module.css";
@@ -35,6 +37,9 @@ type AtlasPageProps = {
 
 export default async function AtlasOfWorldsPage({ searchParams }: AtlasPageProps) {
   assertPublicExhibitRouteAvailable(exhibitDefinition);
+  const researchRecords = listPublicResearchRecordsForExhibit(
+    exhibitDefinition.slug,
+  );
   const query = await searchParams;
   const initialWorld = parseWorldQuery(query.world);
   const sources = Array.from(
@@ -49,7 +54,7 @@ export default async function AtlasOfWorldsPage({ searchParams }: AtlasPageProps
     <main className="space-page">
       <JsonLd
         data={[
-          createExhibitGraph(exhibitDefinition),
+          createExhibitGraph(exhibitDefinition, researchRecords),
           createBreadcrumbGraph(breadcrumbItems),
         ]}
       />
@@ -143,6 +148,10 @@ export default async function AtlasOfWorldsPage({ searchParams }: AtlasPageProps
           </ol>
         </div>
       </section>
+      <ExhibitDiscoveryFooter
+        exhibit={exhibitDefinition}
+        records={researchRecords}
+      />
     </main>
   );
 }

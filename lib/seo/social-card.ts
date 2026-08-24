@@ -1,5 +1,6 @@
 import { getActiveExhibits } from "@/content/exhibits";
 import { isPubliclyDiscoverable } from "@/lib/auth/exhibit-access";
+import { resolvePublicResearchRecord } from "@/lib/research/public-records";
 import { SITE_NAME } from "@/lib/seo/site";
 
 export interface SocialCardContent {
@@ -20,9 +21,19 @@ export function resolveSocialCard(
   kind: string,
   slugParts: readonly string[],
 ): SocialCardContent | null {
-  if (kind !== "exhibit" || slugParts.length !== 1) {
-    return null;
+  if (kind === "research" && slugParts.length === 2) {
+    const resolved = resolvePublicResearchRecord(slugParts[0]!, slugParts[1]!);
+    if (!resolved) return null;
+
+    return {
+      eyebrow: `RESEARCH RECORD · ${resolved.exhibit.title.toUpperCase()}`,
+      title: resolved.record.title,
+      description: resolved.record.summary,
+      accentColor: resolved.exhibit.visualTheme.accentColor,
+    };
   }
+
+  if (kind !== "exhibit" || slugParts.length !== 1) return null;
 
   const exhibit = getActiveExhibits()
     .filter(isPubliclyDiscoverable)
@@ -38,4 +49,11 @@ export function resolveSocialCard(
     description: exhibit.synopsis,
     accentColor: exhibit.visualTheme.accentColor,
   };
+}
+
+export function resolveSocialCardOrFallback(
+  kind: string,
+  slugParts: readonly string[],
+): SocialCardContent {
+  return resolveSocialCard(kind, slugParts) ?? museumSocialCard;
 }

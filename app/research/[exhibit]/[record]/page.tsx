@@ -56,7 +56,7 @@ export default async function ResearchRecordRoute({ params }: ResearchRecordRout
 
   return (
     <>
-      <JsonLd data={createResearchRecordGraph(record)} />
+      <JsonLd data={createResearchRecordGraph(record, exhibit)} />
       <JsonLd data={createBreadcrumbGraph(breadcrumbItems)} />
       <ResearchRecordPage
         record={record}

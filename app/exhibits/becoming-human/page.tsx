@@ -5,12 +5,14 @@ import {
 } from "@/components/becoming-human/BecomingHumanReadingEdition";
 import { BecomingHumanV2Experience } from "@/components/becoming-human/BecomingHumanV2Experience";
 import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
+import { ExhibitDiscoveryFooter } from "@/components/museum/ExhibitDiscoveryFooter";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getExhibitBySlug } from "@/content/exhibits";
 import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
+import { listPublicResearchRecordsForExhibit } from "@/lib/research/public-records";
 
 const exhibitDefinition = getExhibitBySlug("becoming-human")!;
 const breadcrumbItems = [
@@ -29,12 +31,15 @@ export const viewport: Viewport = {
 export default function BecomingHumanPage() {
   assertPublicExhibitRouteAvailable(exhibitDefinition);
   const hasMemberPolicy = exhibitDefinition.access.mode === "members";
+  const researchRecords = listPublicResearchRecordsForExhibit(
+    exhibitDefinition.slug,
+  );
 
   return (
     <>
       <JsonLd
         data={[
-          createExhibitGraph(exhibitDefinition),
+          createExhibitGraph(exhibitDefinition, researchRecords),
           createBreadcrumbGraph(breadcrumbItems),
         ]}
       />
@@ -45,6 +50,10 @@ export default function BecomingHumanPage() {
           <BecomingHumanV2Experience />
         </ExhibitAccessBoundary>
         <BecomingHumanReadingEdition headingLevel={2} />
+        <ExhibitDiscoveryFooter
+          exhibit={exhibitDefinition}
+          records={researchRecords}
+        />
       </main>
     </>
   );
