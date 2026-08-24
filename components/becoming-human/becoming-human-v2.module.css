@@ -522,7 +522,7 @@
 .beginButton { display:flex; width:clamp(225px,19vw,300px); min-height:68px; align-items:center; justify-content:space-between; padding:0 24px !important; border:1px solid rgba(255,255,255,.5) !important; color:#fff !important; font:10px ui-monospace,monospace !important; letter-spacing:.14em !important; text-decoration:none !important; transition:background 240ms ease,color 240ms ease,border-color 240ms ease; }
 .beginButton i { font:300 24px sans-serif; }
 .beginButton:hover { border-color:#99f6d4 !important; background:#99f6d4 !important; color:#050505 !important; }
-.entryFooter { position:absolute; right:0; bottom:0; left:0; display:flex; min-height:48px; align-items:center; justify-content:space-between; padding:0 32px; border-top:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.4); font:8px ui-monospace,monospace; letter-spacing:.13em; }
+.entryFooter { position:absolute; right:0; bottom:0; left:0; display:flex; min-height:48px; align-items:center; justify-content:space-between; padding:0 32px; border-top:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.5); font:8px ui-monospace,monospace; letter-spacing:.13em; }
 .entryInfrastructure { position:absolute; z-index:-1; inset:0; pointer-events:none; }
 .entryInfrastructure > span { position:absolute; right:10%; width:1px; height:42vh; background:linear-gradient(transparent,#99f6d4,transparent); transform-origin:bottom; opacity:.34; }
 .entryInfrastructure > span:nth-child(1){bottom:0;right:13%;transform:rotate(62deg)}
