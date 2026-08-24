@@ -51,6 +51,8 @@ export interface ExhibitDefinition {
   tags: string[];
   route: string;
   enabled: boolean;
+  access: import("@/lib/auth/exhibit-access").ExhibitAccess;
+  lastModified: string;
   featured?: boolean;
   order: number;
   visualTheme: ExhibitVisualTheme;
@@ -106,6 +108,8 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     tags: ["Human Anatomy", "Eight Body Systems", "Scientific 3D", "HuBMAP HRA"],
     route: "/exhibits/human-anatomy",
     enabled: true,
+    access: { mode: "public" },
+    lastModified: "2026-08-23T00:00:00.000Z",
     featured: true,
     order: 1,
     visualTheme: {
@@ -136,6 +140,8 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     tags: ["Human Evolution", "Paleoanthropology", "Cumulative Culture", "AI & Society"],
     route: "/exhibits/becoming-human",
     enabled: true,
+    access: { mode: "public" },
+    lastModified: "2026-08-18T00:00:00.000Z",
     featured: true,
     order: 2,
     visualTheme: {
@@ -167,6 +173,8 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     tags: ["Jet Propulsion", "Thermodynamics", "NASA Station Convention", "Scientific Reconstruction"],
     route: "/exhibits/jet-engine",
     enabled: true,
+    access: { mode: "public" },
+    lastModified: "2026-08-23T00:00:00.000Z",
     featured: true,
     order: 3,
     visualTheme: {
@@ -197,6 +205,8 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     tags: ["Apollo 11", "Flight Telemetry", "Real-Time 3D", "1202 Program Alarm"],
     route: "/exhibits/thirteen-minutes",
     enabled: true,
+    access: { mode: "public" },
+    lastModified: "2026-08-15T00:00:00.000Z",
     featured: true,
     order: 4,
     visualTheme: {
@@ -227,6 +237,8 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     tags: ["Solar System", "Planetary Science", "NASA Imagery", "Interactive 3D"],
     route: "/exhibits/atlas-of-worlds",
     enabled: true,
+    access: { mode: "public" },
+    lastModified: "2026-08-21T00:00:00.000Z",
     featured: true,
     order: 5,
     visualTheme: {
@@ -246,7 +258,9 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
  * Returns all active exhibits sorted by exhibition order.
  */
 export function getActiveExhibits(): ExhibitDefinition[] {
-  return EXHIBIT_REGISTRY.filter((exhibit) => exhibit.enabled).sort(
+  return EXHIBIT_REGISTRY.filter(
+    (exhibit) => exhibit.enabled && exhibit.access.mode !== "private",
+  ).sort(
     (a, b) => a.order - b.order
   );
 }
@@ -282,6 +296,8 @@ export function getActiveWings(
   const map = new Map<string, { wing: ExhibitWing; count: number }>();
 
   for (const exhibit of exhibits) {
+    if (exhibit.access.mode === "private") continue;
+
     const existing = map.get(exhibit.wing.id);
     if (existing) {
       existing.count += 1;
