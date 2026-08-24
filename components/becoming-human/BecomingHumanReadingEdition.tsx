@@ -153,6 +153,32 @@ function EpisodeArticle({
   );
 }
 
+function ReadingBoundaryNavigation({
+  label,
+  next,
+  previous,
+}: {
+  label: string;
+  next: { href: string; title: string };
+  previous: { href: string; title: string };
+}) {
+  return (
+    <nav aria-label={label} className={styles.boundaryNav}>
+      <ul>
+        <li>
+          <a href={previous.href}><span>Previous</span><strong>{previous.title}</strong></a>
+        </li>
+        <li>
+          <a href="#becoming-human-edition-index"><span>Edition index</span><strong>Eight acts</strong></a>
+        </li>
+        <li>
+          <a href={next.href}><span>Next</span><strong>{next.title}</strong></a>
+        </li>
+      </ul>
+    </nav>
+  );
+}
+
 export function BecomingHumanPublicIdentity() {
   return (
     <header
@@ -185,6 +211,7 @@ export function BecomingHumanReadingEdition({
       className={styles.edition}
       data-becoming-human-edition
       id="becoming-human-reading-edition"
+      tabIndex={-1}
     >
       <header className={styles.masthead}>
         <div className={styles.titleBlock}>
@@ -200,7 +227,7 @@ export function BecomingHumanReadingEdition({
         </div>
       </header>
 
-      <nav aria-label="Becoming Human edition index" className={styles.actIndex}>
+      <nav aria-label="Becoming Human edition index" className={styles.actIndex} id="becoming-human-edition-index">
         <p>Eight acts · one changing clock</p>
         <ol>
           {becomingHumanActs.map((act) => (
@@ -226,7 +253,7 @@ export function BecomingHumanReadingEdition({
       </aside>
 
       <div className={styles.acts}>
-        {becomingHumanActs.map((act) => {
+        {becomingHumanActs.map((act, actIndex) => {
           const actEpisodes = act.episodeIds.map((episodeId) => {
             const episode = episodesById.get(episodeId);
             if (!episode) throw new Error(`Unknown Becoming Human episode: ${episodeId}`);
@@ -270,6 +297,21 @@ export function BecomingHumanReadingEdition({
                   </li>
                 ))}
               </ol>
+              <ReadingBoundaryNavigation
+                label={`Act ${act.order} reading navigation`}
+                next={actIndex < becomingHumanActs.length - 1
+                  ? {
+                      href: `#act-${becomingHumanActs[actIndex + 1]!.id}`,
+                      title: becomingHumanActs[actIndex + 1]!.title,
+                    }
+                  : { href: "#becoming-human-finale", title: "Coda" }}
+                previous={actIndex > 0
+                  ? {
+                      href: `#act-${becomingHumanActs[actIndex - 1]!.id}`,
+                      title: becomingHumanActs[actIndex - 1]!.title,
+                    }
+                  : { href: "#becoming-human-edition-title", title: "Introduction" }}
+              />
             </section>
           );
         })}
@@ -278,6 +320,7 @@ export function BecomingHumanReadingEdition({
       <section
         aria-labelledby="becoming-human-finale-title"
         className={styles.finale}
+        id="becoming-human-finale"
       >
         <header>
           <p className={styles.eyebrow}>Coda · What changed fastest?</p>
@@ -329,6 +372,14 @@ export function BecomingHumanReadingEdition({
             ))}
           </ul>
         </section>
+        <ReadingBoundaryNavigation
+          label="Coda reading navigation"
+          next={{ href: "/research", title: "Research library" }}
+          previous={{
+            href: `#act-${becomingHumanActs[becomingHumanActs.length - 1]!.id}`,
+            title: becomingHumanActs[becomingHumanActs.length - 1]!.title,
+          }}
+        />
       </section>
     </section>
   );

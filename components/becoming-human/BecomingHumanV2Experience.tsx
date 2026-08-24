@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type MouseEvent as ReactMouseEvent,
   type ReactNode,
 } from "react";
 import { AmbientSoundscape } from "./AmbientSoundscape";
@@ -31,6 +32,8 @@ import styles from "./becoming-human-v2.module.css";
 type PanelKind = "story" | "evidence" | "instrument" | "atlas" | null;
 type Prediction = "bodies" | "culture" | "systems";
 type BackgroundFrame = { src: string; focalPoint: string };
+
+const READING_EDITION_ID = "becoming-human-reading-edition";
 
 const predictionLabels: Record<Prediction, string> = {
   bodies: "OUR BODIES",
@@ -147,17 +150,23 @@ function Finale({ prediction, onDeleteTrace }: { prediction: Prediction | null; 
 
 function Entry({
   onBegin,
+  onReadEdition,
   prediction,
   resumeIndex,
   setPrediction,
 }: {
   onBegin: (withSound: boolean, resume?: boolean) => void;
+  onReadEdition: (event: ReactMouseEvent<HTMLAnchorElement>) => void;
   prediction: Prediction | null;
   resumeIndex: number | null;
   setPrediction: (value: Prediction) => void;
 }) {
   return (
-    <section className={styles.entry}>
+    <section
+      aria-label="Becoming Human cinematic entry"
+      className={styles.entry}
+      data-cinematic-state="entry"
+    >
       <Image alt="A real city at dusk, where bodies, energy, infrastructure and computation meet" fill preload quality={92} sizes="100vw" src="/media/becoming-human/chronicle/act-08-models.webp" />
       <div className={styles.entryVeil} />
       <div className={styles.entryInfrastructure} aria-hidden="true">
@@ -183,6 +192,7 @@ function Entry({
       <div className={styles.entryActions}>
         <button className={styles.beginButton} onClick={() => onBegin(false)} type="button"><span>BEGIN QUIET</span><i aria-hidden="true">→</i></button>
         <button onClick={() => onBegin(true)} type="button">BEGIN WITH SOUND</button>
+        <a href={`#${READING_EDITION_ID}`} onClick={onReadEdition}>Read the complete research edition</a>
         {resumeIndex !== null && resumeIndex > 0 ? (
           <button onClick={() => onBegin(false, true)} type="button">
             {resumeIndex === becomingHumanEpisodes.length ? "RESUME AT FINALE" : `RESUME AT EPISODE ${String(resumeIndex + 1).padStart(2, "0")}`}
@@ -273,6 +283,19 @@ export function BecomingHumanV2Experience() {
     setStarted(true);
   }, [resumeIndex]);
 
+  const readEdition = useCallback((event: ReactMouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    setPanel(null);
+    setSoundEnabled(false);
+    setStarted(false);
+    window.history.replaceState(null, "", `#${READING_EDITION_ID}`);
+    window.setTimeout(() => {
+      const target = document.getElementById(READING_EDITION_ID);
+      target?.scrollIntoView({ block: "start", behavior: "auto" });
+      target?.focus({ preventScroll: true });
+    }, 0);
+  }, []);
+
   const deleteTrace = useCallback(() => {
     window.localStorage.removeItem("bh-v2-episode");
     window.localStorage.removeItem("bh-v2-prediction");
@@ -281,8 +304,6 @@ export function BecomingHumanV2Experience() {
   }, []);
 
   useEffect(() => {
-    const previousOverflow = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
     const savedValue = window.localStorage.getItem("bh-v2-episode");
     const saved = savedValue === null ? null : Number(savedValue);
     if (saved !== null && Number.isInteger(saved) && saved >= 0 && saved <= becomingHumanEpisodes.length) setResumeIndex(saved);
@@ -298,8 +319,14 @@ export function BecomingHumanV2Experience() {
       setActiveIndex(becomingHumanEpisodes.length);
       setStarted(true);
     }
-    return () => { document.documentElement.style.overflow = previousOverflow; };
   }, []);
+
+  useEffect(() => {
+    if (!started) return;
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => { document.documentElement.style.overflow = previousOverflow; };
+  }, [started]);
 
   useEffect(() => {
     if (!started) return;
@@ -356,12 +383,14 @@ export function BecomingHumanV2Experience() {
   }), []);
 
   if (!started) {
-    return <Entry onBegin={begin} prediction={prediction} resumeIndex={resumeIndex} setPrediction={setPrediction} />;
+    return <Entry onBegin={begin} onReadEdition={readEdition} prediction={prediction} resumeIndex={resumeIndex} setPrediction={setPrediction} />;
   }
 
   return (
-    <main
+    <section
+      aria-label="Becoming Human cinematic exhibit"
       className={styles.root}
+      data-cinematic-state="started"
       data-copy={copySide}
       data-direction={direction}
       onTouchEnd={(event) => {
@@ -409,6 +438,10 @@ export function BecomingHumanV2Experience() {
             <strong>{act.title}</strong>
           </div>
           <nav aria-label="Exhibit tools">
+            <a aria-label="Read the complete research edition" href={`#${READING_EDITION_ID}`} onClick={readEdition}>
+              <span className={styles.editionLong}>READ EDITION</span>
+              <span aria-hidden="true" className={styles.editionShort}>READ</span>
+            </a>
             <button onClick={(event) => { setAtlasView("time"); openPanel("atlas", event.currentTarget); }} type="button">TIME</button>
             <button onClick={(event) => { setAtlasView("place"); openPanel("atlas", event.currentTarget); }} type="button">MAP</button>
             <button aria-pressed={soundEnabled} onClick={() => setSoundEnabled((value) => !value)} type="button">SOUND {soundEnabled ? "ON" : "OFF"}</button>
@@ -503,6 +536,6 @@ export function BecomingHumanV2Experience() {
           </FocusTrap>
         </div>
       ) : null}
-    </main>
+    </section>
   );
 }

@@ -3,16 +3,24 @@
   --chrome: rgba(255, 255, 255, 0.76);
   --chrome-dim: rgba(255, 255, 255, 0.46);
   --hairline: rgba(255, 255, 255, 0.2);
-  position: fixed;
-  z-index: 0;
-  inset: 0;
   width: 100%;
-  height: 100svh;
   overflow: hidden;
   background: #050505;
   color: var(--scene-ink, #f8f3e8);
   font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
   isolation: isolate;
+}
+
+.root {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  height: 100svh;
+}
+
+.entry {
+  position: relative;
+  min-height: 100svh;
 }
 
 .root button,
@@ -118,8 +126,9 @@
 .actIdentity strong { overflow: hidden; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 
 .topChrome nav { display: flex; justify-content: flex-end; gap: 22px; }
-.topChrome button { padding: 0; font: inherit; letter-spacing: inherit; }
-.topChrome button:hover { color: var(--accent); }
+.topChrome nav :is(a, button) { padding: 0; font: inherit; letter-spacing: inherit; }
+.topChrome nav :is(a, button):hover { color: var(--accent); }
+.editionShort { display: none; }
 
 .scene { overflow: hidden; animation: sceneReveal 900ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both; }
 
@@ -509,7 +518,7 @@
 .predictionChoices button[aria-pressed="true"] { color:#99f6d4; }
 .predictionChoices button span { width:13px; color:#99f6d4; }
 .entryActions { position:absolute; right:clamp(30px,6vw,100px); bottom:95px; display:grid; justify-items:end; gap:11px; }
-.entryActions > button:not(.beginButton) { color:rgba(255,255,255,.52); font:8px ui-monospace,monospace; letter-spacing:.13em; text-decoration:underline; text-decoration-color:rgba(255,255,255,.25); text-underline-offset:5px; }
+.entryActions > :is(button, a):not(.beginButton) { color:rgba(255,255,255,.52); font:8px ui-monospace,monospace; letter-spacing:.13em; text-align:right; text-decoration:underline; text-decoration-color:rgba(255,255,255,.25); text-underline-offset:5px; }
 .beginButton { display:flex; width:clamp(225px,19vw,300px); min-height:68px; align-items:center; justify-content:space-between; padding:0 24px !important; border:1px solid rgba(255,255,255,.5) !important; color:#fff !important; font:10px ui-monospace,monospace !important; letter-spacing:.14em !important; text-decoration:none !important; transition:background 240ms ease,color 240ms ease,border-color 240ms ease; }
 .beginButton i { font:300 24px sans-serif; }
 .beginButton:hover { border-color:#99f6d4 !important; background:#99f6d4 !important; color:#050505 !important; }
@@ -565,7 +574,9 @@
   .actIdentity { display:none; }
   .topChrome > a { min-height:36px; align-items:center; }
   .topChrome nav { gap:1px; }
-  .topChrome nav button { min-height:36px; padding:0 7px; }
+  .topChrome nav :is(a, button) { display:grid; min-height:36px; align-items:center; padding:0 7px; }
+  .editionLong { display:none; }
+  .editionShort { display:inline; }
   .sceneNumber { top:5vh; right:-4vw; font-size:48vw; opacity:.36; }
   .root[data-copy="right"] .sceneNumber { right:-4vw; left:auto; }
   .sceneCopy,
@@ -670,7 +681,7 @@
   .predictionChoices button { min-height:32px; font-size:7px; }
   .entryActions { right:20px; bottom:calc(66px + env(safe-area-inset-bottom)); left:20px; justify-items:stretch; gap:7px; }
   .beginButton { width:100%; min-height:53px; }
-  .entryActions > button:not(.beginButton) { min-height:30px; text-align:right; }
+  .entryActions > :is(button, a):not(.beginButton) { display:grid; min-height:30px; align-items:center; }
   .entryFooter { display:none; }
   .entryPhone { top:13%; right:9vw; width:120px; height:230px; opacity:.5; }
 }

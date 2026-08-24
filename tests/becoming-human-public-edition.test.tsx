@@ -11,9 +11,9 @@ import { getExhibitBySlug } from "@/content/exhibits";
 
 vi.mock("@/components/becoming-human/BecomingHumanV2Experience", () => ({
   BecomingHumanV2Experience: () => (
-    <main aria-label="Becoming Human interactive exhibit">
+    <section aria-label="Becoming Human interactive exhibit">
       <h1>Becoming Human</h1>
-    </main>
+    </section>
   ),
 }));
 
@@ -87,6 +87,14 @@ describe("Becoming Human public research edition", () => {
       expect(
         Array.from(section.querySelectorAll("article"), (article) => article.dataset.episodeId),
       ).toEqual(act.episodeIds);
+
+      const navigation = within(section).getByRole("navigation", {
+        name: `Act ${act.order} reading navigation`,
+      });
+      expect(within(navigation).getByRole("link", { name: /previous/i })).toBeVisible();
+      expect(within(navigation).getByRole("link", { name: /edition index/i }))
+        .toHaveAttribute("href", "#becoming-human-edition-index");
+      expect(within(navigation).getByRole("link", { name: /next/i })).toBeVisible();
     }
 
     const finale = within(edition).getByRole("region", { name: becomingHumanFinale.title });
@@ -96,14 +104,23 @@ describe("Becoming Human public research edition", () => {
       expect(within(finale).getByText(layer.label)).toBeVisible();
       expect(within(finale).getByText(layer.description)).toBeVisible();
     }
+    expect(within(finale).getByRole("navigation", { name: "Coda reading navigation" }))
+      .toBeVisible();
   });
 
   it("uses one exhibit h1 in current public mode", () => {
-    render(<>{BecomingHumanPage()}</>);
+    const { container } = render(<>{BecomingHumanPage()}</>);
 
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { level: 1, name: "Becoming Human" })).toBeVisible();
     expect(screen.getAllByRole("article")).toHaveLength(35);
+    expect(container.querySelectorAll("main")).toHaveLength(1);
+    expect(container.querySelector("main")).toContainElement(
+      screen.getByRole("region", { name: "Becoming Human interactive exhibit" }),
+    );
+    expect(container.querySelector("main")).toContainElement(
+      screen.getByRole("region", { name: "Becoming Human public research edition" }),
+    );
   });
 
   it("keeps the complete signed-out members edition and identity outside the gate", () => {
@@ -134,6 +151,9 @@ describe("Becoming Human public research edition", () => {
       );
       expect(memberContent).not.toContainElement(identity);
       expect(memberContent).not.toContainElement(edition);
+      expect(container.querySelectorAll("main")).toHaveLength(1);
+      expect(container.querySelector("main")).toContainElement(memberContent);
+      expect(container.querySelector("main")).toContainElement(edition);
       expect(within(edition).getAllByRole("link").filter((link) =>
         link.getAttribute("data-source-link") === "true"
       )).toHaveLength(allSourceUrls.length);

@@ -213,12 +213,12 @@
   padding: clamp(3rem, 7vw, 6.5rem) clamp(1.25rem, 7vw, 7.5rem);
 }
 
-.uncertaintyNote h3,
+.uncertaintyNote :is(h2, h3),
 .uncertaintyNote > p:last-child {
   margin: 0;
 }
 
-.uncertaintyNote h3 {
+.uncertaintyNote :is(h2, h3) {
   font-family: var(--display);
   font-size: clamp(1.8rem, 3vw, 3rem);
   font-weight: 400;
@@ -520,8 +520,7 @@
   margin-top: 2.5rem;
 }
 
-.sources ul,
-.finaleSources ul {
+.sources ul {
   display: grid;
   margin: 1.25rem 0 0;
   padding: 0;
@@ -529,8 +528,7 @@
   list-style: none;
 }
 
-.sources li,
-.finaleSources li {
+.sources li {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1rem;
@@ -682,8 +680,12 @@
 }
 
 .finaleSources ul {
+  display: grid;
+  margin: 1.25rem 0 0;
+  padding: 0;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
+  list-style: none;
 }
 
 .finaleSources li {
@@ -692,6 +694,64 @@
   align-items: flex-start;
   padding: 1rem;
   border: 1px solid var(--edition-line);
+}
+
+.boundaryNav {
+  max-width: 82rem;
+  margin: 0 auto;
+  padding: 1.25rem clamp(1.25rem, 7vw, 7.5rem) clamp(3.5rem, 7vw, 6rem);
+}
+
+.boundaryNav ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--edition-line);
+  list-style: none;
+}
+
+.boundaryNav li + li {
+  border-left: 1px solid var(--edition-line);
+}
+
+.boundaryNav a {
+  display: grid;
+  min-height: 4.5rem;
+  gap: 0.35rem;
+  align-content: center;
+  padding: 0.8rem 1rem;
+  color: var(--edition-muted);
+}
+
+.boundaryNav li:nth-child(2) a {
+  text-align: center;
+}
+
+.boundaryNav li:last-child a {
+  text-align: right;
+}
+
+.boundaryNav span {
+  color: var(--edition-accent-bright);
+  font-size: 0.58rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.boundaryNav strong {
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 0.94rem;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.boundaryNav a:hover {
+  background: rgba(224, 138, 84, 0.08);
+  color: var(--edition-ink);
 }
 
 .edition a:focus-visible,
@@ -830,13 +890,25 @@
   }
 
   .sources li,
-  .finaleSources li,
   .layers li {
     grid-template-columns: 1fr;
   }
 
   .sources li {
     gap: 0.3rem;
+  }
+
+  .boundaryNav {
+    padding-inline: 1rem;
+  }
+
+  .boundaryNav a {
+    min-height: 4rem;
+    padding-inline: 0.65rem;
+  }
+
+  .boundaryNav strong {
+    font-size: 0.78rem;
   }
 
   .layers li {

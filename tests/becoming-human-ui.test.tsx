@@ -1,8 +1,110 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { BecomingHumanV2Experience } from "@/components/becoming-human/BecomingHumanV2Experience";
 
+function renderExperienceWithEditionTarget() {
+  return render(
+    <>
+      <BecomingHumanV2Experience />
+      <section id="becoming-human-reading-edition" tabIndex={-1}>
+        <h2>Public research edition</h2>
+      </section>
+    </>,
+  );
+}
+
 describe("Becoming Human cinematic atlas", () => {
+  it("keeps the entry in document flow and sends keyboard visitors to the edition", async () => {
+    window.localStorage.clear();
+    window.history.replaceState(null, "", "/exhibits/becoming-human");
+    document.documentElement.style.overflow = "";
+    const scrollIntoView = vi.fn();
+    const originalScrollIntoView = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    try {
+      const { container } = renderExperienceWithEditionTarget();
+      const entry = screen.getByRole("region", { name: "Becoming Human cinematic entry" });
+      const edition = container.querySelector("#becoming-human-reading-edition") as HTMLElement;
+
+      expect(document.documentElement.style.overflow).toBe("");
+      expect(entry).toHaveAttribute("data-cinematic-state", "entry");
+      expect(within(entry).getByRole("link", { name: "Read the complete research edition" }))
+        .toHaveAttribute("href", "#becoming-human-reading-edition");
+
+      fireEvent.click(
+        within(entry).getByRole("link", { name: "Read the complete research edition" }),
+      );
+
+      await waitFor(() => expect(document.activeElement).toBe(edition));
+      expect(scrollIntoView).toHaveBeenCalled();
+      expect(window.location.hash).toBe("#becoming-human-reading-edition");
+      expect(document.documentElement.style.overflow).toBe("");
+    } finally {
+      Element.prototype.scrollIntoView = originalScrollIntoView;
+    }
+  });
+
+  it("locks overflow only during the cinematic and restores it when reading", async () => {
+    window.localStorage.clear();
+    window.history.replaceState(null, "", "/exhibits/becoming-human");
+    document.documentElement.style.overflow = "";
+    const scrollIntoView = vi.fn();
+    const originalScrollIntoView = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    try {
+      const { container } = renderExperienceWithEditionTarget();
+      fireEvent.click(screen.getByRole("button", { name: /BEGIN QUIET/i }));
+
+      expect(await screen.findByRole("region", { name: "Becoming Human cinematic exhibit" }))
+        .toHaveAttribute("data-cinematic-state", "started");
+      await waitFor(() => expect(document.documentElement.style.overflow).toBe("hidden"));
+
+      fireEvent.click(
+        screen.getByRole("link", { name: "Read the complete research edition" }),
+      );
+
+      const edition = container.querySelector("#becoming-human-reading-edition") as HTMLElement;
+      await waitFor(() => expect(document.activeElement).toBe(edition));
+      expect(document.documentElement.style.overflow).toBe("");
+      expect(screen.getByRole("region", { name: "Becoming Human cinematic entry" })).toBeVisible();
+      expect(window.location.hash).toBe("#becoming-human-reading-edition");
+    } finally {
+      Element.prototype.scrollIntoView = originalScrollIntoView;
+    }
+  });
+
+  it("honors real reading and episode fragments after hydration", async () => {
+    window.localStorage.clear();
+    document.documentElement.style.overflow = "";
+    window.history.replaceState(
+      null,
+      "",
+      "/exhibits/becoming-human#becoming-human-reading-edition",
+    );
+    const { unmount } = renderExperienceWithEditionTarget();
+
+    expect(screen.getByRole("region", { name: "Becoming Human cinematic entry" })).toBeVisible();
+    expect(document.documentElement.style.overflow).toBe("");
+    unmount();
+
+    window.history.replaceState(
+      null,
+      "",
+      "/exhibits/becoming-human#episode-trackmakers",
+    );
+    renderExperienceWithEditionTarget();
+
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: "Footprints Prove Two-Legged Walking",
+      }),
+    ).toBeVisible();
+    await waitFor(() => expect(document.documentElement.style.overflow).toBe("hidden"));
+  });
+
   it("moves from a visitor prediction into discrete evidence-led scenes", async () => {
     window.localStorage.clear();
     window.history.replaceState(null, "", "/exhibits/becoming-human");

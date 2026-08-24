@@ -39,11 +39,13 @@ export default function BecomingHumanPage() {
         ]}
       />
       <Breadcrumbs items={breadcrumbItems} />
-      {hasMemberPolicy ? <BecomingHumanPublicIdentity /> : null}
-      <ExhibitAccessBoundary exhibit={exhibitDefinition}>
-        <BecomingHumanV2Experience />
-      </ExhibitAccessBoundary>
-      <BecomingHumanReadingEdition headingLevel={2} />
+      <main>
+        {hasMemberPolicy ? <BecomingHumanPublicIdentity /> : null}
+        <ExhibitAccessBoundary exhibit={exhibitDefinition}>
+          <BecomingHumanV2Experience />
+        </ExhibitAccessBoundary>
+        <BecomingHumanReadingEdition headingLevel={2} />
+      </main>
     </>
   );
 }
