@@ -53,6 +53,23 @@ describe("research route accessibility stylesheet contract", () => {
     );
   });
 
+  it("uses a muted deep-paper label color that exceeds 4.5:1 contrast", () => {
+    const mutedOnPaperDeep = cssToken("research-muted-on-paper-deep");
+
+    expect(mutedOnPaperDeep).toBe("#615b54");
+    expect(contrastRatio(mutedOnPaperDeep, "#ded5c4"))
+      .toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("applies the accessible muted token to every tiny deep-paper label", () => {
+    expect(stylesheet).toMatch(
+      /\.libraryMeasure span\s*\{[^}]*color: var\(--research-muted-on-paper-deep\);[^}]*\}/su,
+    );
+    expect(stylesheet).toMatch(
+      /\.relatedPanel a span\s*\{[^}]*color: var\(--research-muted-on-paper-deep\);[^}]*\}/su,
+    );
+  });
+
   it("gives the rust parent CTA a contrasting keyboard focus ring", () => {
     const focusOnRust = cssToken("research-focus-on-rust");
 

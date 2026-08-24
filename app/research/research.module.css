@@ -4,6 +4,7 @@
   --research-paper-deep: #ded5c4;
   --research-ink: #151514;
   --research-muted: #676158;
+  --research-muted-on-paper-deep: #615b54;
   --research-rust: #a74425;
   --research-label-on-dark: #e18462;
   --research-label-on-paper: #7d2f1a;
@@ -94,7 +95,7 @@
   flex: 1;
   padding: 18px 20px;
   background: var(--research-paper-deep);
-  color: var(--research-muted);
+  color: var(--research-muted-on-paper-deep);
   font-size: 0.69rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -500,7 +501,7 @@
 }
 
 .relatedPanel a span {
-  color: var(--research-muted);
+  color: var(--research-muted-on-paper-deep);
   font-size: 0.58rem;
   font-weight: 750;
   letter-spacing: 0.1em;
