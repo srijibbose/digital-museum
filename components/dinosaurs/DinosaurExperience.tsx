@@ -38,11 +38,12 @@ import {
 } from "@/content/dinosaurs";
 import { DinosaurEvidenceOverlay } from "./DinosaurEvidenceOverlay";
 import type { DinosaurCameraCommand, ExhibitTheme } from "./dinosaur-viewer-types";
+import { preconnectSketchfab } from "./sketchfab-loader";
 import styles from "./dinosaur-experience.module.css";
 
 const DinosaurSpecimenViewer = dynamic(() => import("./DinosaurSpecimenViewer"), {
   ssr: false,
-  loading: () => <div className={styles.viewerLoading}>Preparing museum scan…</div>,
+  loading: () => null,
 });
 
 const statusLabels = {
@@ -94,6 +95,10 @@ export function DinosaurExperience() {
   );
 
   useEffect(() => {
+    // Six of eight species (plus every "life" reconstruction) load through
+    // Sketchfab, so warm the DNS/TLS handshake immediately instead of
+    // waiting for the first hover/mode-switch to pay that cost.
+    preconnectSketchfab();
     const initial = readInitialState();
     setSpeciesId(initial.species);
     setModeId(initial.mode);
@@ -339,6 +344,19 @@ export function DinosaurExperience() {
                   : staticView ? "STATIC RECORD" : species.specimen.provider === "local" ? "LOCAL MUSEUM GLB" : "INSTITUTIONAL VIEWER"}
               </span>
             </div>
+            {!staticView ? (
+              <div className={styles.viewerPhoto} data-visible={!viewerReady || undefined} aria-hidden="true">
+                <Image
+                  key={modeId === "life" ? lifeModel.preview : species.specimen.preview}
+                  src={modeId === "life" ? lifeModel.preview : species.specimen.preview}
+                  alt=""
+                  fill
+                  sizes="(max-width: 900px) 100vw, 60vw"
+                  quality={70}
+                  priority={species.id === "tyrannosaurus" && modeId !== "life"}
+                />
+              </div>
+            ) : null}
             <div className={styles.viewer}>
               {initialized ? (
                 <DinosaurSpecimenViewer
@@ -353,9 +371,7 @@ export function DinosaurExperience() {
                   onBoneSelect={setBoneIndex}
                   onReady={handleViewerReady}
                 />
-              ) : (
-                <div className={styles.viewerLoading}>Preparing museum scan…</div>
-              )}
+              ) : null}
             </div>
             <DinosaurEvidenceOverlay
               mode={modeId}

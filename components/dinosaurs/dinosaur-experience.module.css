@@ -528,6 +528,23 @@
   transition: opacity 260ms ease, filter 260ms ease;
 }
 
+.viewerPhoto {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.viewerPhoto :global(img) {
+  object-fit: cover;
+  object-position: center 38%;
+}
+
+.viewerPhoto[data-visible] {
+  opacity: 1;
+}
+
 .localCanvasHost {
   position: absolute;
   inset: 0;
@@ -576,7 +593,6 @@
   text-transform: uppercase;
 }
 
-.viewerLoading,
 .scanProgress {
   display: flex;
   align-items: center;
@@ -585,11 +601,6 @@
   font-size: 0.61rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
-}
-
-.viewerLoading {
-  position: absolute;
-  inset: 0;
 }
 
 .modelTransition {

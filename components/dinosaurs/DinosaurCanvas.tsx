@@ -256,4 +256,29 @@ export function preloadMuseumModel(path: string) {
   useGLTF.preload(path);
 }
 
+// Whichever local scan is actually needed first (the default T. rex, or
+// whatever ?species= a deep link asks for) warms the instant this chunk
+// evaluates, the same way EagleModel.tsx preloads the Apollo lander at
+// module scope — no waiting for <MuseumModel> to mount. The other local
+// scan is deferred to idle time so it doesn't compete for bandwidth with
+// the model actually on screen.
+const SUE_PATH = "/models/dinosaurs/institutional/field-sue-pr2081.glb";
+const TRICERATOPS_PATH = "/models/dinosaurs/institutional/smithsonian-triceratops-pal500000.glb";
+
+if (typeof window !== "undefined") {
+  const requestedFirst =
+    new URLSearchParams(window.location.search).get("species") === "triceratops"
+      ? TRICERATOPS_PATH
+      : SUE_PATH;
+  const deferred = requestedFirst === SUE_PATH ? TRICERATOPS_PATH : SUE_PATH;
+
+  useGLTF.preload(requestedFirst);
+  const warmDeferredSpecimen = () => useGLTF.preload(deferred);
+  if (typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(warmDeferredSpecimen, { timeout: 4000 });
+  } else {
+    window.setTimeout(warmDeferredSpecimen, 2000);
+  }
+}
+
 export default DinosaurCanvas;
