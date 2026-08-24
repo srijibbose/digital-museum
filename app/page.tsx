@@ -5,6 +5,7 @@ import { CompactExhibitCard } from "@/components/museum/CompactExhibitCard";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
 import { MuseumSearch } from "@/components/museum/MuseumSearch";
 import { SurpriseMe } from "@/components/museum/SurpriseMe";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { createExhibitSearchIndex } from "@/content/exhibit-discovery";
 import {
   getActiveExhibits,
@@ -12,6 +13,7 @@ import {
   getFeaturedExhibits,
 } from "@/content/exhibits";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import { createHomeCollectionGraph } from "@/lib/seo/json-ld";
 import styles from "./home.module.css";
 
 export const metadata: Metadata = createPageMetadata({
@@ -43,6 +45,7 @@ export default function MuseumLobby() {
 
   return (
     <main className={styles.home}>
+      <JsonLd data={createHomeCollectionGraph(featuredExhibits)} />
       <MuseumHeader tone="paper" />
 
       <section className={styles.hero} aria-labelledby="lobby-title">

@@ -42,28 +42,48 @@ describe("SEO metadata builders", () => {
       index: false,
     });
 
-    expect(metadata.robots).toMatchObject({ index: false, follow: true });
+    expect(metadata.robots).toMatchObject({
+      index: false,
+      follow: true,
+      googleBot: {
+        index: false,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    });
   });
 
-  it("derives exhibit discovery metadata from the registry and access mode", () => {
+  it.each([
+    ["private", { enabled: true, access: { mode: "private" as const } }],
+    ["disabled", { enabled: false, access: { mode: "public" as const } }],
+  ])("does not disclose a %s exhibit through metadata", (_state, overrides) => {
     const exhibit = {
       ...getExhibitBySlug("atlas-of-worlds")!,
-      access: { mode: "private" as const },
+      ...overrides,
     };
     const metadata = createExhibitMetadata(exhibit, {
       NEXT_PUBLIC_SITE_URL: "https://museum.example",
     });
 
-    expect(metadata.title).toBe("Atlas of Worlds");
+    expect(metadata.title).toBe("Exhibit unavailable");
     expect(metadata.description).toBe(
-      "Move from the Sun to Neptune in a single high-fidelity observatory, switching between terrain, atmosphere, missions, interiors, rings, light, and magnetic fields.",
+      "This exhibit is not available in the public museum.",
     );
-    expect(metadata.alternates?.canonical).toBe(
-      "https://museum.example/exhibits/atlas-of-worlds",
-    );
+    expect(metadata.alternates?.canonical).toBeUndefined();
     expect(metadata.openGraph?.images).toMatchObject([
-      { url: "https://museum.example/social/exhibit/atlas-of-worlds" },
+      { url: "https://museum.example/social/museum/default" },
     ]);
-    expect(metadata.robots).toMatchObject({ index: false, follow: true });
+    expect(metadata.openGraph?.url).toBe("https://museum.example/");
+    expect(metadata.robots).toMatchObject({
+      index: false,
+      follow: false,
+      noarchive: true,
+      googleBot: { index: false, follow: false, noarchive: true },
+    });
+    expect(JSON.stringify(metadata)).not.toContain("Atlas of Worlds");
+    expect(JSON.stringify(metadata)).not.toContain("atlas-of-worlds");
+    expect(JSON.stringify(metadata)).not.toContain("Move from the Sun");
   });
 });

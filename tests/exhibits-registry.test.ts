@@ -25,6 +25,26 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(active.every((e) => e.formats.length > 0)).toBe(true);
   });
 
+  it.each([
+    ["private", { enabled: true, access: { mode: "private" as const } }],
+    ["disabled", { enabled: false, access: { mode: "public" as const } }],
+  ])("excludes a %s exhibit from every public registry view", (_state, overrides) => {
+    const exhibit = getExhibitBySlug("atlas-of-worlds")!;
+    const original = { enabled: exhibit.enabled, access: exhibit.access };
+
+    Object.assign(exhibit, overrides);
+
+    try {
+      expect(getActiveExhibits()).not.toContain(exhibit);
+      expect(getFeaturedExhibits()).not.toContain(exhibit);
+      expect(
+        getActiveWings().find(({ wing }) => wing.slug === exhibit.wing.slug),
+      ).toBeUndefined();
+    } finally {
+      Object.assign(exhibit, original);
+    }
+  });
+
   it("returns the featured lobby exhibits", () => {
     const featured = getFeaturedExhibits();
 

@@ -1,17 +1,23 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { AnatomyExperience } from "@/components/anatomy/AnatomyExperience";
 import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
 import accessStyles from "@/components/museum/exhibit-access.module.css";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { anatomy } from "@/content/anatomy";
-import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
+import { getExhibitBySlug } from "@/content/exhibits";
+import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
 import styles from "@/components/anatomy/anatomy.module.css";
 
 const exhibitDefinition = getExhibitBySlug("human-anatomy")!;
+const breadcrumbItems = [
+  { name: "Home", pathname: "/" },
+  { name: "Exhibits", pathname: "/exhibits" },
+  { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
+] as const;
 
 export const metadata: Metadata = createExhibitMetadata(exhibitDefinition);
 
@@ -21,19 +27,17 @@ export const viewport: Viewport = {
 };
 
 export default function HumanAnatomyPage() {
-  if (!isExhibitEnabled("human-anatomy")) notFound();
+  assertPublicExhibitRouteAvailable(exhibitDefinition);
 
   return (
     <main className={styles.page}>
       <JsonLd
         data={[
           createExhibitGraph(exhibitDefinition),
-          createBreadcrumbGraph([
-            { name: "Exhibits", pathname: "/exhibits" },
-            { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
-          ]),
+          createBreadcrumbGraph(breadcrumbItems),
         ]}
       />
+      <Breadcrumbs items={breadcrumbItems} />
       {exhibitDefinition.access.mode === "members" ? (
         <header className={accessStyles.publicContext}>
           <p className={accessStyles.eyebrow}>The public scientific edition</p>

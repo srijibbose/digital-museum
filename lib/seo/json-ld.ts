@@ -39,6 +39,68 @@ export function createSiteGraph(env?: SiteEnvironment) {
   };
 }
 
+export function createCatalogCollectionGraph(
+  exhibits: readonly ExhibitDefinition[],
+  env?: SiteEnvironment,
+) {
+  const url = absoluteUrl("/exhibits", env);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${url}#collection-page`,
+    url,
+    name: "Explore every exhibit",
+    description: "Search every exhibition by subject, wing, format, or the time you have.",
+    mainEntity: {
+      "@type": "ItemList",
+      "@id": `${url}#visible-exhibits`,
+      numberOfItems: exhibits.length,
+      itemListElement: exhibits.map((exhibit, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "CreativeWork",
+          name: exhibit.title,
+          description: exhibit.synopsis,
+          url: absoluteUrl(exhibit.route, env),
+        },
+      })),
+    },
+  };
+}
+
+export function createHomeCollectionGraph(
+  exhibits: readonly ExhibitDefinition[],
+  env?: SiteEnvironment,
+) {
+  const url = absoluteUrl("/", env);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${url}#collection-page`,
+    url,
+    name: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    mainEntity: {
+      "@type": "ItemList",
+      "@id": `${url}#featured-exhibits`,
+      numberOfItems: exhibits.length,
+      itemListElement: exhibits.map((exhibit, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "CreativeWork",
+          name: exhibit.title,
+          description: exhibit.synopsis,
+          url: absoluteUrl(exhibit.route, env),
+        },
+      })),
+    },
+  };
+}
+
 export function createExhibitGraph(
   exhibit: ExhibitDefinition,
   env?: SiteEnvironment,

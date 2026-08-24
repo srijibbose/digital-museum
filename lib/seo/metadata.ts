@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ExhibitDefinition } from "@/content/exhibits";
+import { isPubliclyDiscoverable } from "@/lib/auth/exhibit-access";
 import { absoluteUrl, SITE_NAME, type SiteEnvironment } from "@/lib/seo/site";
 
 export interface PageSeoInput {
@@ -22,7 +23,17 @@ export function createPageMetadata(
     title: input.title,
     description: input.description,
     alternates: { canonical },
-    robots: { index: input.index !== false, follow: true },
+    robots: {
+      index: input.index !== false,
+      follow: true,
+      googleBot: {
+        index: input.index !== false,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
     openGraph: {
       type: "website",
       url: canonical,
@@ -51,13 +62,44 @@ export function createExhibitMetadata(
   exhibit: ExhibitDefinition,
   env?: SiteEnvironment,
 ): Metadata {
+  if (!isPubliclyDiscoverable(exhibit)) {
+    const homeUrl = absoluteUrl("/", env);
+    const image = absoluteUrl("/social/museum/default", env);
+    const title = "Exhibit unavailable";
+    const description = "This exhibit is not available in the public museum.";
+
+    return {
+      title,
+      description,
+      robots: {
+        index: false,
+        follow: false,
+        noarchive: true,
+        googleBot: { index: false, follow: false, noarchive: true },
+      },
+      openGraph: {
+        type: "website",
+        url: homeUrl,
+        title,
+        description,
+        siteName: SITE_NAME,
+        images: [{ url: image, width: 1200, height: 630, alt: SITE_NAME }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+        images: [image],
+      },
+    };
+  }
+
   return createPageMetadata(
     {
       title: exhibit.title,
       description: exhibit.synopsis,
       pathname: exhibit.route,
       imagePath: `/social/exhibit/${exhibit.slug}`,
-      index: exhibit.access.mode !== "private",
     },
     env,
   );

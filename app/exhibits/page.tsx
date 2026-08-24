@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CompactExhibitCard } from "@/components/museum/CompactExhibitCard";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import { JsonLd } from "@/components/seo/JsonLd";
 import {
   buildCatalogHref,
   getCatalogPage,
@@ -16,6 +18,10 @@ import {
   getActiveWings,
 } from "@/content/exhibits";
 import { createPageMetadata } from "@/lib/seo/metadata";
+import {
+  createBreadcrumbGraph,
+  createCatalogCollectionGraph,
+} from "@/lib/seo/json-ld";
 import styles from "./catalog.module.css";
 
 type RawSearchParams = Record<string, string | string[] | undefined>;
@@ -25,6 +31,10 @@ type ExhibitsCatalogProps = {
 };
 
 const CATALOG_PAGE_SIZE = 12;
+const breadcrumbItems = [
+  { name: "Home", pathname: "/" },
+  { name: "Exhibits", pathname: "/exhibits" },
+] as const;
 const DURATION_OPTIONS: { value: DurationFilter; label: string }[] = [
   { value: "all", label: "Any duration" },
   { value: "short", label: "15 minutes or less" },
@@ -48,7 +58,7 @@ export async function generateMetadata({
       "Search every exhibition by subject, wing, format, or the time you have.",
     pathname: "/exhibits",
     imagePath: "/social/museum/default",
-    index: !hasValidCatalogState(params),
+    index: Object.keys(params).length === 0,
   });
 }
 
@@ -61,8 +71,10 @@ function isOneOf<T extends string>(value: string | undefined, options: readonly 
 }
 
 function parseCatalogPage(value: string | undefined): number | undefined {
-  const page = Number.parseInt(value ?? "", 10);
-  return Number.isFinite(page) && page > 0 ? page : undefined;
+  if (!value || !/^[1-9]\d*$/.test(value)) return undefined;
+
+  const page = Number(value);
+  return Number.isSafeInteger(page) ? page : undefined;
 }
 
 function parseFilters(params: RawSearchParams): ExhibitFilters {
@@ -88,29 +100,6 @@ function parseFilters(params: RawSearchParams): ExhibitFilters {
   };
 }
 
-function hasValidCatalogState(params: RawSearchParams): boolean {
-  const q = firstValue(params.q)?.trim();
-  const wing = firstValue(params.wing);
-  const duration = firstValue(params.duration);
-  const format = firstValue(params.format);
-  const featured = firstValue(params.featured);
-  const sort = firstValue(params.sort);
-  const page = firstValue(params.page);
-  const activeWingSlugs = getActiveWings().map(({ wing: activeWing }) => activeWing.slug);
-  const formats = Object.keys(EXHIBIT_FORMAT_LABELS) as ExhibitFormat[];
-
-  return Boolean(
-    q ||
-      wing === "all" ||
-      activeWingSlugs.includes(wing ?? "") ||
-      isOneOf(duration, ["all", "short", "medium", "deep"] as const) ||
-      isOneOf(format, ["all", ...formats]) ||
-      featured === "true" ||
-      isOneOf(sort, ["curated", "title", "duration"] as const) ||
-      parseCatalogPage(page) !== undefined,
-  );
-}
-
 function resultLabel(total: number): string {
   return `${total} ${total === 1 ? "exhibit" : "exhibits"}`;
 }
@@ -124,9 +113,12 @@ export default async function ExhibitsCatalog({ searchParams }: ExhibitsCatalogP
 
   return (
     <main className={styles.catalog}>
+      <JsonLd data={createCatalogCollectionGraph(catalog.items)} />
+      <JsonLd data={createBreadcrumbGraph(breadcrumbItems)} />
       <MuseumHeader tone="paper" />
 
       <header className={styles.intro}>
+        <Breadcrumbs items={breadcrumbItems} />
         <p className={styles.eyebrow}>Loupe / Museum catalog</p>
         <h1>All exhibits</h1>
         <p>

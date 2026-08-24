@@ -1,10 +1,21 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import MuseumLobby from "@/app/page";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
 }));
+
+const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+beforeAll(() => {
+  process.env.NEXT_PUBLIC_SITE_URL = "https://museum.example";
+});
+
+afterAll(() => {
+  if (originalSiteUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+  else process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl;
+});
 
 describe("museum homepage", () => {
   it("states what Loupe is and makes catalog search the primary journey", () => {
@@ -66,6 +77,39 @@ describe("museum homepage", () => {
       "href",
       "/exhibits?wing=space",
     );
+  });
+
+  it("describes the visible featured exhibits as a CollectionPage ItemList", () => {
+    render(<MuseumLobby />);
+
+    const featured = screen.getByRole("region", { name: "Featured exhibits" });
+    const visibleItems = within(featured).getAllByRole("article").map((article) => ({
+      name: article.querySelector("h3")?.textContent,
+      pathname: within(article).getByRole("link").getAttribute("href"),
+    }));
+    const script = document.querySelector('script[type="application/ld+json"]');
+    const graph = JSON.parse(script?.textContent ?? "null");
+
+    expect(graph).toMatchObject({
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": "https://museum.example/#collection-page",
+      url: "https://museum.example/",
+      name: "Loupe Digital Museum",
+      mainEntity: {
+        "@type": "ItemList",
+        "@id": "https://museum.example/#featured-exhibits",
+        numberOfItems: 5,
+      },
+    });
+    expect(
+      graph.mainEntity.itemListElement.map(
+        (entry: { item: { name: string; url: string } }) => ({
+          name: entry.item.name,
+          pathname: new URL(entry.item.url).pathname,
+        }),
+      ),
+    ).toEqual(visibleItems);
   });
 
   it("keeps desktop and mobile navigation meaningful", () => {

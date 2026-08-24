@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from "react";
 import type { Metadata } from "next";
-import { render } from "@testing-library/react";
+import { render, within } from "@testing-library/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { getExhibitBySlug } from "@/content/exhibits";
@@ -183,6 +183,7 @@ describe("page SEO integration", () => {
     "atlas-of-worlds",
   ])("renders visible exhibit and breadcrumb JSON-LD for %s", async (slug) => {
     const page = exhibitPages.find((candidate) => candidate.slug === slug)!;
+    const exhibit = getExhibitBySlug(slug)!;
     const { container } = render(<>{await page.render()}</>);
     const scripts = Array.from(
       container.querySelectorAll('script[type="application/ld+json"]'),
@@ -197,11 +198,36 @@ describe("page SEO integration", () => {
       expect.arrayContaining([
         expect.objectContaining({
           "@type": ["CreativeWork", "LearningResource"],
-          name: getExhibitBySlug(slug)!.title,
+          name: exhibit.title,
           isAccessibleForFree: true,
         }),
         expect.objectContaining({ "@type": "BreadcrumbList" }),
       ]),
     );
+
+    const navigation = within(container).getByRole("navigation", {
+      name: "Breadcrumb",
+    });
+    const visibleItems = within(navigation)
+      .getAllByRole("link")
+      .map((link) => [link.textContent, link.getAttribute("href")]);
+    const breadcrumbGraph = graphs.find(
+      (graph) => graph["@type"] === "BreadcrumbList",
+    );
+
+    expect(visibleItems).toEqual([
+      ["Home", "/"],
+      ["Exhibits", "/exhibits"],
+      [exhibit.title, exhibit.route],
+    ]);
+    expect(
+      breadcrumbGraph.itemListElement.map(
+        (item: { name: string; item: string }) => [
+          item.name,
+          new URL(item.item).pathname,
+        ],
+      ),
+    ).toEqual(visibleItems);
+    expect(container.querySelector(".member-content")).not.toContainElement(navigation);
   });
 });

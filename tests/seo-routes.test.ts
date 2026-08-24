@@ -18,28 +18,73 @@ describe("SEO metadata routes", () => {
     }
   });
 
-  it("advertises the absolute sitemap and excludes private surfaces", () => {
+  it("publishes isolated public, search, and training crawler groups", () => {
     const output = robots();
-    const rules = Array.isArray(output.rules) ? output.rules[0] : output.rules;
+    const rules = Array.isArray(output.rules) ? output.rules : [output.rules];
+    const disallow = [
+      "/api/",
+      "/account/",
+      "/dashboard/",
+      "/private/",
+      "/internal/",
+      "/auth/callback/",
+    ];
 
     expect(output.sitemap).toBe("https://museum.example/sitemap.xml");
-    expect(rules.disallow).toEqual(
-      expect.arrayContaining(["/api/", "/api/private/", "/auth/", "/internal/"]),
-    );
+    expect(output.host).toBe("https://museum.example");
+    expect(rules).toEqual([
+      { userAgent: "*", allow: "/", disallow },
+      {
+        userAgent: [
+          "Googlebot",
+          "Bingbot",
+          "OAI-SearchBot",
+          "ChatGPT-User",
+          "Claude-SearchBot",
+          "Claude-User",
+          "PerplexityBot",
+          "Perplexity-User",
+        ],
+        allow: "/",
+        disallow,
+      },
+      {
+        userAgent: ["GPTBot", "ClaudeBot"],
+        allow: "/",
+        disallow,
+      },
+    ]);
+    expect(JSON.stringify(rules)).not.toContain("/sign-in");
+    expect(JSON.stringify(rules)).not.toContain("/_next/");
   });
 
-  it("sitemaps only discoverable canonical exhibits", () => {
+  it("sitemaps exactly home, catalog, and discoverable canonical exhibits", () => {
     const entries = sitemap();
-    const urls = entries.map((entry) => entry.url);
 
-    expect(urls).toContain("https://museum.example/exhibits/atlas-of-worlds");
-    expect(urls.some((url) => url.includes("?"))).toBe(false);
-    expect(urls.some((url) => url.includes("sign-in"))).toBe(false);
-    expect(urls.some((url) => url.includes("/api/"))).toBe(false);
-    expect(entries).toContainEqual({
-      url: "https://museum.example/exhibits/atlas-of-worlds",
-      lastModified: "2026-08-21T00:00:00.000Z",
-    });
+    expect(entries).toEqual([
+      { url: "https://museum.example/" },
+      { url: "https://museum.example/exhibits" },
+      {
+        url: "https://museum.example/exhibits/human-anatomy",
+        lastModified: "2026-08-23T00:00:00.000Z",
+      },
+      {
+        url: "https://museum.example/exhibits/becoming-human",
+        lastModified: "2026-08-18T00:00:00.000Z",
+      },
+      {
+        url: "https://museum.example/exhibits/jet-engine",
+        lastModified: "2026-08-23T00:00:00.000Z",
+      },
+      {
+        url: "https://museum.example/exhibits/thirteen-minutes",
+        lastModified: "2026-08-15T00:00:00.000Z",
+      },
+      {
+        url: "https://museum.example/exhibits/atlas-of-worlds",
+        lastModified: "2026-08-21T00:00:00.000Z",
+      },
+    ]);
   });
 
   it("describes Loupe as an installable museum", () => {

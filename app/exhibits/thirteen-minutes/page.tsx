@@ -1,13 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import {
   ExhibitAccessBoundary,
   getExhibitAccessRegionId,
 } from "@/components/museum/ExhibitAccessBoundary";
-import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
+import { getExhibitBySlug } from "@/content/exhibits";
+import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
 import { thirteenMinutesContent as exhibit } from "./content";
@@ -17,6 +18,11 @@ import { ARCHIVAL_MEDIA } from "./media-manifest";
 import styles from "./thirteen-minutes.module.css";
 
 const exhibitDefinition = getExhibitBySlug("thirteen-minutes")!;
+const breadcrumbItems = [
+  { name: "Home", pathname: "/" },
+  { name: "Exhibits", pathname: "/exhibits" },
+  { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
+] as const;
 
 export const metadata: Metadata = createExhibitMetadata(exhibitDefinition);
 
@@ -25,9 +31,7 @@ export const viewport: Viewport = {
 };
 
 export default function ThirteenMinutesPage() {
-  if (!isExhibitEnabled("thirteen-minutes")) {
-    notFound();
-  }
+  assertPublicExhibitRouteAvailable(exhibitDefinition);
 
   const eagleImage = ARCHIVAL_MEDIA[0];
   const missionControlImage = ARCHIVAL_MEDIA[1];
@@ -41,12 +45,10 @@ export default function ThirteenMinutesPage() {
       <JsonLd
         data={[
           createExhibitGraph(exhibitDefinition),
-          createBreadcrumbGraph([
-            { name: "Exhibits", pathname: "/exhibits" },
-            { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
-          ]),
+          createBreadcrumbGraph(breadcrumbItems),
         ]}
       />
+      <Breadcrumbs items={breadcrumbItems} />
       <a className="skip-link" href={skipTarget}>
         {memberAccess ? "Skip to member access" : "Skip to the descent timeline"}
       </a>

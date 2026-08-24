@@ -1,4 +1,5 @@
 import type { ExhibitDefinition } from "@/content/exhibits";
+import { notFound } from "next/navigation";
 
 export type ExhibitAccess =
   | { mode: "public" }
@@ -19,4 +20,12 @@ export function canEnterExhibit(
 
 export function isPubliclyDiscoverable(exhibit: ExhibitDefinition): boolean {
   return exhibit.enabled && exhibit.access.mode !== "private";
+}
+
+export function assertPublicExhibitRouteAvailable(
+  exhibit: ExhibitDefinition,
+): void {
+  if (!isPubliclyDiscoverable(exhibit)) {
+    notFound();
+  }
 }
