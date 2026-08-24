@@ -11,7 +11,10 @@ import { getExhibitBySlug } from "@/content/exhibits";
 import { assertPublicExhibitRouteAvailable } from "@/lib/auth/exhibit-access";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
-import { thirteenMinutesContent as exhibit } from "./content";
+import {
+  thirteenMinutesContent as exhibit,
+  thirteenMinutesSources,
+} from "./content";
 import { AgcArtifactPlate } from "./components/AgcArtifactPlate";
 import { TimelineExperience } from "./components/TimelineExperience";
 import { ARCHIVAL_MEDIA } from "./media-manifest";
@@ -152,47 +155,22 @@ export default function ThirteenMinutesPage() {
           </p>
         </div>
         <div className={styles.goDeeperLinks}>
-          <a
-            className={styles.archivalLink}
-            href="https://www.hq.nasa.gov/alsj/a11/a11.landing.html"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <div className={styles.archivalLinkMeta}>
-              <span className={styles.archivalTag}>NASA History ALSJ</span>
-              <strong>Apollo 11 Air-to-Ground Mission Transcript</strong>
-              <p>Complete transcript from powered descent initiation to touchdown at Tranquility Base.</p>
-            </div>
-            <span className={styles.archivalArrow} aria-hidden="true">↗</span>
-          </a>
-
-          <a
-            className={styles.archivalLink}
-            href="https://github.com/chrislgarry/Apollo-11"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <div className={styles.archivalLinkMeta}>
-              <span className={styles.archivalTag}>MIT Instrumentation Lab</span>
-              <strong>Apollo 11 Guidance Computer (AGC) Source Code</strong>
-              <p>Original Luminary 1A assembly source code including Hamilton&apos;s priority alarm routines.</p>
-            </div>
-            <span className={styles.archivalArrow} aria-hidden="true">↗</span>
-          </a>
-
-          <a
-            className={styles.archivalLink}
-            href="https://www.nasa.gov/history/alsj/a11/a11.hamilton.html"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <div className={styles.archivalLinkMeta}>
-              <span className={styles.archivalTag}>Software Pioneers</span>
-              <strong>Margaret Hamilton&apos;s Account of the 1202 Alarm</strong>
-              <p>Firsthand retrospective on asynchronous software engineering and the landing alarms.</p>
-            </div>
-            <span className={styles.archivalArrow} aria-hidden="true">↗</span>
-          </a>
+          {thirteenMinutesSources.map((source) => (
+            <a
+              className={styles.archivalLink}
+              href={source.url}
+              key={source.url}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <div className={styles.archivalLinkMeta}>
+                <span className={styles.archivalTag}>{source.label}</span>
+                <strong>{source.title}</strong>
+                <p>{source.description}</p>
+              </div>
+              <span className={styles.archivalArrow} aria-hidden="true">↗</span>
+            </a>
+          ))}
         </div>
       </aside>
 
