@@ -1,16 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { AtlasExperience } from "@/components/space/AtlasExperience";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { atlas } from "@/content/space/atlas";
-import { isExhibitEnabled } from "@/content/exhibits";
+import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
+import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
+import { createExhibitMetadata } from "@/lib/seo/metadata";
 import { parseWorldQuery } from "@/lib/space/atlas-query";
 import { MARS_DEEP_TIME_ANCHORS, formatMarsTime } from "@/lib/space/mars-deep-time";
 
-export const metadata: Metadata = {
-  title: "Atlas of Worlds — Interactive Solar System",
-  description:
-    "Inspect the Sun, every planet, and the Moon through sourced NASA and USGS textures, scientific layers, mission sites, interiors, and comparative scale.",
-};
+const exhibitDefinition = getExhibitBySlug("atlas-of-worlds")!;
+
+export const metadata: Metadata = createExhibitMetadata(exhibitDefinition);
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
@@ -38,6 +39,15 @@ export default async function AtlasOfWorldsPage({ searchParams }: AtlasPageProps
 
   return (
     <main className="space-page">
+      <JsonLd
+        data={[
+          createExhibitGraph(exhibitDefinition),
+          createBreadcrumbGraph([
+            { name: "Exhibits", pathname: "/exhibits" },
+            { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
+          ]),
+        ]}
+      />
       <a className="skip-link" href="#atlas-transcript">
         Skip interactive instrument
       </a>

@@ -2,17 +2,19 @@ import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isExhibitEnabled } from "@/content/exhibits";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
+import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
+import { createExhibitMetadata } from "@/lib/seo/metadata";
 import { thirteenMinutesContent as exhibit } from "./content";
 import { AgcArtifactPlate } from "./components/AgcArtifactPlate";
 import { TimelineExperience } from "./components/TimelineExperience";
 import { ARCHIVAL_MEDIA } from "./media-manifest";
 import styles from "./thirteen-minutes.module.css";
 
-export const metadata: Metadata = {
-  title: exhibit.title,
-  description: exhibit.subtitle,
-};
+const exhibitDefinition = getExhibitBySlug("thirteen-minutes")!;
+
+export const metadata: Metadata = createExhibitMetadata(exhibitDefinition);
 
 export const viewport: Viewport = {
   themeColor: "#070a0b",
@@ -28,6 +30,15 @@ export default function ThirteenMinutesPage() {
 
   return (
     <main className={styles.page}>
+      <JsonLd
+        data={[
+          createExhibitGraph(exhibitDefinition),
+          createBreadcrumbGraph([
+            { name: "Exhibits", pathname: "/exhibits" },
+            { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
+          ]),
+        ]}
+      />
       <a className="skip-link" href="#mission-timeline">
         Skip to the descent timeline
       </a>

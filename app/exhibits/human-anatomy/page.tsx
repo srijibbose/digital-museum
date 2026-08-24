@@ -1,15 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { AnatomyExperience } from "@/components/anatomy/AnatomyExperience";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { anatomy } from "@/content/anatomy";
-import { isExhibitEnabled } from "@/content/exhibits";
+import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
+import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
+import { createExhibitMetadata } from "@/lib/seo/metadata";
 import styles from "@/components/anatomy/anatomy.module.css";
 
-export const metadata: Metadata = {
-  title: "Human Anatomy — A Living Systems Atlas",
-  description:
-    "Explore expert-curated Human Reference Atlas anatomy through registered organs, vessels, airways, named structures, evidence labels, and source-linked explanations.",
-};
+const exhibitDefinition = getExhibitBySlug("human-anatomy")!;
+
+export const metadata: Metadata = createExhibitMetadata(exhibitDefinition);
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
@@ -21,6 +22,15 @@ export default function HumanAnatomyPage() {
 
   return (
     <main className={styles.page}>
+      <JsonLd
+        data={[
+          createExhibitGraph(exhibitDefinition),
+          createBreadcrumbGraph([
+            { name: "Exhibits", pathname: "/exhibits" },
+            { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
+          ]),
+        ]}
+      />
       <a className="skip-link" href="#anatomy-transcript">
         Skip interactive anatomy
       </a>

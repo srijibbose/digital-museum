@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { CompactExhibitCard } from "@/components/museum/CompactExhibitCard";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
@@ -14,6 +15,7 @@ import {
   getActiveExhibits,
   getActiveWings,
 } from "@/content/exhibits";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import styles from "./catalog.module.css";
 
 type RawSearchParams = Record<string, string | string[] | undefined>;
@@ -34,6 +36,21 @@ const SORT_OPTIONS: { value: CatalogSort; label: string }[] = [
   { value: "title", label: "Title A–Z" },
   { value: "duration", label: "Shortest first" },
 ];
+
+export async function generateMetadata({
+  searchParams,
+}: ExhibitsCatalogProps): Promise<Metadata> {
+  const params = await searchParams;
+
+  return createPageMetadata({
+    title: "Explore every exhibit",
+    description:
+      "Search every exhibition by subject, wing, format, or the time you have.",
+    pathname: "/exhibits",
+    imagePath: "/social/museum/default",
+    index: !hasValidCatalogState(params),
+  });
+}
 
 function firstValue(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -64,6 +81,30 @@ function parseFilters(params: RawSearchParams): ExhibitFilters {
     sort: isOneOf(sort, ["title", "duration"] as const) ? sort : "curated",
     page: Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1,
   };
+}
+
+function hasValidCatalogState(params: RawSearchParams): boolean {
+  const q = firstValue(params.q)?.trim();
+  const wing = firstValue(params.wing);
+  const duration = firstValue(params.duration);
+  const format = firstValue(params.format);
+  const featured = firstValue(params.featured);
+  const sort = firstValue(params.sort);
+  const page = firstValue(params.page);
+  const activeWingSlugs = getActiveWings().map(({ wing: activeWing }) => activeWing.slug);
+  const formats = Object.keys(EXHIBIT_FORMAT_LABELS) as ExhibitFormat[];
+  const pageNumber = Number(page);
+
+  return Boolean(
+    q ||
+      wing === "all" ||
+      activeWingSlugs.includes(wing ?? "") ||
+      isOneOf(duration, ["all", "short", "medium", "deep"] as const) ||
+      isOneOf(format, ["all", ...formats]) ||
+      featured === "true" ||
+      isOneOf(sort, ["curated", "title", "duration"] as const) ||
+      (page && Number.isInteger(pageNumber) && pageNumber > 0),
+  );
 }
 
 function resultLabel(total: number): string {

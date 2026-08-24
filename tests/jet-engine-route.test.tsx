@@ -4,11 +4,14 @@ import { describe, expect, it, vi } from "vitest";
 import JetEngineError from "@/app/exhibits/jet-engine/error";
 import JetEngineLoading from "@/app/exhibits/jet-engine/loading";
 import { metadata } from "@/app/exhibits/jet-engine/page";
+import { getExhibitBySlug } from "@/content/exhibits";
 
 describe("jet-engine route states", () => {
-  it("describes the sourced 3D laboratory in route metadata", () => {
-    expect(metadata.title).toMatch(/Interactive 3D Jet Engine Laboratory/);
-    expect(metadata.description).toMatch(/NASA flow stations/);
+  it("describes the sourced 3D laboratory from the exhibit registry", () => {
+    const exhibit = getExhibitBySlug("jet-engine")!;
+
+    expect(metadata.title).toBe(exhibit.title);
+    expect(metadata.description).toBe(exhibit.synopsis);
   });
 
   it("provides a labelled instant loading state", () => {

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { CompactExhibitCard } from "@/components/museum/CompactExhibitCard";
@@ -10,7 +11,17 @@ import {
   getActiveWings,
   getFeaturedExhibits,
 } from "@/content/exhibits";
+import { createPageMetadata } from "@/lib/seo/metadata";
 import styles from "./home.module.css";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "A digital museum for exploring how the world works",
+  description:
+    "Enter interactive, source-grounded exhibits on the human body, machines, space, and human history.",
+  pathname: "/",
+  imagePath: "/social/museum/default",
+  imageAlt: "Loupe Digital Museum",
+});
 
 const QUICK_PATHS = [
   { href: "/exhibits?duration=short", label: "Under 15 minutes" },

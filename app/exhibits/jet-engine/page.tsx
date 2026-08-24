@@ -1,12 +1,27 @@
 import type { Metadata } from "next";
 import JetEngineExperience from "@/components/jet-engine/JetEngineExperience";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { getExhibitBySlug } from "@/content/exhibits";
+import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
+import { createExhibitMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "The Engine Is a River — Interactive 3D Jet Engine Laboratory",
-  description:
-    "Orbit a sourced 3D turbofan reconstruction and trace NASA flow stations through cycle-linked airflow, pressure, thermal, and shaft-work views.",
-};
+const exhibitDefinition = getExhibitBySlug("jet-engine")!;
+
+export const metadata: Metadata = createExhibitMetadata(exhibitDefinition);
 
 export default function JetEnginePage() {
-  return <JetEngineExperience />;
+  return (
+    <>
+      <JsonLd
+        data={[
+          createExhibitGraph(exhibitDefinition),
+          createBreadcrumbGraph([
+            { name: "Exhibits", pathname: "/exhibits" },
+            { name: exhibitDefinition.title, pathname: exhibitDefinition.route },
+          ]),
+        ]}
+      />
+      <JetEngineExperience />
+    </>
+  );
 }
