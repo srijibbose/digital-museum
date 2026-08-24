@@ -15,6 +15,7 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(ids).toContain("becoming-human");
     expect(ids).toContain("atlas-of-worlds");
     expect(ids).toContain("human-anatomy");
+    expect(ids).toContain("work-of-flowers");
   });
 
   it("returns active exhibits when enabled is true", () => {
@@ -29,6 +30,7 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     const featured = getFeaturedExhibits();
 
     expect(featured.map((exhibit) => exhibit.slug)).toEqual([
+      "work-of-flowers",
       "human-anatomy",
       "becoming-human",
       "jet-engine",
@@ -60,6 +62,7 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(isExhibitEnabled("thirteen-minutes")).toBe(true);
     expect(isExhibitEnabled("living-atlas")).toBe(false);
     expect(isExhibitEnabled("human-anatomy")).toBe(true);
+    expect(isExhibitEnabled("work-of-flowers")).toBe(true);
     expect(isExhibitEnabled("non-existent-exhibit")).toBe(false);
   });
 

@@ -13,8 +13,8 @@ describe("all exhibits catalog", () => {
     await renderCatalog();
 
     expect(screen.getByRole("heading", { level: 1, name: "All exhibits" })).toBeVisible();
-    expect(screen.getByText("5 exhibits")).toBeVisible();
-    expect(screen.getAllByRole("article")).toHaveLength(5);
+    expect(screen.getByText("6 exhibits")).toBeVisible();
+    expect(screen.getAllByRole("article")).toHaveLength(6);
     expect(screen.queryByRole("link", { name: "Next page" })).not.toBeInTheDocument();
   });
 
@@ -52,6 +52,7 @@ describe("all exhibits catalog", () => {
     expect(within(results).getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual([
       "Thirteen Minutes",
       "The Engine Is a River",
+      "The Work of Flowers",
       "Atlas of Worlds",
       "Human Anatomy",
       "Becoming Human",
@@ -62,7 +63,7 @@ describe("all exhibits catalog", () => {
   it("bounds out-of-range page requests to the available catalog", async () => {
     await renderCatalog({ page: "2" });
 
-    expect(screen.getAllByRole("article")).toHaveLength(5);
+    expect(screen.getAllByRole("article")).toHaveLength(6);
     expect(screen.getByRole("heading", { level: 3, name: "Atlas of Worlds" })).toBeVisible();
     expect(screen.getAllByText("Page 1 of 1")).toHaveLength(2);
     expect(screen.queryByRole("link", { name: "Previous page" })).not.toBeInTheDocument();

@@ -26,7 +26,7 @@ export const EXHIBIT_FORMAT_LABELS: Record<ExhibitFormat, string> = {
 };
 
 export interface ExhibitVisualTheme {
-  variant: "human-anatomy" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
+  variant: "work-of-flowers" | "human-anatomy" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -89,6 +89,37 @@ export const WINGS: Record<string, ExhibitWing> = {
 
 export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
   {
+    id: "work-of-flowers",
+    slug: "work-of-flowers",
+    exhibitNumber: "EXH. 007",
+    wing: WINGS.body,
+    title: "The Work of Flowers",
+    tagline: "A flower is an event, not an ornament.",
+    synopsis:
+      "Follow one sourced orchid from visible form through a longitudinal section, a real-time 3D pollination event, fertilisation at microscopic scale, and the beginning of fruit set.",
+    curatorNote:
+      "Built around a CC0 Smithsonian Gardens surface scan. Internal anatomy, carpenter-bee behaviour, pollen-tube growth, and fruit development are conventional scientific 3D reconstructions—never AI-generated and never mislabelled as direct observation.",
+    readingTime: "18–25 min open study",
+    durationMinutes: 22,
+    interactionType: "Scroll-Driven 3D Sequence · Section Plane · Pollination Reconstruction",
+    formats: ["interactive-3d", "evidence-led", "field-guide"],
+    tags: ["Flower Anatomy", "Orchid Pollination", "Scientific 3D", "Smithsonian Open Access"],
+    route: "/exhibits/work-of-flowers",
+    enabled: true,
+    featured: true,
+    order: 1,
+    visualTheme: {
+      variant: "work-of-flowers",
+      accentColor: "#4f7658",
+      badgeText: "LIVING MECHANISM",
+      metrics: [
+        { label: "Chapters", value: "05" },
+        { label: "Observed scan", value: "01" },
+        { label: "Evidence states", value: "04" },
+      ],
+    },
+  },
+  {
     id: "human-anatomy",
     slug: "human-anatomy",
     exhibitNumber: "EXH. 006",
@@ -107,7 +138,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/human-anatomy",
     enabled: true,
     featured: true,
-    order: 1,
+    order: 2,
     visualTheme: {
       variant: "human-anatomy",
       accentColor: "#b64d3f",
@@ -137,7 +168,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/becoming-human",
     enabled: true,
     featured: true,
-    order: 2,
+    order: 3,
     visualTheme: {
       variant: "becoming-human",
       accentColor: "#c96b39",
@@ -168,7 +199,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/jet-engine",
     enabled: true,
     featured: true,
-    order: 3,
+    order: 4,
     visualTheme: {
       variant: "jet-engine",
       accentColor: "#d86f3d",
@@ -198,7 +229,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/thirteen-minutes",
     enabled: true,
     featured: true,
-    order: 4,
+    order: 5,
     visualTheme: {
       variant: "thirteen-minutes",
       accentColor: "#48cae4",
@@ -228,7 +259,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     route: "/exhibits/atlas-of-worlds",
     enabled: true,
     featured: true,
-    order: 5,
+    order: 6,
     visualTheme: {
       variant: "atlas-of-worlds",
       accentColor: "#bd552b",
