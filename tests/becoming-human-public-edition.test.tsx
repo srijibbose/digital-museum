@@ -138,7 +138,7 @@ describe("Becoming Human public research edition", () => {
       const edition = screen.getByRole("region", {
         name: "Becoming Human public research edition",
       });
-      const identity = screen.getByRole("banner", { name: "Becoming Human exhibit identity" });
+      const identity = screen.getByRole("region", { name: "Becoming Human exhibit identity" });
 
       expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
       expect(within(identity).getByRole("heading", { level: 1, name: exhibit.title })).toBeVisible();

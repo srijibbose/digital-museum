@@ -6,6 +6,10 @@ const stylesheet = readFileSync(
   resolve(process.cwd(), "components/becoming-human/becoming-human-v2.module.css"),
   "utf8",
 );
+const readingStylesheet = readFileSync(
+  resolve(process.cwd(), "components/becoming-human/becoming-human-reading.module.css"),
+  "utf8",
+);
 
 function relativeLuminance(channel: number) {
   const normalized = channel / 255;
@@ -29,5 +33,11 @@ describe("Becoming Human cinematic stylesheet accessibility", () => {
       / (relativeLuminance(5) + 0.05);
 
     expect(contrast).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it("removes the nine web-only boundary navigation bars from print", () => {
+    expect(readingStylesheet).toMatch(
+      /@media print\s*\{[\s\S]*?\.actIndex,\s*\.boundaryNav\s*\{\s*display:\s*none;/u,
+    );
   });
 });

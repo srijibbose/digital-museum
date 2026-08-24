@@ -938,7 +938,8 @@
     color: inherit !important;
   }
 
-  .actIndex {
+  .actIndex,
+  .boundaryNav {
     display: none;
   }
 

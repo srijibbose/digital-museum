@@ -181,10 +181,9 @@ function ReadingBoundaryNavigation({
 
 export function BecomingHumanPublicIdentity() {
   return (
-    <header
+    <section
       aria-label="Becoming Human exhibit identity"
       className={styles.policyIdentity}
-      role="banner"
     >
       <p className={styles.eyebrow}>{exhibitDefinition.exhibitNumber} · {exhibitDefinition.wing.title}</p>
       <h1>{exhibitDefinition.title}</h1>
@@ -194,7 +193,7 @@ export function BecomingHumanPublicIdentity() {
         <a href="#becoming-human-reading-edition">Read the complete research edition</a>
         <a href="#becoming-human-member-content">Member access</a>
       </nav>
-    </header>
+    </section>
   );
 }
 
