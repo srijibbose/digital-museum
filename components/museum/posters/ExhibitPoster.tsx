@@ -4,9 +4,12 @@ import { JetEnginePoster } from "./JetEnginePoster";
 import { BecomingHumanPoster } from "./BecomingHumanPoster";
 import { AtlasOfWorldsPoster } from "./AtlasOfWorldsPoster";
 import { HumanAnatomyPoster } from "./HumanAnatomyPoster";
+import { FlowerPoster } from "./FlowerPoster";
 
 export function ExhibitPoster({ exhibit }: { exhibit: ExhibitDefinition }) {
   switch (exhibit.visualTheme.variant) {
+    case "work-of-flowers":
+      return <FlowerPoster />;
     case "human-anatomy":
       return <HumanAnatomyPoster />;
     case "thirteen-minutes":

@@ -43,13 +43,14 @@ describe("exhibit discovery", () => {
       "Becoming Human",
       "Human Anatomy",
       "The Engine Is a River",
+      "The Work of Flowers",
       "Thirteen Minutes",
     ]);
     expect(
       filterExhibits(exhibits, { sort: "duration" }).map(
         (exhibit) => exhibit.durationMinutes,
       ),
-    ).toEqual([10, 15, 25, 35, 70]);
+    ).toEqual([10, 15, 22, 25, 35, 70]);
     expect(exhibits.map((exhibit) => exhibit.slug)).toEqual(curatorOrder);
   });
 
@@ -60,7 +61,7 @@ describe("exhibit discovery", () => {
       "Human Anatomy",
       "The Engine Is a River",
     ]);
-    expect(page.total).toBe(5);
+    expect(page.total).toBe(6);
     expect(page.page).toBe(2);
     expect(page.pageSize).toBe(2);
     expect(page.totalPages).toBe(3);
@@ -96,7 +97,7 @@ describe("exhibit discovery", () => {
 
   it("selects a surprise exhibit through an injectable random source", () => {
     expect(pickSurpriseExhibit(exhibits, () => 0)?.slug).toBe(
-      "human-anatomy",
+      "work-of-flowers",
     );
     expect(pickSurpriseExhibit(exhibits, () => 0.999)?.slug).toBe(
       "atlas-of-worlds",

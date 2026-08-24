@@ -58,7 +58,7 @@ describe("museum homepage", () => {
 
     const wings = screen.getByRole("region", { name: "Explore by wing" });
     expect(within(wings).getAllByRole("link")).toHaveLength(4);
-    expect(within(wings).getByRole("link", { name: /The Body.*1 exhibit/i })).toHaveAttribute(
+    expect(within(wings).getByRole("link", { name: /The Body.*2 exhibits/i })).toHaveAttribute(
       "href",
       "/exhibits?wing=body",
     );
