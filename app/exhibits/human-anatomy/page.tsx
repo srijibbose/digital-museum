@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AnatomyExperience } from "@/components/anatomy/AnatomyExperience";
 import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
+import accessStyles from "@/components/museum/exhibit-access.module.css";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { anatomy } from "@/content/anatomy";
 import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
@@ -32,6 +34,20 @@ export default function HumanAnatomyPage() {
           ]),
         ]}
       />
+      {exhibitDefinition.access.mode === "members" ? (
+        <header className={accessStyles.publicContext}>
+          <p className={accessStyles.eyebrow}>The public scientific edition</p>
+          <h1>{exhibitDefinition.title}</h1>
+          <p className={accessStyles.publicTagline}>{exhibitDefinition.tagline}</p>
+          <p>{exhibitDefinition.synopsis}</p>
+          <p className={accessStyles.publicNote}>{exhibitDefinition.curatorNote}</p>
+          <nav aria-label="Human Anatomy public edition">
+            <a href="#anatomy-transcript">Read the text atlas</a>
+            <a href="#anatomy-sources">Review anatomy sources</a>
+            <Link href="/exhibits">Browse all exhibits</Link>
+          </nav>
+        </header>
+      ) : null}
       <a className="skip-link" href="#anatomy-transcript">
         Skip interactive anatomy
       </a>

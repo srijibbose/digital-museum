@@ -16,6 +16,12 @@ type ExhibitAccessBoundaryProps = {
 
 const SIGNED_OUT_VIEWER: ExhibitViewer = { signedIn: false };
 
+export function getExhibitAccessRegionId(
+  exhibit: Pick<ExhibitDefinition, "slug">,
+) {
+  return `${exhibit.slug}-member-content`;
+}
+
 export function ExhibitAccessBoundary({
   exhibit,
   viewer = SIGNED_OUT_VIEWER,
@@ -24,8 +30,14 @@ export function ExhibitAccessBoundary({
 }: ExhibitAccessBoundaryProps) {
   if (exhibit.access.mode === "private") return null;
 
+  const accessRegionId = getExhibitAccessRegionId(exhibit);
+
   if (canEnterExhibit(exhibit, viewer)) {
-    return <div className={`member-content ${styles.boundary}`}>{children}</div>;
+    return (
+      <div className={`member-content ${styles.boundary}`} id={accessRegionId}>
+        {children}
+      </div>
+    );
   }
 
   if (exhibit.access.mode !== "members") return null;
@@ -33,7 +45,10 @@ export function ExhibitAccessBoundary({
   const returnTo = encodeURIComponent(exhibit.route);
 
   return (
-    <div className={`member-content ${styles.boundary} ${styles.gated}`}>
+    <div
+      className={`member-content ${styles.boundary} ${styles.gated}`}
+      id={accessRegionId}
+    >
       <section className={styles.gate} aria-labelledby={`${exhibit.slug}-access-title`}>
         <p className={styles.eyebrow}>Member access</p>
         <h2 id={`${exhibit.slug}-access-title`}>{exhibit.access.gateLabel}</h2>

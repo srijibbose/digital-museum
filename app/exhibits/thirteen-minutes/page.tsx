@@ -3,7 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
+import {
+  ExhibitAccessBoundary,
+  getExhibitAccessRegionId,
+} from "@/components/museum/ExhibitAccessBoundary";
 import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
@@ -28,6 +31,10 @@ export default function ThirteenMinutesPage() {
 
   const eagleImage = ARCHIVAL_MEDIA[0];
   const missionControlImage = ARCHIVAL_MEDIA[1];
+  const memberAccess = exhibitDefinition.access.mode === "members";
+  const skipTarget = memberAccess
+    ? `#${getExhibitAccessRegionId(exhibitDefinition)}`
+    : "#mission-timeline";
 
   return (
     <main className={styles.page}>
@@ -40,8 +47,8 @@ export default function ThirteenMinutesPage() {
           ]),
         ]}
       />
-      <a className="skip-link" href="#mission-timeline">
-        Skip to the descent timeline
+      <a className="skip-link" href={skipTarget}>
+        {memberAccess ? "Skip to member access" : "Skip to the descent timeline"}
       </a>
 
       <header aria-labelledby="exhibit-title" className={styles.hero}>
