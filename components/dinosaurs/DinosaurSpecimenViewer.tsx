@@ -4,7 +4,7 @@ import { type CSSProperties, useCallback, useEffect, useRef, useState } from "re
 import type { DinosaurLifeModel, DinosaurSpecies } from "@/content/dinosaurs";
 import { DinosaurCanvas } from "./DinosaurCanvas";
 import type { DinosaurCameraCommand, ExhibitTheme } from "./dinosaur-viewer-types";
-import { loadSketchfabScript, type SketchfabApi } from "./sketchfab-loader";
+import { loadSketchfabScript, type SketchfabApi, type SketchfabCamera } from "./sketchfab-loader";
 import styles from "./dinosaur-experience.module.css";
 
 export type { DinosaurCameraCommand } from "./dinosaur-viewer-types";
@@ -34,6 +34,10 @@ function viewerBackground(theme: ExhibitTheme): [number, number, number] {
 export async function preloadLocalDinosaurViewer(modelPath: string) {
   const { preloadMuseumModel } = await import("./DinosaurCanvas");
   preloadMuseumModel(modelPath);
+}
+
+function distance3(a: [number, number, number], b: [number, number, number]) {
+  return Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 }
 
 function applySketchfabCommand(api: SketchfabApi, command: DinosaurCameraCommand) {
@@ -89,16 +93,23 @@ function HostedSpecimenHotspots({
   species,
   selectedBoneIndex = 0,
   onBoneSelect,
+  drifted,
 }: {
   species: DinosaurSpecies;
   selectedBoneIndex?: number;
   onBoneSelect?: (index: number) => void;
+  drifted: boolean;
 }) {
   const points = hostedHotspotPositions[species.id];
   if (!points) return null;
 
   return (
-    <div className={styles.hostedHotspots} aria-label={`${species.commonName} anatomical inspection markers`}>
+    <div
+      className={styles.hostedHotspots}
+      data-drifted={drifted || undefined}
+      aria-hidden={drifted || undefined}
+      aria-label={`${species.commonName} anatomical inspection markers`}
+    >
       {points.map((point, index) => {
         const region = species.boneRegions[index];
         if (!region) return null;
@@ -147,10 +158,13 @@ function SketchfabSpecimen({
   const api = useRef<SketchfabApi | null>(null);
   const intersecting = useRef(true);
   const running = useRef(false);
+  const baselineCamera = useRef<SketchfabCamera | null>(null);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [drifted, setDrifted] = useState(false);
   const themeRef = useRef(theme);
   const modelUid = lifeModel?.sketchfabUid ?? species.specimen.sketchfabUid;
+  const trackHotspots = Boolean(showHotspots) && !lifeModel && Boolean(hostedHotspotPositions[species.id]);
 
   const syncPlayback = useCallback(() => {
     const viewerApi = api.current;
@@ -169,8 +183,10 @@ function SketchfabSpecimen({
     let cancelled = false;
     setReady(false);
     setFailed(false);
+    setDrifted(false);
     api.current = null;
     running.current = false;
+    baselineCamera.current = null;
     loadSketchfabScript()
       .then(() => {
         if (cancelled || !iframe.current || !window.Sketchfab) return;
@@ -199,8 +215,17 @@ function SketchfabSpecimen({
             syncPlayback();
             viewerApi.addEventListener("viewerready", () => {
               if (cancelled) return;
+              viewerApi.getCameraLookAt((camera) => {
+                if (!cancelled) baselineCamera.current = camera;
+              });
               viewerApi.setBackground?.({ color: viewerBackground(themeRef.current) });
-              viewerApi.setTextureQuality?.("hd");
+              // "hd" textures cost real bandwidth for no visible gain at
+              // museum-diorama viewing distance — "ld" keeps things
+              // appealing while cutting transfer weight, which matters most
+              // for the handful of specimens with unusually heavy source
+              // scans (Diplodocus alone is 5-13x the polygon/texture count
+              // of the others in this set).
+              viewerApi.setTextureQuality?.("ld");
               setReady(true);
               onReady?.();
             });
@@ -245,6 +270,29 @@ function SketchfabSpecimen({
     if (api.current && command.id > 0) applySketchfabCommand(api.current, command);
   }, [command]);
 
+  // The hotspot dots are calibrated against the model's default camera
+  // angle. Sketchfab's viewer runs in a cross-origin iframe, so there's no
+  // way to reproject them onto an arbitrary rotated view — instead, poll
+  // the camera against its starting position and fade the dots out once
+  // the view has actually moved. They reappear once "reset" brings the
+  // camera back (api.recenterCamera(), wired through the command effect
+  // above), so they're always accurate rather than quietly wrong.
+  useEffect(() => {
+    if (!ready || !trackHotspots) return;
+    const interval = window.setInterval(() => {
+      const viewerApi = api.current;
+      const baseline = baselineCamera.current;
+      if (!viewerApi || !baseline) return;
+      viewerApi.getCameraLookAt((camera) => {
+        const dolly = distance3(camera.position, camera.target) || 1;
+        const positionDrift = distance3(camera.position, baseline.position);
+        const targetDrift = distance3(camera.target, baseline.target);
+        setDrifted(positionDrift + targetDrift > dolly * 0.03);
+      });
+    }, 350);
+    return () => window.clearInterval(interval);
+  }, [ready, trackHotspots]);
+
   return (
     <div ref={container} className={styles.remoteViewer} data-ready={ready} data-failed={failed}>
       <iframe
@@ -257,11 +305,12 @@ function SketchfabSpecimen({
         allow="autoplay; fullscreen; xr-spatial-tracking"
         allowFullScreen
       />
-      {showHotspots && !lifeModel ? (
+      {trackHotspots ? (
         <HostedSpecimenHotspots
           species={species}
           selectedBoneIndex={selectedBoneIndex}
           onBoneSelect={onBoneSelect}
+          drifted={drifted}
         />
       ) : null}
       {failed ? (

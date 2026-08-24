@@ -4,6 +4,13 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
     qualities: [75, 90, 92],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "media.sketchfab.com",
+        pathname: "/models/**",
+      },
+    ],
   },
   async headers() {
     const dinosaurAssetCache = [

@@ -22,6 +22,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import {
@@ -39,6 +40,7 @@ import {
 import { DinosaurEvidenceOverlay } from "./DinosaurEvidenceOverlay";
 import type { DinosaurCameraCommand, ExhibitTheme } from "./dinosaur-viewer-types";
 import { preconnectSketchfab } from "./sketchfab-loader";
+import { keyFor, SketchfabViewerPool } from "./SketchfabViewerPool";
 import styles from "./dinosaur-experience.module.css";
 
 const DinosaurSpecimenViewer = dynamic(() => import("./DinosaurSpecimenViewer"), {
@@ -93,6 +95,17 @@ export function DinosaurExperience() {
     () => getDinosaurSources([...species.sourceIds, lifeModel.sourceId]),
     [lifeModel.sourceId, species.sourceIds],
   );
+  const photoSrc = modeId === "life" ? lifeModel.preview : species.specimen.preview;
+  // Sketchfab-hosted previews are already sized for the web — proxying them
+  // through Next's image optimizer would add a server round-trip and a
+  // resize pass for no benefit, so those load straight from Sketchfab's CDN.
+  const photoIsRemote = photoSrc.startsWith("http");
+  const viewerContent = modeId === "life" ? "life" : "specimen";
+  const usesSketchfabPool = viewerContent === "life" || species.specimen.provider === "sketchfab";
+  // Local GLB species (T-rex, Triceratops) aren't pooled — drei's own GLTF
+  // cache already makes a re-mount instant — but the loading screen still
+  // needs to know not to reappear for a specimen it's already resolved once.
+  const localReadyKeys = useRef(new Set<string>());
 
   useEffect(() => {
     // Six of eight species (plus every "life" reconstruction) load through
@@ -154,22 +167,35 @@ export function DinosaurExperience() {
     setSpeciesId(nextId);
     setBoneIndex(0);
     setAnatomyIndex(0);
-    setViewerReady(false);
+    const nextSpecies = getDinosaurSpecies(nextId);
+    const nextUsesPool = modeId === "life" || nextSpecies.specimen.provider === "sketchfab";
+    // Sketchfab-routed targets always start "not ready" here — the pool
+    // itself immediately flips this back to true (before paint) if that
+    // specimen is already warm, so there's no visible flash either way.
+    setViewerReady(nextUsesPool ? false : localReadyKeys.current.has(keyFor(nextId, "specimen")));
     setCameraCommand((current) => ({ id: current.id + 1, type: "reset" }));
-  }, []);
+  }, [modeId]);
 
   const commandCamera = useCallback((type: DinosaurCameraCommand["type"]) => {
     setCameraCommand((current) => ({ id: current.id + 1, type }));
   }, []);
 
   const selectMode = useCallback((nextMode: DinosaurModeId) => {
+    // Trace/anatomy/lineage overlay the same base specimen as skeleton mode
+    // — only crossing into or out of "life" actually swaps the 3D content.
     if (nextMode !== modeId && (nextMode === "life" || modeId === "life")) {
-      setViewerReady(false);
+      const nextUsesPool = nextMode === "life" || species.specimen.provider === "sketchfab";
+      setViewerReady(nextUsesPool ? false : localReadyKeys.current.has(keyFor(speciesId, "specimen")));
     }
     setModeId(nextMode);
-  }, [modeId]);
+  }, [modeId, speciesId, species.specimen.provider]);
 
-  const handleViewerReady = useCallback(() => setViewerReady(true), []);
+  const handleLocalViewerReady = useCallback(() => {
+    localReadyKeys.current.add(keyFor(speciesId, "specimen"));
+    setViewerReady(true);
+  }, [speciesId]);
+
+  const handlePoolReady = useCallback(() => setViewerReady(true), []);
 
   const warmSpecies = useCallback((nextId: DinosaurSpeciesId) => {
     const connection = (
@@ -347,30 +373,61 @@ export function DinosaurExperience() {
             {!staticView ? (
               <div className={styles.viewerPhoto} data-visible={!viewerReady || undefined} aria-hidden="true">
                 <Image
-                  key={modeId === "life" ? lifeModel.preview : species.specimen.preview}
-                  src={modeId === "life" ? lifeModel.preview : species.specimen.preview}
+                  key={photoSrc}
+                  src={photoSrc}
                   alt=""
                   fill
                   sizes="(max-width: 900px) 100vw, 60vw"
                   quality={70}
                   priority={species.id === "tyrannosaurus" && modeId !== "life"}
+                  unoptimized={photoIsRemote}
                 />
               </div>
             ) : null}
             <div className={styles.viewer}>
               {initialized ? (
-                <DinosaurSpecimenViewer
-                  species={species}
-                  reducedMotion={reducedMotion}
-                  staticView={staticView}
-                  command={cameraCommand}
-                  lifeModel={modeId === "life" ? lifeModel : undefined}
-                  theme={theme}
-                  showHotspots={modeId === "skeleton"}
-                  selectedBoneIndex={boneIndex}
-                  onBoneSelect={setBoneIndex}
-                  onReady={handleViewerReady}
-                />
+                staticView ? (
+                  <DinosaurSpecimenViewer
+                    species={species}
+                    reducedMotion={reducedMotion}
+                    staticView
+                    command={cameraCommand}
+                    lifeModel={modeId === "life" ? lifeModel : undefined}
+                    theme={theme}
+                    showHotspots={false}
+                    selectedBoneIndex={boneIndex}
+                    onBoneSelect={setBoneIndex}
+                    onReady={handleLocalViewerReady}
+                  />
+                ) : (
+                  <>
+                    {/* Always mounted so passing through a local species and back
+                        doesn't evict specimens already warmed in the pool. */}
+                    <SketchfabViewerPool
+                      activeKey={usesSketchfabPool ? keyFor(speciesId, viewerContent) : null}
+                      reducedMotion={reducedMotion}
+                      command={cameraCommand}
+                      theme={theme}
+                      showHotspots={modeId === "skeleton"}
+                      selectedBoneIndex={boneIndex}
+                      onBoneSelect={setBoneIndex}
+                      onActiveReady={handlePoolReady}
+                    />
+                    {!usesSketchfabPool ? (
+                      <DinosaurSpecimenViewer
+                        species={species}
+                        reducedMotion={reducedMotion}
+                        staticView={false}
+                        command={cameraCommand}
+                        theme={theme}
+                        showHotspots={modeId === "skeleton"}
+                        selectedBoneIndex={boneIndex}
+                        onBoneSelect={setBoneIndex}
+                        onReady={handleLocalViewerReady}
+                      />
+                    ) : null}
+                  </>
+                )
               ) : null}
             </div>
             <DinosaurEvidenceOverlay

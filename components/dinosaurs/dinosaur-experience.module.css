@@ -551,6 +551,15 @@
   contain: strict;
 }
 
+.pooledLayer {
+  position: absolute;
+  inset: 0;
+}
+
+.pooledLayer[data-active="false"] {
+  display: none;
+}
+
 .viewer :global(canvas) {
   width: 100% !important;
   height: 100% !important;
@@ -687,6 +696,16 @@
   position: absolute;
   z-index: 4;
   inset: 0;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 220ms ease;
+}
+
+.hostedHotspots[data-drifted="true"] {
+  opacity: 0;
+}
+
+.hostedHotspots[data-drifted="true"] .specimenHotspot {
   pointer-events: none;
 }
 
