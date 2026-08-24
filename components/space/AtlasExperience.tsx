@@ -129,9 +129,10 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
           onSelectWorld={setWorld}
         />
 
-        <main
+        <section
           className={styles.stage}
           id="atlas-stage"
+          aria-label="Atlas world stage"
           data-testid="atlas-stage"
           data-camera-command={cameraCommand.type}
           data-camera-sequence={cameraCommand.sequence}
@@ -225,7 +226,7 @@ export function AtlasExperience({ initialWorld }: { initialWorld: WorldId }) {
           <p className={styles.liveStatus} aria-live="polite">
             {world.name}. {activeMode.label} mode. {visibleHotspots.length} features visible.
           </p>
-        </main>
+        </section>
 
         <div id="field-guide">
           <FieldGuide

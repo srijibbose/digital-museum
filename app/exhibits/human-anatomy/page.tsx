@@ -38,20 +38,18 @@ export default function HumanAnatomyPage() {
         ]}
       />
       <Breadcrumbs items={breadcrumbItems} />
-      {exhibitDefinition.access.mode === "members" ? (
-        <header className={accessStyles.publicContext}>
-          <p className={accessStyles.eyebrow}>The public scientific edition</p>
-          <h1>{exhibitDefinition.title}</h1>
-          <p className={accessStyles.publicTagline}>{exhibitDefinition.tagline}</p>
-          <p>{exhibitDefinition.synopsis}</p>
-          <p className={accessStyles.publicNote}>{exhibitDefinition.curatorNote}</p>
-          <nav aria-label="Human Anatomy public edition">
-            <a href="#anatomy-transcript">Read the text atlas</a>
-            <a href="#anatomy-sources">Review anatomy sources</a>
-            <Link href="/exhibits">Browse all exhibits</Link>
-          </nav>
-        </header>
-      ) : null}
+      <header className={accessStyles.publicContext}>
+        <p className={accessStyles.eyebrow}>The public scientific edition</p>
+        <h1>{exhibitDefinition.title}</h1>
+        <p className={accessStyles.publicTagline}>{exhibitDefinition.tagline}</p>
+        <p>{exhibitDefinition.synopsis}</p>
+        <p className={accessStyles.publicNote}>{exhibitDefinition.curatorNote}</p>
+        <nav aria-label="Human Anatomy public edition">
+          <a href="#anatomy-transcript">Read the text atlas</a>
+          <a href="#anatomy-sources">Review anatomy sources</a>
+          <Link href="/exhibits">Browse all exhibits</Link>
+        </nav>
+      </header>
       <a className="skip-link" href="#anatomy-transcript">
         Skip interactive anatomy
       </a>

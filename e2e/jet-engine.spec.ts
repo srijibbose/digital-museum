@@ -36,7 +36,11 @@ test("moves from a sourced 3D reconstruction to modelled airflow without remote 
   await page.getByRole("button", { name: /Takeoff/ }).click({ force: true });
   await expect(page.getByRole("button", { name: /Takeoff/, pressed: true })).toBeVisible();
   await page.getByRole("button", { name: "Toggle source notebook" }).click({ force: true });
-  await expect(page.getByText(/Gas Turbine Schematic and Station Numbers/)).toBeVisible();
+  await expect(
+    page
+      .getByRole("complementary", { name: "Burner exit and turbine inlet" })
+      .getByRole("link", { name: /Gas Turbine Schematic and Station Numbers/ }),
+  ).toBeVisible();
 
   expect(errors).toEqual([]);
   const externalResources = await page.evaluate(() =>

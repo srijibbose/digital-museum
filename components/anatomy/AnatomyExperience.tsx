@@ -133,11 +133,11 @@ export function AnatomyExperience() {
       <div className={styles.instrumentGrid}>
         <SystemIndex systems={anatomy.systems} activeSystemId={systemId} onSelect={setSystem} />
 
-        <main className={styles.stage} id="anatomy-stage">
+        <section className={styles.stage} id="anatomy-stage" aria-label="Interactive anatomy stage">
           <div className={styles.stageHeading}>
             <div>
               <span>{system.index} · {system.territory}</span>
-              <h1>{system.label}</h1>
+              <h2>{system.label}</h2>
             </div>
             <p>{system.thesis}</p>
           </div>
@@ -192,7 +192,7 @@ export function AnatomyExperience() {
             <p><strong>{system.viewLabels[view.id]}</strong> — {getAnatomyViewChange(system, view)}</p>
             <span>{view.evidence.replaceAll("-", " ")}</span>
           </div>
-        </main>
+        </section>
 
         <StructureGuide
           system={system}

@@ -28,7 +28,11 @@ test("moves from whole systems to exact source anatomy without external runtime 
   ).toBeVisible({ timeout: 20_000 });
   await systems.getByRole("button", { name: /05 Nervous/ }).click();
 
-  await expect(page.getByRole("heading", { level: 1, name: "Central nervous system" })).toBeVisible();
+  await expect(
+    page
+      .getByRole("region", { name: "Interactive anatomy stage" })
+      .getByRole("heading", { level: 2, name: "Central nervous system" }),
+  ).toBeVisible();
   await expect(
     page.getByRole("img", { name: /Central nervous system, in place view/ }).or(
       page.getByRole("img", { name: /Source-validation render of the central nervous system/ }),
@@ -67,7 +71,11 @@ test("keeps the system rail, source model, and controls usable at 390 by 844", a
     ),
   ).toBeVisible({ timeout: 20_000 });
   await systems.getByRole("button", { name: /08 Skeleton/ }).click();
-  await expect(page.getByRole("heading", { level: 1, name: "Full skeletal system" })).toBeVisible();
+  await expect(
+    page
+      .getByRole("region", { name: "Interactive anatomy stage" })
+      .getByRole("heading", { level: 2, name: "Full skeletal system" }),
+  ).toBeVisible();
   await expect(
     page.getByRole("img", { name: /Full skeletal system, whole skeleton view/ }).or(
       page.getByRole("img", { name: /Source-validation render of the full skeletal system/ }),
@@ -87,16 +95,17 @@ test("keeps the system rail, source model, and controls usable at 390 by 844", a
   expect(layout.railScrollable).toBe(true);
 });
 
-test("keeps the model controls inside the first desktop viewport", async ({ page }) => {
+test("keeps the public identity and model controls in one overflow-safe route", async ({ page }) => {
   await page.setViewportSize({ width: 1920, height: 947 });
   await page.goto(route);
+  await expect(page.getByRole("heading", { level: 1, name: "Human Anatomy" })).toBeVisible();
+  await page.getByRole("region", { name: "Human Anatomy interactive exhibit" }).scrollIntoViewIfNeeded();
   await expect(page.getByRole("button", { name: "Zoom in" })).toBeVisible({ timeout: 20_000 });
 
   const geometry = await page.evaluate(() => {
     const zoom = document.querySelector('button[aria-label="Zoom in"]')?.getBoundingClientRect();
-    const title = document.querySelector("main h1")?.getBoundingClientRect();
+    const title = document.querySelector('[aria-label="Interactive anatomy stage"] h2')?.getBoundingClientRect();
     return {
-      scrollY: window.scrollY,
       zoomBottom: zoom?.bottom ?? Infinity,
       titleBottom: title?.bottom ?? Infinity,
       viewportHeight: window.innerHeight,
@@ -104,7 +113,6 @@ test("keeps the model controls inside the first desktop viewport", async ({ page
     };
   });
 
-  expect(geometry.scrollY).toBe(0);
   expect(geometry.zoomBottom).toBeLessThanOrEqual(geometry.viewportHeight);
   expect(geometry.titleBottom).toBeLessThan(260);
   expect(geometry.overflow).toBeLessThanOrEqual(0);

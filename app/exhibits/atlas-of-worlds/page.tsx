@@ -54,19 +54,17 @@ export default async function AtlasOfWorldsPage({ searchParams }: AtlasPageProps
         ]}
       />
       <Breadcrumbs items={breadcrumbItems} />
-      {exhibitDefinition.access.mode === "members" ? (
-        <header className={accessStyles.publicContext}>
-          <p className={accessStyles.eyebrow}>The public scientific edition</p>
-          <h1>{exhibitDefinition.title}</h1>
-          <p className={accessStyles.publicTagline}>{exhibitDefinition.tagline}</p>
-          <p>{exhibitDefinition.synopsis}</p>
-          <p className={accessStyles.publicNote}>{exhibitDefinition.curatorNote}</p>
-          <nav aria-label="Atlas public edition">
-            <a href="#atlas-transcript">Read the scientific edition</a>
-            <a href="#atlas-sources">Review sources</a>
-          </nav>
-        </header>
-      ) : null}
+      <header className={accessStyles.publicContext}>
+        <p className={accessStyles.eyebrow}>The public scientific edition</p>
+        <h1>{exhibitDefinition.title}</h1>
+        <p className={accessStyles.publicTagline}>{exhibitDefinition.tagline}</p>
+        <p>{exhibitDefinition.synopsis}</p>
+        <p className={accessStyles.publicNote}>{exhibitDefinition.curatorNote}</p>
+        <nav aria-label="Atlas public edition">
+          <a href="#atlas-transcript">Read the scientific edition</a>
+          <a href="#atlas-sources">Review sources</a>
+        </nav>
+      </header>
       <a className="skip-link" href="#atlas-transcript">
         Skip interactive instrument
       </a>

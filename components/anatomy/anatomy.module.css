@@ -305,7 +305,7 @@
   text-transform: uppercase;
 }
 
-.stageHeading h1 {
+.stageHeading h2 {
   margin: 4px 0 0;
   font-family: var(--display);
   font-size: clamp(1.55rem, 2.2vw, 2.15rem);
@@ -1324,7 +1324,7 @@
     left: 18px;
   }
 
-  .stageHeading h1 {
+  .stageHeading h2 {
     font-size: 1.75rem;
   }
 

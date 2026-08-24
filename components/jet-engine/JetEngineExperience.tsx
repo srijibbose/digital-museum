@@ -95,11 +95,11 @@ export function JetEngineExperience() {
       <div className={styles.instrument} id="jet-engine-instrument">
         <FlowStationRail selectedId={stationId} cycle={cycle} onSelect={setStationId} />
 
-        <main className={styles.workbench}>
+        <section className={styles.workbench} aria-label="Jet engine workbench">
           <div className={styles.exhibitHeading}>
             <div>
               <p>Systems &amp; machines / three-dimensional flow laboratory</p>
-              <h1>{jetEngine.title}</h1>
+              <h2>{jetEngine.title}</h2>
             </div>
             <p className={styles.headingThesis}>{jetEngine.thesis}</p>
           </div>
@@ -138,7 +138,7 @@ export function JetEngineExperience() {
             onProfileChange={setProfileId}
             onViewChange={setViewId}
           />
-        </main>
+        </section>
 
         <StationGuide
           station={station}
