@@ -1,5 +1,9 @@
 import type { ExhibitDefinition } from "@/content/exhibits";
 import {
+  researchRecordPath,
+  type ResearchRecord,
+} from "@/content/research-records";
+import {
   absoluteUrl,
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -159,5 +163,55 @@ export function createBreadcrumbGraph(
       name: item.name,
       item: absoluteUrl(item.pathname, env),
     })),
+  };
+}
+
+export function createResearchLibraryGraph(
+  records: readonly ResearchRecord[],
+  env?: SiteEnvironment,
+) {
+  const url = absoluteUrl("/research", env);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${url}#collection-page`,
+    url,
+    name: "Research library",
+    description:
+      "Read the source-grounded records behind Loupe's exhibits, with evidence limits, authored interpretation, and direct links to authoritative sources.",
+    mainEntity: {
+      "@type": "ItemList",
+      "@id": `${url}#research-records`,
+      numberOfItems: records.length,
+      itemListElement: records.map((record, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": ["Article", "LearningResource"],
+          name: record.title,
+          description: record.summary,
+          url: absoluteUrl(researchRecordPath(record), env),
+        },
+      })),
+    },
+  };
+}
+
+export function createResearchRecordGraph(
+  record: ResearchRecord,
+  env?: SiteEnvironment,
+) {
+  const url = absoluteUrl(researchRecordPath(record), env);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": ["Article", "LearningResource"],
+    "@id": `${url}#research-record`,
+    url,
+    headline: record.title,
+    description: record.summary,
+    dateModified: record.lastModified,
+    citation: record.sources.map(({ url: sourceUrl }) => sourceUrl),
   };
 }

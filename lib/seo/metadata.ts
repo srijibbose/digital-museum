@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import type { ExhibitDefinition } from "@/content/exhibits";
+import {
+  researchRecordPath,
+  type ResearchRecord,
+} from "@/content/research-records";
 import { isPubliclyDiscoverable } from "@/lib/auth/exhibit-access";
 import { absoluteUrl, SITE_NAME, type SiteEnvironment } from "@/lib/seo/site";
 
@@ -100,6 +104,22 @@ export function createExhibitMetadata(
       description: exhibit.synopsis,
       pathname: exhibit.route,
       imagePath: `/social/exhibit/${exhibit.slug}`,
+    },
+    env,
+  );
+}
+
+export function createResearchRecordMetadata(
+  record: ResearchRecord,
+  env?: SiteEnvironment,
+): Metadata {
+  return createPageMetadata(
+    {
+      title: record.title,
+      description: record.summary,
+      pathname: researchRecordPath(record),
+      imagePath: `/social/research/${record.exhibitSlug}/${record.slug}`,
+      imageAlt: `${record.title} research record`,
     },
     env,
   );
