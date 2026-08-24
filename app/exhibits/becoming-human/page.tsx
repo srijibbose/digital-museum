@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { BecomingHumanV2Experience } from "@/components/becoming-human/BecomingHumanV2Experience";
+import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
@@ -28,7 +29,9 @@ export default function BecomingHumanPage() {
           ]),
         ]}
       />
-      <BecomingHumanV2Experience />
+      <ExhibitAccessBoundary exhibit={exhibitDefinition}>
+        <BecomingHumanV2Experience />
+      </ExhibitAccessBoundary>
     </>
   );
 }

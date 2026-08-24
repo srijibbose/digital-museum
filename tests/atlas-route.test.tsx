@@ -1,14 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
-import { permanentRedirect } from "next/navigation";
 import AtlasOfWorldsPage from "@/app/exhibits/atlas-of-worlds/page";
-import EarthPage from "@/app/exhibits/earth/page";
-import MoonPage from "@/app/exhibits/moon/page";
-
-vi.mock("next/navigation", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("next/navigation")>();
-  return { ...actual, permanentRedirect: vi.fn() };
-});
+import { getExhibitBySlug } from "@/content/exhibits";
+import nextConfig from "@/next.config";
 
 describe("Atlas of Worlds route", () => {
   it("hydrates the instrument from a valid world query", async () => {
@@ -54,13 +48,64 @@ describe("Atlas of Worlds route", () => {
     expect(transcript).toHaveTextContent("Constrained reconstruction");
     expect(transcript).toHaveTextContent(/NASA|USGS/);
     expect(within(transcript as HTMLElement).getAllByRole("article").length).toBeGreaterThanOrEqual(10);
+
+    const memberContent = container.querySelector(".member-content");
+    expect(memberContent).toContainElement(
+      screen.getByRole("navigation", { name: /world index/i }),
+    );
+    expect(memberContent).not.toContainElement(transcript as HTMLElement);
   });
 
-  it("permanently redirects the obsolete single-world routes", () => {
-    EarthPage();
-    MoonPage();
+  it("keeps the Atlas identity, reading edition, and sources public for member access", async () => {
+    const exhibit = getExhibitBySlug("atlas-of-worlds")!;
+    const originalAccess = exhibit.access;
+    exhibit.access = {
+      mode: "members",
+      gateLabel: "Members' observatory",
+      gateDescription: "Sign in to use the interactive planetary instrument.",
+    };
 
-    expect(permanentRedirect).toHaveBeenCalledWith("/exhibits/atlas-of-worlds?world=earth");
-    expect(permanentRedirect).toHaveBeenCalledWith("/exhibits/atlas-of-worlds?world=moon");
+    try {
+      const { container } = render(
+        await AtlasOfWorldsPage({ searchParams: Promise.resolve({}) }),
+      );
+      const memberContent = container.querySelector(".member-content");
+      const transcript = container.querySelector("#atlas-transcript") as HTMLElement;
+      const sources = container.querySelector("#atlas-sources") as HTMLElement;
+
+      expect(screen.getByRole("heading", { level: 1, name: exhibit.title })).toBeVisible();
+      expect(screen.getByText(exhibit.tagline)).toBeVisible();
+      expect(screen.getByText(exhibit.synopsis)).toBeVisible();
+      expect(screen.queryByTestId("atlas-instrument")).not.toBeInTheDocument();
+      expect(screen.getByRole("link", { name: /sign in to enter/i })).toHaveAttribute(
+        "href",
+        "/sign-in?returnTo=%2Fexhibits%2Fatlas-of-worlds",
+      );
+      expect(transcript).toBeVisible();
+      expect(sources).toBeVisible();
+      expect(memberContent).not.toContainElement(transcript);
+      expect(memberContent).not.toContainElement(sources);
+    } finally {
+      exhibit.access = originalAccess;
+    }
+  });
+
+  it("configures permanent HTTP redirects for obsolete single-world routes", async () => {
+    const redirects = await nextConfig.redirects?.();
+
+    expect(redirects).toEqual(
+      expect.arrayContaining([
+        {
+          source: "/exhibits/earth",
+          destination: "/exhibits/atlas-of-worlds?world=earth",
+          permanent: true,
+        },
+        {
+          source: "/exhibits/moon",
+          destination: "/exhibits/atlas-of-worlds?world=moon",
+          permanent: true,
+        },
+      ]),
+    );
   });
 });

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
 import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
@@ -111,7 +112,9 @@ export default function ThirteenMinutesPage() {
         </div>
       </section>
 
-      <TimelineExperience beats={exhibit.beats} exhibitTitle={exhibit.title} />
+      <ExhibitAccessBoundary exhibit={exhibitDefinition}>
+        <TimelineExperience beats={exhibit.beats} exhibitTitle={exhibit.title} />
+      </ExhibitAccessBoundary>
 
       <section aria-labelledby="takeaway-title" className={styles.takeaway}>
         <p className={styles.sectionKicker}>What survived the alarm</p>

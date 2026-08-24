@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import JetEngineExperience from "@/components/jet-engine/JetEngineExperience";
+import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getExhibitBySlug } from "@/content/exhibits";
 import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
@@ -21,7 +22,9 @@ export default function JetEnginePage() {
           ]),
         ]}
       />
-      <JetEngineExperience />
+      <ExhibitAccessBoundary exhibit={exhibitDefinition}>
+        <JetEngineExperience />
+      </ExhibitAccessBoundary>
     </>
   );
 }

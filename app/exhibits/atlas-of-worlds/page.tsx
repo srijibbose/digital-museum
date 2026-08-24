@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { AtlasExperience } from "@/components/space/AtlasExperience";
+import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { atlas } from "@/content/space/atlas";
 import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
@@ -8,6 +9,7 @@ import { createBreadcrumbGraph, createExhibitGraph } from "@/lib/seo/json-ld";
 import { createExhibitMetadata } from "@/lib/seo/metadata";
 import { parseWorldQuery } from "@/lib/space/atlas-query";
 import { MARS_DEEP_TIME_ANCHORS, formatMarsTime } from "@/lib/space/mars-deep-time";
+import accessStyles from "@/components/museum/exhibit-access.module.css";
 
 const exhibitDefinition = getExhibitBySlug("atlas-of-worlds")!;
 
@@ -48,10 +50,25 @@ export default async function AtlasOfWorldsPage({ searchParams }: AtlasPageProps
           ]),
         ]}
       />
+      {exhibitDefinition.access.mode === "members" ? (
+        <header className={accessStyles.publicContext}>
+          <p className={accessStyles.eyebrow}>The public scientific edition</p>
+          <h1>{exhibitDefinition.title}</h1>
+          <p className={accessStyles.publicTagline}>{exhibitDefinition.tagline}</p>
+          <p>{exhibitDefinition.synopsis}</p>
+          <p className={accessStyles.publicNote}>{exhibitDefinition.curatorNote}</p>
+          <nav aria-label="Atlas public edition">
+            <a href="#atlas-transcript">Read the scientific edition</a>
+            <a href="#atlas-sources">Review sources</a>
+          </nav>
+        </header>
+      ) : null}
       <a className="skip-link" href="#atlas-transcript">
         Skip interactive instrument
       </a>
-      <AtlasExperience initialWorld={initialWorld} />
+      <ExhibitAccessBoundary exhibit={exhibitDefinition}>
+        <AtlasExperience initialWorld={initialWorld} />
+      </ExhibitAccessBoundary>
 
       <section
         className="atlas-transcript"

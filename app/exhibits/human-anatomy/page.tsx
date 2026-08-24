@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { AnatomyExperience } from "@/components/anatomy/AnatomyExperience";
+import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { anatomy } from "@/content/anatomy";
 import { getExhibitBySlug, isExhibitEnabled } from "@/content/exhibits";
@@ -34,7 +35,9 @@ export default function HumanAnatomyPage() {
       <a className="skip-link" href="#anatomy-transcript">
         Skip interactive anatomy
       </a>
-      <AnatomyExperience />
+      <ExhibitAccessBoundary exhibit={exhibitDefinition}>
+        <AnatomyExperience />
+      </ExhibitAccessBoundary>
 
       <section
         className={styles.transcript}

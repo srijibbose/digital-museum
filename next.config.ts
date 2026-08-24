@@ -8,6 +8,20 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 90, 92],
   },
+  async redirects() {
+    return [
+      {
+        source: "/exhibits/earth",
+        destination: "/exhibits/atlas-of-worlds?world=earth",
+        permanent: true,
+      },
+      {
+        source: "/exhibits/moon",
+        destination: "/exhibits/atlas-of-worlds?world=moon",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     const anatomyAssetCache = [
       {
