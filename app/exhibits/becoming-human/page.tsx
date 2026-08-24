@@ -1,4 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import {
+  BecomingHumanPublicIdentity,
+  BecomingHumanReadingEdition,
+} from "@/components/becoming-human/BecomingHumanReadingEdition";
 import { BecomingHumanV2Experience } from "@/components/becoming-human/BecomingHumanV2Experience";
 import { ExhibitAccessBoundary } from "@/components/museum/ExhibitAccessBoundary";
 import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
@@ -24,6 +28,8 @@ export const viewport: Viewport = {
 
 export default function BecomingHumanPage() {
   assertPublicExhibitRouteAvailable(exhibitDefinition);
+  const hasMemberPolicy = exhibitDefinition.access.mode === "members";
+
   return (
     <>
       <JsonLd
@@ -33,9 +39,11 @@ export default function BecomingHumanPage() {
         ]}
       />
       <Breadcrumbs items={breadcrumbItems} />
+      {hasMemberPolicy ? <BecomingHumanPublicIdentity /> : null}
       <ExhibitAccessBoundary exhibit={exhibitDefinition}>
         <BecomingHumanV2Experience />
       </ExhibitAccessBoundary>
+      <BecomingHumanReadingEdition headingLevel={2} />
     </>
   );
 }
