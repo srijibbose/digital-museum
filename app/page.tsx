@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { CompactExhibitCard } from "@/components/museum/CompactExhibitCard";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
 import { MuseumSearch } from "@/components/museum/MuseumSearch";
@@ -60,7 +61,8 @@ export default function MuseumLobby() {
           <span className={styles.quickLabel}>Start somewhere</span>
           {QUICK_PATHS.map((path) => (
             <Link key={path.href} className={styles.quickPath} href={path.href}>
-              {path.label}
+              <span>{path.label}</span>
+              <ArrowUpRight size={16} strokeWidth={1.7} aria-hidden="true" />
             </Link>
           ))}
         </div>

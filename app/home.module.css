@@ -148,10 +148,9 @@
   transition: background 180ms ease, padding 180ms ease;
 }
 
-.quickPath::after {
-  content: "↗";
+.quickPath svg {
+  flex: 0 0 auto;
   color: #77726a;
-  font-size: 0.8rem;
 }
 
 .quickPath:hover {

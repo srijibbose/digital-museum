@@ -857,32 +857,32 @@ a {
 }
 
 @media (max-width: 600px) {
-  .exhibit-card--becoming-human .exhibit-card__visual {
+  .exhibit-card.exhibit-card--becoming-human .exhibit-card__visual {
     min-height: 540px;
   }
 
-  .exhibit-card--becoming-human .poster-bh__artifact {
+  .exhibit-card.exhibit-card--becoming-human .poster-bh__artifact {
     top: 45%;
     width: min(70%, 290px);
   }
 
-  .exhibit-card--becoming-human .exhibit-card__metrics-ribbon {
+  .exhibit-card.exhibit-card--becoming-human .exhibit-card__metrics-ribbon {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1px;
     padding: 0;
   }
 
-  .exhibit-card--becoming-human .metric-cell {
+  .exhibit-card.exhibit-card--becoming-human .metric-cell {
     min-width: 0;
     padding: 12px 9px;
   }
 
-  .exhibit-card--becoming-human .metric-cell__label {
+  .exhibit-card.exhibit-card--becoming-human .metric-cell__label {
     overflow-wrap: anywhere;
     font-size: 0.48rem;
   }
 
-  .exhibit-card--becoming-human .metric-cell__value {
+  .exhibit-card.exhibit-card--becoming-human .metric-cell__value {
     font-size: 0.72rem;
   }
 }
