@@ -60,13 +60,18 @@ function isOneOf<T extends string>(value: string | undefined, options: readonly 
   return Boolean(value && options.includes(value as T));
 }
 
+function parseCatalogPage(value: string | undefined): number | undefined {
+  const page = Number.parseInt(value ?? "", 10);
+  return Number.isFinite(page) && page > 0 ? page : undefined;
+}
+
 function parseFilters(params: RawSearchParams): ExhibitFilters {
   const q = firstValue(params.q);
   const wing = firstValue(params.wing);
   const duration = firstValue(params.duration);
   const format = firstValue(params.format);
   const sort = firstValue(params.sort);
-  const rawPage = Number.parseInt(firstValue(params.page) ?? "1", 10);
+  const page = parseCatalogPage(firstValue(params.page));
   const activeWingSlugs = getActiveWings().map(({ wing: activeWing }) => activeWing.slug);
   const formats = Object.keys(EXHIBIT_FORMAT_LABELS) as ExhibitFormat[];
 
@@ -79,7 +84,7 @@ function parseFilters(params: RawSearchParams): ExhibitFilters {
     format: isOneOf(format, formats) ? format : undefined,
     featured: firstValue(params.featured) === "true",
     sort: isOneOf(sort, ["title", "duration"] as const) ? sort : "curated",
-    page: Number.isFinite(rawPage) && rawPage > 0 ? rawPage : 1,
+    page: page ?? 1,
   };
 }
 
@@ -93,7 +98,6 @@ function hasValidCatalogState(params: RawSearchParams): boolean {
   const page = firstValue(params.page);
   const activeWingSlugs = getActiveWings().map(({ wing: activeWing }) => activeWing.slug);
   const formats = Object.keys(EXHIBIT_FORMAT_LABELS) as ExhibitFormat[];
-  const pageNumber = Number(page);
 
   return Boolean(
     q ||
@@ -103,7 +107,7 @@ function hasValidCatalogState(params: RawSearchParams): boolean {
       isOneOf(format, ["all", ...formats]) ||
       featured === "true" ||
       isOneOf(sort, ["curated", "title", "duration"] as const) ||
-      (page && Number.isInteger(pageNumber) && pageNumber > 0),
+      parseCatalogPage(page) !== undefined,
   );
 }
 

@@ -50,6 +50,7 @@ describe("all exhibits catalog", () => {
     ["featured filter", { featured: "true" }],
     ["sort", { sort: "title" }],
     ["pagination", { page: "2" }],
+    ["pagination with trailing characters", { page: "2abc" }],
   ])("noindexes a valid %s catalog URL", async (_label, searchParams) => {
     expect(generateCatalogMetadata).toBeTypeOf("function");
     if (!generateCatalogMetadata) return;
