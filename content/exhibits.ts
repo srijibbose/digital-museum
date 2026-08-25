@@ -1,12 +1,39 @@
 export interface ExhibitWing {
   id: string;
+  slug: string;
   code: string;
   title: string;
   description: string;
 }
 
+export type ExhibitFormat =
+  | "interactive-3d"
+  | "simulation"
+  | "archival-audio"
+  | "evidence-led"
+  | "comparison"
+  | "field-guide"
+  | "cinematic";
+
+export const EXHIBIT_FORMAT_LABELS: Record<ExhibitFormat, string> = {
+  "interactive-3d": "Interactive 3D",
+  simulation: "Simulation",
+  "archival-audio": "Archival audio",
+  "evidence-led": "Evidence-led",
+  comparison: "Comparison",
+  "field-guide": "Field guide",
+  cinematic: "Cinematic",
+};
+
 export interface ExhibitVisualTheme {
-  variant: "living-atlas" | "thirteen-minutes" | "jet-engine" | "becoming-human" | "atlas-of-worlds" | "dinosaurs" | "generic";
+  variant:
+    | "human-anatomy"
+    | "thirteen-minutes"
+    | "jet-engine"
+    | "becoming-human"
+    | "atlas-of-worlds"
+    | "dinosaurs"
+    | "generic";
   accentColor: string;
   badgeText: string;
   metrics: {
@@ -25,7 +52,9 @@ export interface ExhibitDefinition {
   synopsis: string;
   curatorNote: string;
   readingTime: string;
+  durationMinutes: number;
   interactionType: string;
+  formats: ExhibitFormat[];
   tags: string[];
   route: string;
   enabled: boolean;
@@ -37,24 +66,28 @@ export interface ExhibitDefinition {
 export const WINGS: Record<string, ExhibitWing> = {
   body: {
     id: "wing-01",
+    slug: "body",
     code: "Wing 01",
     title: "The Body",
     description: "Biological systems, sensory perception, and internal architectures",
   },
   machines: {
     id: "wing-02",
+    slug: "systems-machines",
     code: "Wing 02",
     title: "Systems & Machines",
     description: "Complex engineered systems, aerospace telemetry, and pivotal human decisions",
   },
   origins: {
     id: "wing-03",
+    slug: "origins-futures",
     code: "Wing 03",
     title: "Origins & Futures",
     description: "Deep time, human evolution, cumulative culture, and the systems shaping what comes next",
   },
   space: {
     id: "wing-04",
+    slug: "space",
     code: "Wing 04",
     title: "Space",
     description: "Real planetary imagery and mission data, explored as physical specimens",
@@ -62,6 +95,37 @@ export const WINGS: Record<string, ExhibitWing> = {
 };
 
 export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
+  {
+    id: "human-anatomy",
+    slug: "human-anatomy",
+    exhibitNumber: "EXH. 006",
+    wing: WINGS.body,
+    title: "Human Anatomy",
+    tagline: "The body is a relationship, not a parts list.",
+    synopsis:
+      "Move through eight body systems, isolate named structures, and trace real anatomical relationships from brain territories to a complete 201-bone skeleton.",
+    curatorNote:
+      "Built from registered HuBMAP Human Reference Atlas geometry derived from the NLM Visible Human Project, with source status, reference-body scope, and model limits shown inside the exhibit.",
+    readingTime: "25–40 min",
+    durationMinutes: 35,
+    interactionType: "Registered 3D Anatomy · System Isolation · Source-Linked Field Guide",
+    formats: ["interactive-3d", "field-guide", "evidence-led"],
+    tags: ["Human Anatomy", "Eight Body Systems", "Scientific 3D", "HuBMAP HRA"],
+    route: "/exhibits/human-anatomy",
+    enabled: true,
+    featured: true,
+    order: 1,
+    visualTheme: {
+      variant: "human-anatomy",
+      accentColor: "#b64d3f",
+      badgeText: "REFERENCE ANATOMY",
+      metrics: [
+        { label: "Systems", value: "08" },
+        { label: "Named meshes", value: "891" },
+        { label: "Sources", value: "HRA · BP3D" },
+      ],
+    },
+  },
   {
     id: "becoming-human",
     slug: "becoming-human",
@@ -73,12 +137,14 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
       "Travel from the shared ape branch through walking, fire, hunting, settlement, writing, industry, networks, the computer in your hand, and tools that learn from our record.",
     curatorNote: "A 35-episode flagship journey grounded in fossil evidence, museum objects, archival photography, open research, and one Blender-composed geological scan.",
     readingTime: "Approx. 70 min complete",
+    durationMinutes: 70,
     interactionType: "Cinematic Atlas · Evidence Lens · 35 Instruments",
+    formats: ["cinematic", "evidence-led"],
     tags: ["Human Evolution", "Paleoanthropology", "Cumulative Culture", "AI & Society"],
     route: "/exhibits/becoming-human",
     enabled: true,
     featured: true,
-    order: 1,
+    order: 2,
     visualTheme: {
       variant: "becoming-human",
       accentColor: "#c96b39",
@@ -91,57 +157,33 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
     },
   },
   {
-    id: "living-atlas",
-    slug: "living-atlas",
-    exhibitNumber: "EXH. 001",
-    wing: WINGS.body,
-    title: "The Living Atlas",
-    tagline: "One body. Many conversations.",
-    synopsis:
-      "Follow a touch, a breath, and a heartbeat through the intricate neural and vascular systems that keep a human body in constant conversation with itself.",
-    curatorNote: "Features real-time heartbeat rhythm simulation and layered 3D anatomy visualization.",
-    readingTime: "12–15 min read",
-    interactionType: "Interactive Anatomy · Real-Time Audio",
-    tags: ["Human Physiology", "Interactive 3D", "Bio-Mechanics", "Soundscape"],
-    route: "/exhibits/living-atlas",
-    enabled: true,
-    featured: false,
-    order: 1,
-    visualTheme: {
-      variant: "living-atlas",
-      accentColor: "#e07a5f",
-      badgeText: "BIOMETRIC EXPLORER",
-      metrics: [
-        { label: "Resting Pulse", value: "72 BPM" },
-        { label: "Neural Speed", value: "120 m/s" },
-        { label: "Vascular Span", value: "60k mi" },
-      ],
-    },
-  },
-  {
     id: "jet-engine",
     slug: "jet-engine",
     exhibitNumber: "EXH. 003",
     wing: WINGS.machines,
     title: "The Engine Is a River",
-    tagline: "Follow air as it becomes flight.",
-    synopsis: "A tactile, animated turbofan exhibit: wake the machine, trace the air, open the core, and tune your own flight profile.",
-    curatorNote: "A simplified explanatory model of a high-bypass turbofan, built for exploration rather than live aircraft telemetry.",
-    readingTime: "8–12 min experience",
-    interactionType: "Animated Cutaway · 3D Inspection · Engine Playground",
-    tags: ["Jet Propulsion", "Fluid Dynamics", "Interactive 3D", "Flight Systems"],
+    tagline: "Two streams. One energy loop.",
+    synopsis:
+      "Move through NASA flow stations, trace the cool bypass and hot core streams, and compare four operating conditions with a transparent educational cycle model.",
+    curatorNote:
+      "A CC BY 4.0 artist-authored 3D reconstruction mapped to NASA and FAA conventions, with cycle-linked particle, pressure, thermal, and shaft overlays. Geometry, assumptions, and limits are identified inside the exhibit; no generative imagery or simulated live telemetry is used.",
+    readingTime: "12–18 min open study",
+    durationMinutes: 15,
+    interactionType: "Sourced Sectional · Flow Stations · Zero-D Cycle Study",
+    formats: ["interactive-3d", "simulation", "evidence-led"],
+    tags: ["Jet Propulsion", "Thermodynamics", "NASA Station Convention", "Scientific Reconstruction"],
     route: "/exhibits/jet-engine",
     enabled: true,
     featured: true,
-    order: 2,
+    order: 3,
     visualTheme: {
       variant: "jet-engine",
       accentColor: "#d86f3d",
-      badgeText: "LIVE ENGINE STUDY",
+      badgeText: "SECTIONAL LABORATORY",
       metrics: [
-        { label: "Airflow", value: "74%" },
-        { label: "Core Temp", value: "1,420 K" },
-        { label: "Thrust", value: "136 kN" },
+        { label: "Stations", value: "0—8 · f" },
+        { label: "Profiles", value: "04" },
+        { label: "Method", value: "0-D CYCLE" },
       ],
     },
   },
@@ -156,12 +198,14 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
       "Step into the cockpit of the Lunar Module Eagle during the final thirteen minutes before touchdown as unexpected radar overloads trigger the legendary 1202 program alarm.",
     curatorNote: "Synchronized with historical NASA flight transcripts, telemetry logs, and low-poly Eagle lunar descent trajectory.",
     readingTime: "7–10 min read",
+    durationMinutes: 10,
     interactionType: "3D Spacecraft · Telemetry HUD · Archival Audio",
+    formats: ["interactive-3d", "archival-audio", "evidence-led"],
     tags: ["Apollo 11", "Flight Telemetry", "Real-Time 3D", "1202 Program Alarm"],
     route: "/exhibits/thirteen-minutes",
     enabled: true,
     featured: true,
-    order: 3,
+    order: 4,
     visualTheme: {
       variant: "thirteen-minutes",
       accentColor: "#48cae4",
@@ -184,12 +228,14 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
       "Move from the Sun to Neptune in a single high-fidelity observatory, switching between terrain, atmosphere, missions, interiors, rings, light, and magnetic fields.",
     curatorNote: "Built from locally delivered NASA, USGS, LRO, MOLA, SDO, Cassini, Voyager, and Magellan observations with evidence status shown in the interface.",
     readingTime: "20–30 min open exploration",
+    durationMinutes: 25,
     interactionType: "Interactive 3D Observatory · Scientific Layers · World Comparison",
+    formats: ["interactive-3d", "comparison", "evidence-led"],
     tags: ["Solar System", "Planetary Science", "NASA Imagery", "Interactive 3D"],
     route: "/exhibits/atlas-of-worlds",
     enabled: true,
     featured: true,
-    order: 4,
+    order: 5,
     visualTheme: {
       variant: "atlas-of-worlds",
       accentColor: "#bd552b",
@@ -204,7 +250,7 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
   {
     id: "dinosaurs",
     slug: "dinosaurs",
-    exhibitNumber: "EXH. 006",
+    exhibitNumber: "EXH. 007",
     wing: WINGS.origins,
     title: "Dinosaurs, Reconsidered",
     tagline: "A lost world, assembled from evidence.",
@@ -212,12 +258,14 @@ export const EXHIBIT_REGISTRY: ExhibitDefinition[] = [
       "Select eight documented museum specimens and inspect what skeletons, bones, tracks, comparative anatomy, and evolutionary relationships can—and cannot—establish.",
     curatorNote: "Institutional scans retain specimen identities, licences, and object types; soft tissue and behaviour remain explicitly labelled inference.",
     readingTime: "12–18 min specimen atlas",
+    durationMinutes: 15,
     interactionType: "Museum 3D Scans · Osteology · Trace Analysis · Comparative Anatomy",
+    formats: ["interactive-3d", "evidence-led", "comparison"],
     tags: ["Dinosaurs", "Deep Time", "Paleontology", "Evolutionary Biology"],
     route: "/exhibits/dinosaurs",
     enabled: true,
     featured: true,
-    order: 5,
+    order: 6,
     visualTheme: {
       variant: "dinosaurs",
       accentColor: "#d78451",

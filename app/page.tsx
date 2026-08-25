@@ -1,76 +1,147 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { CompactExhibitCard } from "@/components/museum/CompactExhibitCard";
 import { MuseumHeader } from "@/components/museum/MuseumHeader";
-import { ExhibitCard } from "@/components/museum/ExhibitCard";
-import { getActiveWings, getFeaturedExhibits } from "@/content/exhibits";
+import { MuseumSearch } from "@/components/museum/MuseumSearch";
+import { SurpriseMe } from "@/components/museum/SurpriseMe";
+import { createExhibitSearchIndex } from "@/content/exhibit-discovery";
+import {
+  getActiveExhibits,
+  getActiveWings,
+  getFeaturedExhibits,
+} from "@/content/exhibits";
+import styles from "./home.module.css";
+
+const QUICK_PATHS = [
+  { href: "/exhibits?duration=short", label: "Under 15 minutes" },
+  { href: "/exhibits?format=interactive-3d", label: "Interactive 3D" },
+  { href: "/exhibits?wing=space", label: "Explore Space" },
+  { href: "/exhibits?featured=true", label: "Staff picks" },
+] as const;
 
 export default function MuseumLobby() {
-  const activeExhibits = getFeaturedExhibits();
+  const activeExhibits = getActiveExhibits();
+  const featuredExhibits = getFeaturedExhibits();
   const activeWings = getActiveWings(activeExhibits);
+  const searchIndex = createExhibitSearchIndex(activeExhibits);
+  const surpriseExhibits = activeExhibits.map(({ id, route, enabled }) => ({
+    id,
+    route,
+    enabled,
+  }));
 
   return (
-    <main className="lobby">
-      <MuseumHeader />
-      <section className="lobby-hero" aria-labelledby="lobby-title">
-        <p className="kicker">A digital museum for the quietly curious</p>
-        <h1 id="lobby-title">
-          Look closer.
-          <span>The ordinary is full of hidden worlds.</span>
-        </h1>
-        <p className="lobby-hero__intro">
-          Immersive, interactive stories about the systems we live inside and
-          the machines we build to explore beyond.
-        </p>
-        <a className="round-link" href="#exhibits" aria-label="Explore the exhibits">
-          <span>Enter</span>
-          <span aria-hidden="true">↓</span>
-        </a>
+    <main className={styles.home}>
+      <MuseumHeader tone="paper" />
+
+      <section className={styles.hero} aria-labelledby="lobby-title">
+        <div className={styles.heroContent}>
+          <p className={styles.eyebrow}>Loupe / Digital Museum</p>
+          <h1 id="lobby-title">A digital museum for exploring how the world works.</h1>
+          <p className={styles.heroIntro}>
+            Enter interactive, source-grounded exhibits on the human body,
+            machines, space, and human history.
+          </p>
+          <div className={styles.heroSearch}>
+            <MuseumSearch exhibits={searchIndex} />
+          </div>
+          <div className={styles.heroActions}>
+            <Link className={styles.primaryAction} href="/exhibits">
+              Browse all exhibits
+            </Link>
+            <SurpriseMe exhibits={surpriseExhibits} />
+          </div>
+        </div>
         <div className="lobby-orbit lobby-orbit--one" aria-hidden="true" />
         <div className="lobby-orbit lobby-orbit--two" aria-hidden="true" />
       </section>
 
-      <section
-        className="exhibit-index"
-        id="exhibits"
-        aria-labelledby="exhibit-heading"
-      >
-        <div className="section-label">
-          <span>Exhibits Directory</span>
-          <span>
-            {activeExhibits.length} Active{" "}
-            {activeExhibits.length === 1 ? "Exhibition" : "Exhibitions"} ·{" "}
-            {activeWings.map((w) => w.wing.title).join(" & ")}
-          </span>
+      <nav className={styles.quickPaths} aria-label="Quick ways to explore">
+        <div className={styles.quickPathsInner}>
+          <span className={styles.quickLabel}>Start somewhere</span>
+          {QUICK_PATHS.map((path) => (
+            <Link key={path.href} className={styles.quickPath} href={path.href}>
+              <span>{path.label}</span>
+              <ArrowUpRight size={16} strokeWidth={1.7} aria-hidden="true" />
+            </Link>
+          ))}
         </div>
+      </nav>
 
-        <div className="exhibit-index__header">
-          <h2 id="exhibit-heading">Preserved in motion.</h2>
-          <p className="exhibit-index__subtext">
-            Choose an exhibition below to step inside high-fidelity interactive
-            visualizations, archival audio, and systems simulations.
+      <section
+        className={styles.featured}
+        aria-label="Featured exhibits"
+      >
+        <div className={styles.sectionHeader}>
+          <div>
+            <p className={styles.sectionEyebrow}>Now showing</p>
+            <h2 id="featured-title">Featured exhibits</h2>
+          </div>
+          <p className={styles.sectionHeaderCopy}>
+            A small, changing selection from the museum. The complete catalog stays
+            searchable as Loupe grows.
           </p>
         </div>
+        <div className={styles.featuredGrid}>
+          {featuredExhibits.map((exhibit) => (
+            <CompactExhibitCard key={exhibit.id} exhibit={exhibit} />
+          ))}
+        </div>
+        <div className={styles.featuredFooter}>
+          <Link className={styles.textLink} href="/exhibits">
+            See the full catalog
+          </Link>
+        </div>
+      </section>
 
-        <div className="exhibit-gallery">
-          {activeExhibits.map((exhibit, index) => (
-            <ExhibitCard key={exhibit.id} exhibit={exhibit} index={index} />
+      <section
+        className={styles.wings}
+        id="wings"
+        aria-label="Explore by wing"
+      >
+        <div className={styles.wingsHeader}>
+          <p className={styles.sectionEyebrow}>Permanent gateways</p>
+          <h2 id="wings-title">Explore by wing.</h2>
+        </div>
+        <div className={styles.wingGrid}>
+          {activeWings.map(({ wing, count }) => (
+            <Link
+              key={wing.id}
+              className={styles.wingCard}
+              href={`/exhibits?wing=${wing.slug}`}
+              aria-label={`${wing.title}, ${count} ${count === 1 ? "exhibit" : "exhibits"}`}
+            >
+              <span className={styles.wingCode}>{wing.code}</span>
+              <div>
+                <h3>{wing.title}</h3>
+                <p>{wing.description}</p>
+              </div>
+              <span className={styles.wingCount}>{String(count).padStart(2, "0")}</span>
+            </Link>
           ))}
         </div>
       </section>
 
-      <section
-        className="manifesto"
-        id="manifesto"
-        aria-labelledby="manifesto-title"
-      >
-        <p className="kicker">Our point of view</p>
-        <h2 id="manifesto-title">Information should feel like discovery.</h2>
-        <p>
-          Loupe is a collection of bounded, interactive stories. No grades, no
-          feeds, no endless course. Wander in curious; leave seeing one thing
-          differently.
-        </p>
+      <section className={styles.about} id="about" aria-labelledby="about-title">
+        <div>
+          <p className={styles.sectionEyebrow}>What Loupe is</p>
+          <h2 id="about-title">A museum made to be entered, not scrolled past.</h2>
+        </div>
+        <div className={styles.aboutCopy}>
+          <p>
+            Loupe turns evidence, objects, scientific models, and archival records into
+            interactive exhibits. Sources and reconstruction limits stay visible, so
+            discovery never asks you to trade wonder for trust.
+          </p>
+          <div className={styles.aboutProof} aria-label="Museum principles">
+            <div><span>Format</span><strong>Interactive exhibitions</strong></div>
+            <div><span>Foundation</span><strong>Named, visible sources</strong></div>
+            <div><span>Pace</span><strong>Explore in your own order</strong></div>
+          </div>
+        </div>
       </section>
 
-      <footer className="museum-footer">
+      <footer className={styles.footer}>
         <span>Loupe / Digital Museum</span>
         <span>Curated for curiosity, 2026</span>
       </footer>

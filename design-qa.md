@@ -1,56 +1,88 @@
-# Atlas of Worlds design QA
+# Loupe Homepage Redesign — Design QA
 
-## Scope
+## Comparison target
 
-- Source direction: `C:\Users\Srijib\.codex\generated_images\01a023a7-0224-7a11-909e-cdfd04631913\exec-665523d3-bc33-46e9-9c6b-1c9101de1986.png`
-- Saturn source direction: `C:\Users\Srijib\.codex\generated_images\01a023a7-0224-7a11-909e-cdfd04631913\exec-8b39e18f-5729-401a-b7b0-3681f0bd950b.png`
-- Implementation route: `http://127.0.0.1:3000/exhibits/atlas-of-worlds`
-- Implementation code: `components/space`, `content/space`, and `lib/space`
-- Desktop viewport: 1280 × 720 CSS pixels at DPR 1.25 in the Codex in-app browser
-- Mobile viewport: 390 × 844 CSS pixels at DPR 1 in the Codex in-app browser
+- Source visual truth: `C:\Users\Srijib\.codex\generated_images\01a02eef-b08b-70c2-a121-0049e3fecdcb\exec-e0acf00d-6f13-4d84-b401-5677d1736893.png`
+- Final implementation: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-home-desktop-final.png`
+- Full comparison input, source left / implementation right: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\design-comparison-home-full.png`
+- Focused hero comparison input, source left / implementation right: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\design-comparison-home-hero.png`
+- Mobile implementation: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-home-mobile-final.png`
+- Catalog evidence: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-catalog-desktop-final.png` and `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-catalog-mobile-final.png`
+- Lower-page evidence: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-home-desktop-lower-2.png` and `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-home-desktop-lower-3.png`
 
-## Images and density
+## Normalization
 
-- The stage uses locally delivered NASA, USGS, LRO, MOLA, SDO, Cassini, Voyager, Magellan, and Earth-observation assets; visible feature media is WebP encoded and accompanied by source, credit, evidence, and processing metadata.
-- Saturn uses the bundled official NASA GLB, including the authored diffuse map and native ring meshes, rather than a stretched portrait or synthetic CSS treatment.
-- Desktop density retains one primary globe, a compact feature rail, a bottom instrument deck, and one Field Guide. Mobile collapses these into a single vertical reading order while preserving the horizontal world and mode rails.
+- Intended CSS viewport: 1440 × 1024, desktop, light homepage state, empty search, device scale factor 1.
+- Source pixels: 1487 × 1058.
+- Browser implementation capture pixels: 1425 × 994. The in-app browser capture excludes its scrollbar/chrome gutters from the 1440 × 1024 CSS override.
+- Source normalized with high-quality bicubic resampling to 1425 × 994 before comparison.
+- Full comparison pixels: 2850 × 994. Focused hero comparison pixels: 2850 × 720.
+- Mobile CSS viewport: 390 × 844; browser content width is 375px after the scrollbar gutter.
 
-## Verified states and evidence
+## State and evidence
 
-- Full desktop / Sun photosphere: `.design-audit/atlas-of-worlds-refinement/implementation-sun-final2.png`
-- Focused Sun feature: `.design-audit/atlas-of-worlds-refinement/implementation-sun-feature-focused-pass2.png`
-- Earth survey lighting: `.design-audit/atlas-of-worlds-refinement/implementation-earth-survey-pass3.png`
-- Mercury temperature and missions: `.design-audit/atlas-of-worlds-refinement/implementation-mercury-temperature.png`, `.design-audit/atlas-of-worlds-refinement/implementation-mercury-missions.png`
-- Lunar topography with displaced LOLA relief: `.design-audit/atlas-of-worlds-refinement/implementation-moon-topography-final.png`
-- Focused Jupiter Great Red Spot: `.design-audit/atlas-of-worlds-refinement/implementation-jupiter-storm-mode-focus-final.png`
-- Saturn rings and focused polar feature: `.design-audit/atlas-of-worlds-refinement/implementation-saturn-rings-final2.png`, `.design-audit/atlas-of-worlds-refinement/implementation-saturn-hexagon-focused-final3.png`
-- Uranus calibrated rotation-axis guide: `.design-audit/atlas-of-worlds-refinement/implementation-uranus-axial-tilt-final.png`
-- Mobile Neptune selection and centered rail: `.design-audit/atlas-of-worlds-refinement/implementation-mobile-neptune-centered-390x844-final.png`
-- Reference comparisons: `.design-audit/atlas-of-worlds-refinement/comparison-primary-final.png`, `.design-audit/atlas-of-worlds-refinement/comparison-saturn-final.png`
-- Scientific feature media contact sheet: `.design-audit/atlas-of-worlds-refinement/feature-media-contact-sheet.png`
+- Final capture is from `next start` after a successful production build, not the development server.
+- Homepage and catalog were checked at 1440 × 1024 and 390 × 844.
+- Full-view comparison evaluates the complete above-the-fold composition and the featured-card entry point.
+- Focused comparison was required because headline wrap, search proportions, CTA hierarchy, and quick-path density are the key fidelity surfaces in the selected reference.
+- Lower-page viewport captures were used instead of a stitched full-page image because the browser's full-page stitch repeated animated regions even though DOM counts were correct (5 featured articles, 4 wing links, 1 about heading).
 
 ## Comparison history
 
-1. Fixed the locale-dependent server/client number mismatch that caused hydration errors.
-2. Replaced the Sun's invalid equirectangular sampling with a full-disc observation projection; the black hemisphere disappeared and solar flow/prominence motion remained available behind the motion toggle.
-3. Reduced selected labels from screen-centered overlays to compact surface anchors, backed by a persistent feature rail and detailed Field Guide media.
-4. Made Survey lighting genuinely unlit for full-surface inspection, resolving Earth's overly dark default while retaining Natural lighting for relief.
-5. Separated Mercury temperature and mission behaviors, then calibrated Jupiter's Great Red Spot marker against the delivered cylindrical observation map.
-6. Replaced Saturn's broken portrait projection with NASA's native Saturn-and-rings GLB, corrected framing and material transparency, and made focus calculations respect authored axial and presentation rotations.
-7. Verified the responsive world rail at 390 × 844, centered text beneath thumbnails, kept horizontal scrolling inside the rail, and added enough edge padding to center the first and last worlds.
-8. Hardened the final interaction contract after independent review: orientation now reports only on mount or an OrbitControls change, a mode switch invalidates stale feature focus, Mercury's inferred temperature layer hides unrelated lighting controls, and Neptune no longer advertises an undelivered ring layer.
-9. Added a calibrated, depth-visible rotation axis and equatorial reference guide to Uranus's axial-tilt mode so the 97.77-degree geometry is directly legible in the rendered model.
-10. Made Moon Topography and Mars Terrain physically distinct from their Surface modes through authored bump strength and real geometry displacement, including under Survey lighting.
-11. Made Jupiter and Neptune storm modes immediately focus their authored vortex observations on entry; marker visibility now follows each mode's authored feature contract.
+### Iteration 1 — blocked
 
-## Findings
+- [P2] Hero proportions pushed featured content below the desktop fold.
+  - Evidence: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-home-desktop-v1.png` used a three-line headline, narrow search field, and an 838px combined hero/quick-path block; the selected reference used a two-line headline and exposed featured cards within the first viewport.
+  - Fix: widened the content/search track, reduced the display scale, centered the CTAs, reduced hero height, added the source-like header divider, and compacted the featured header.
+  - Post-fix evidence: the final implementation and full comparison paths recorded above.
 
-- P1 visual defects: none.
-- P2 visual defects: none.
-- Core navigation, world selection, viewing modes, light policies, motion controls, feature selection, zoom/reset/compare controls, Field Guide media, and keyboard world navigation were exercised.
-- Automated verification passed: 35 test files / 144 tests, TypeScript `--noEmit`, Next.js 16.3 production build, and Git whitespace validation.
-- The only browser-console entry is Three.js's upstream `THREE.Clock` deprecation warning emitted from a dependency chunk; there are no application errors or hydration warnings in the fresh verified state.
+- [P2] Mobile proposition density hid the discovery paths.
+  - Evidence: `C:\Users\Srijib\.codex\visualizations\2026\08\23\01a02eef-b08b-70c2-a121-0049e3fecdcb\implementation-home-mobile-v1.png` wrapped the headline across five large lines and stacked both hero actions, so the quick paths were not visible in the 390 × 844 viewport.
+  - Fix: reduced the mobile display scale, preserved readable line height, and placed the two hero actions in a balanced two-column grid.
+  - Post-fix evidence: the mobile implementation path recorded above, where the proposition, search, both CTAs, and the first quick paths are visible without horizontal overflow.
 
-## Final result
+- [P2] The first catalog implementation paginated five exhibits into 4 + 1.
+  - Evidence: the catalog route initially used a four-item page size and exposed a second page for one exhibit.
+  - Fix: changed the catalog page size to 12 and added a regression expectation that the current five remain together while the pure catalog utility continues to test bounded pagination for large registries.
+  - Post-fix evidence: the desktop catalog path recorded above, five result articles, no premature next-page control.
 
-passed
+### Iteration 2 — passed
+
+The final combined comparison has no actionable P0/P1/P2 findings.
+
+## Required fidelity surfaces
+
+- Fonts and typography: Passed. The existing Loupe Baskerville/Iowan-style display stack and Avenir/Segoe UI sans stack retain the source's editorial hierarchy. The desktop title holds two lines; the mobile title remains readable without dominating the full viewport. Small labels use consistent weight, case, and tracking.
+- Spacing and layout rhythm: Passed. Header, hero copy, search, CTA pair, quick paths, featured gateway, wing grid, and about section follow a coherent vertical system. Desktop and mobile show no horizontal overflow.
+- Colors and visual tokens: Passed. Warm paper, near-black ink, restrained rust accent, hairline borders, and the dark featured field map closely to the reference. Contrast remains legible in both themes.
+- Image quality and asset fidelity: Passed with an intentional product constraint. The generated reference thumbnails were not shipped. Final cards reuse Loupe's current local/source-grounded exhibit posters and animations, including the Human Reference Atlas and NASA/USGS planetary media. No new generated, stock, placeholder, or approximate exhibit imagery was introduced.
+- Copy and content: Passed. The hero explicitly defines Loupe as a digital museum and names its subjects. Vague labels were replaced with functional catalog, wing, duration, format, and trust language. `Featured exhibits` replaces the earlier ambiguous section title.
+- Icons: Passed. Search, clock, sparkle, and external-link indicators use the existing Lucide icon family; the Loupe mark remains the existing product mark.
+- Responsive behavior: Passed at 1440 × 1024 and 390 × 844. Mobile navigation is available through a native details/summary menu, filters collapse to a practical two-column grid, and featured cards remain horizontally discoverable.
+- Accessibility: Passed for the implemented scope. Search, filter, pagination, menu, and result regions have names; form controls have labels; focus-visible and reduced-motion styles are present; mobile tap targets are practical.
+
+## Intentional differences from the visual reference
+
+- Search suggestions are query-driven instead of permanently occupying an empty suggestion row, keeping the blank state quieter while still exposing real result suggestions after two characters.
+- `Collections` and `Saved` were not copied because those destinations do not exist. Navigation links only to working catalog, wing, and about destinations.
+- `Explore Space` replaces the mock's unsupported `New this month` shortcut.
+- Real current exhibit posters replace all generated mock thumbnails by explicit user requirement.
+
+## Primary interactions tested
+
+- Homepage autocomplete: `planet` reveals the real Atlas of Worlds suggestion; Escape closes it.
+- Homepage GET search: `Apollo` opens `/exhibits?q=Apollo` with Thirteen Minutes as the result.
+- Intersected filters: wing + short duration + Interactive 3D + staff picks returns one matching exhibit and retains control state in the URL.
+- Empty state: a no-match query displays `No exhibits found` and a working `Clear all filters` link.
+- Quick path: `Under 15 minutes` opens the catalog with two matching exhibits.
+- Surprise Me: production navigation opened a real enabled exhibit route.
+- Pagination behavior is covered by the pure catalog tests; the five-item live catalog correctly has no unnecessary pagination.
+- Mobile menu opens and exposes Browse all, Wings, and About.
+- Homepage/catalog production console: zero errors and zero warnings in a clean tab.
+
+## Residual gaps
+
+- No P0/P1/P2 visual or interaction gaps remain for the homepage/catalog scope.
+- Individual exhibit routes retain their own independent QA and may emit legacy library warnings outside this redesign; those were not introduced by the homepage/catalog work.
+
+final result: passed

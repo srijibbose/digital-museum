@@ -1,15 +1,15 @@
 import type { ExhibitDefinition } from "@/content/exhibits";
-import { LivingAtlasPoster } from "./LivingAtlasPoster";
 import { ThirteenMinutesPoster } from "./ThirteenMinutesPoster";
 import { JetEnginePoster } from "./JetEnginePoster";
 import { BecomingHumanPoster } from "./BecomingHumanPoster";
 import { AtlasOfWorldsPoster } from "./AtlasOfWorldsPoster";
 import { DinosaursPoster } from "./DinosaursPoster";
+import { HumanAnatomyPoster } from "./HumanAnatomyPoster";
 
 export function ExhibitPoster({ exhibit }: { exhibit: ExhibitDefinition }) {
   switch (exhibit.visualTheme.variant) {
-    case "living-atlas":
-      return <LivingAtlasPoster />;
+    case "human-anatomy":
+      return <HumanAnatomyPoster />;
     case "thirteen-minutes":
       return <ThirteenMinutesPoster />;
     case "jet-engine":

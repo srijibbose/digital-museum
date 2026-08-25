@@ -9,22 +9,28 @@ import {
 } from "@/content/exhibits";
 
 describe("Exhibit Registry & Plug-and-Play System", () => {
-  it("contains registry entries for both Living Atlas and Thirteen Minutes", () => {
+  it("contains the active flagship exhibit entries", () => {
     const ids = EXHIBIT_REGISTRY.map((e) => e.id);
-    expect(ids).toContain("living-atlas");
     expect(ids).toContain("thirteen-minutes");
+    expect(ids).toContain("becoming-human");
+    expect(ids).toContain("atlas-of-worlds");
+    expect(ids).toContain("human-anatomy");
+    expect(ids).toContain("dinosaurs");
   });
 
   it("returns active exhibits when enabled is true", () => {
     const active = getActiveExhibits();
     expect(active.length).toBeGreaterThanOrEqual(2);
     expect(active.every((e) => e.enabled)).toBe(true);
+    expect(active.every((e) => e.durationMinutes > 0)).toBe(true);
+    expect(active.every((e) => e.formats.length > 0)).toBe(true);
   });
 
-  it("keeps Living Atlas published but out of the featured lobby", () => {
+  it("returns the featured lobby exhibits", () => {
     const featured = getFeaturedExhibits();
 
     expect(featured.map((exhibit) => exhibit.slug)).toEqual([
+      "human-anatomy",
       "becoming-human",
       "jet-engine",
       "thirteen-minutes",
@@ -33,8 +39,8 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     ]);
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("moon");
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("earth");
-    expect(isExhibitEnabled("living-atlas")).toBe(true);
     expect(getActiveWings(featured).map(({ wing }) => wing.title)).toEqual([
+      "The Body",
       "Origins & Futures",
       "Systems & Machines",
       "Space",
@@ -48,10 +54,8 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(apollo?.wing.code).toBe("Wing 02");
     expect(apollo?.visualTheme.variant).toBe("thirteen-minutes");
 
-    const anatomy = getExhibitBySlug("living-atlas");
-    expect(anatomy).toBeDefined();
-    expect(anatomy?.title).toBe("The Living Atlas");
-    expect(anatomy?.wing.code).toBe("Wing 01");
+    expect(getExhibitBySlug("living-atlas")).toBeUndefined();
+    expect(getExhibitBySlug("human-anatomy")?.visualTheme.variant).toBe("human-anatomy");
 
     const dinosaurs = getExhibitBySlug("dinosaurs");
     expect(dinosaurs).toMatchObject({
@@ -63,9 +67,19 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
 
   it("verifies exhibit enabled status", () => {
     expect(isExhibitEnabled("thirteen-minutes")).toBe(true);
-    expect(isExhibitEnabled("living-atlas")).toBe(true);
+    expect(isExhibitEnabled("living-atlas")).toBe(false);
+    expect(isExhibitEnabled("human-anatomy")).toBe(true);
     expect(isExhibitEnabled("dinosaurs")).toBe(true);
     expect(isExhibitEnabled("non-existent-exhibit")).toBe(false);
+  });
+
+  it("keeps exhibit numbers and curator order unique after merging catalogs", () => {
+    expect(new Set(EXHIBIT_REGISTRY.map((exhibit) => exhibit.exhibitNumber)).size).toBe(
+      EXHIBIT_REGISTRY.length,
+    );
+    expect(new Set(EXHIBIT_REGISTRY.map((exhibit) => exhibit.order)).size).toBe(
+      EXHIBIT_REGISTRY.length,
+    );
   });
 
   it("aggregates active wings properly", () => {
@@ -76,5 +90,11 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(titles).toContain("Systems & Machines");
     expect(titles).toContain("Origins & Futures");
     expect(titles).toContain("Space");
+    expect(wings.map(({ wing }) => wing.slug)).toEqual([
+      "body",
+      "origins-futures",
+      "systems-machines",
+      "space",
+    ]);
   });
 });
