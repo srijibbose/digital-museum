@@ -15,6 +15,7 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
     expect(ids).toContain("becoming-human");
     expect(ids).toContain("atlas-of-worlds");
     expect(ids).toContain("human-anatomy");
+    expect(ids).toContain("dinosaurs");
   });
 
   it("returns active exhibits when enabled is true", () => {
@@ -34,6 +35,7 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
       "jet-engine",
       "thirteen-minutes",
       "atlas-of-worlds",
+      "dinosaurs",
     ]);
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("moon");
     expect(featured.map((exhibit) => exhibit.slug)).not.toContain("earth");
@@ -54,13 +56,30 @@ describe("Exhibit Registry & Plug-and-Play System", () => {
 
     expect(getExhibitBySlug("living-atlas")).toBeUndefined();
     expect(getExhibitBySlug("human-anatomy")?.visualTheme.variant).toBe("human-anatomy");
+
+    const dinosaurs = getExhibitBySlug("dinosaurs");
+    expect(dinosaurs).toMatchObject({
+      title: "Dinosaurs, Reconsidered",
+      wing: { code: "Wing 03" },
+      visualTheme: { variant: "dinosaurs" },
+    });
   });
 
   it("verifies exhibit enabled status", () => {
     expect(isExhibitEnabled("thirteen-minutes")).toBe(true);
     expect(isExhibitEnabled("living-atlas")).toBe(false);
     expect(isExhibitEnabled("human-anatomy")).toBe(true);
+    expect(isExhibitEnabled("dinosaurs")).toBe(true);
     expect(isExhibitEnabled("non-existent-exhibit")).toBe(false);
+  });
+
+  it("keeps exhibit numbers and curator order unique after merging catalogs", () => {
+    expect(new Set(EXHIBIT_REGISTRY.map((exhibit) => exhibit.exhibitNumber)).size).toBe(
+      EXHIBIT_REGISTRY.length,
+    );
+    expect(new Set(EXHIBIT_REGISTRY.map((exhibit) => exhibit.order)).size).toBe(
+      EXHIBIT_REGISTRY.length,
+    );
   });
 
   it("aggregates active wings properly", () => {

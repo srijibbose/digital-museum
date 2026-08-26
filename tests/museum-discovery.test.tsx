@@ -54,7 +54,7 @@ describe("museum discovery components", () => {
 
     await user.click(screen.getByRole("button", { name: "Surprise me" }));
 
-    expect(navigation.push).toHaveBeenCalledWith("/exhibits/atlas-of-worlds");
+    expect(navigation.push).toHaveBeenCalledWith("/exhibits/dinosaurs");
   });
 
   it("renders compact exhibit metadata with the real local poster asset", () => {

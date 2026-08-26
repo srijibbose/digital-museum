@@ -7,8 +7,21 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.0.2"],
   images: {
     qualities: [75, 90, 92],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "media.sketchfab.com",
+        pathname: "/models/**",
+      },
+    ],
   },
   async headers() {
+    const dinosaurAssetCache = [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=86400, stale-while-revalidate=604800",
+      },
+    ];
     const anatomyAssetCache = [
       {
         key: "Cache-Control",
@@ -17,6 +30,14 @@ const nextConfig: NextConfig = {
     ];
 
     return [
+      {
+        source: "/models/dinosaurs/:path*",
+        headers: dinosaurAssetCache,
+      },
+      {
+        source: "/media/dinosaurs/:path*",
+        headers: dinosaurAssetCache,
+      },
       {
         source: "/models/anatomy/:path*",
         headers: anatomyAssetCache,

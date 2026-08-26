@@ -26,7 +26,7 @@ test("keeps the featured rail compact and scrollable on a portrait homepage", as
       };
     });
 
-    expect(layout.visualHeights).toHaveLength(5);
+    expect(layout.visualHeights).toHaveLength(6);
     expect(layout.pageOverflow).toBeLessThanOrEqual(0);
     expect(layout.railScrollable).toBe(true);
     expect(Math.max(...layout.visualHeights)).toBeLessThanOrEqual(300);

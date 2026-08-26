@@ -41,6 +41,7 @@ describe("exhibit discovery", () => {
     ).toEqual([
       "Atlas of Worlds",
       "Becoming Human",
+      "Dinosaurs, Reconsidered",
       "Human Anatomy",
       "The Engine Is a River",
       "Thirteen Minutes",
@@ -49,7 +50,7 @@ describe("exhibit discovery", () => {
       filterExhibits(exhibits, { sort: "duration" }).map(
         (exhibit) => exhibit.durationMinutes,
       ),
-    ).toEqual([10, 15, 25, 35, 70]);
+    ).toEqual([10, 15, 15, 25, 35, 70]);
     expect(exhibits.map((exhibit) => exhibit.slug)).toEqual(curatorOrder);
   });
 
@@ -57,10 +58,10 @@ describe("exhibit discovery", () => {
     const page = getCatalogPage(exhibits, { sort: "title", page: 2 }, 2);
 
     expect(page.items.map((exhibit) => exhibit.title)).toEqual([
+      "Dinosaurs, Reconsidered",
       "Human Anatomy",
-      "The Engine Is a River",
     ]);
-    expect(page.total).toBe(5);
+    expect(page.total).toBe(6);
     expect(page.page).toBe(2);
     expect(page.pageSize).toBe(2);
     expect(page.totalPages).toBe(3);
@@ -98,9 +99,7 @@ describe("exhibit discovery", () => {
     expect(pickSurpriseExhibit(exhibits, () => 0)?.slug).toBe(
       "human-anatomy",
     );
-    expect(pickSurpriseExhibit(exhibits, () => 0.999)?.slug).toBe(
-      "atlas-of-worlds",
-    );
+    expect(pickSurpriseExhibit(exhibits, () => 0.999)?.slug).toBe("dinosaurs");
     expect(pickSurpriseExhibit([], () => 0)).toBeUndefined();
   });
 });

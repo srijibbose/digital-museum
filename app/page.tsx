@@ -21,7 +21,7 @@ const QUICK_PATHS = [
 
 export default function MuseumLobby() {
   const activeExhibits = getActiveExhibits();
-  const featuredExhibits = getFeaturedExhibits().slice(0, 5);
+  const featuredExhibits = getFeaturedExhibits();
   const activeWings = getActiveWings(activeExhibits);
   const searchIndex = createExhibitSearchIndex(activeExhibits);
   const surpriseExhibits = activeExhibits.map(({ id, route, enabled }) => ({

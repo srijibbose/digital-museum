@@ -54,7 +54,7 @@ describe("museum homepage", () => {
     render(<MuseumLobby />);
 
     const featured = screen.getByRole("region", { name: "Featured exhibits" });
-    expect(within(featured).getAllByRole("article")).toHaveLength(5);
+    expect(within(featured).getAllByRole("article")).toHaveLength(6);
 
     const wings = screen.getByRole("region", { name: "Explore by wing" });
     expect(within(wings).getAllByRole("link")).toHaveLength(4);
